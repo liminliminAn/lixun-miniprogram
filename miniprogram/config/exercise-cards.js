@@ -1,4 +1,5 @@
-{
+/* 本地内容配置（由产品 JSON 转为 CommonJS，兼容基础库 2.32 require） */
+module.exports = {
   "_meta": {
     "version": "it2-v1",
     "note": "图文卡占位文案，待产品/教练替换；通用内容，不署名",
@@ -276,4 +277,4 @@
       "dose": "待核实"
     }
   }
-}
+};

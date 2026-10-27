@@ -1,6 +1,6 @@
 import { buildPostureView } from '../../utils/posture';
 
-const CONFIG: any = require('../../config/posture.json');
+const CONFIG: any = require('../../config/posture.js');
 
 Page({
   data: {

@@ -2,7 +2,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const { buildExerciseCard, PLACEHOLDER_IMAGE } = require('./lib/exerciseCards');
-const cfg = require('../miniprogram/config/exercise-cards.json');
+const cfg = require('../miniprogram/config/exercise-cards.js');
 
 const src = fs.readFileSync(__dirname + '/../miniprogram/constants/exercises.ts', 'utf8');
 const ids = [...src.matchAll(/id: '([^']+)'/g)].map((m) => m[1]);

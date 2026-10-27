@@ -3,7 +3,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { buildPostureView, TAN_AUTHOR, shoulderWarmupAddon } = require('./lib/posture');
-const cfg = require('../miniprogram/config/posture.json');
+const cfg = require('../miniprogram/config/posture.js');
 
 const v = buildPostureView(cfg);
 assert.ok(v.disclaimer.includes('非医疗建议'));
@@ -42,7 +42,7 @@ assert.strictEqual(shoulderWarmupAddon({ issues: [{ id: 'shoulder_x', attributio
 const root = path.join(__dirname, '../miniprogram');
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
   e.isDirectory() ? (e.name === 'assets' ? [] : walk(path.join(d, e.name))) : [path.join(d, e.name)]);
-const allowTan = new Set(['utils/posture.ts', 'config/posture.json']);
+const allowTan = new Set(['utils/posture.ts', 'config/posture.js']);
 walk(root).filter((f) => /\.(wxml|ts|json|wxss|js)$/.test(f)).forEach((f) => {
   const txt = fs.readFileSync(f, 'utf8');
   const rel = path.relative(root, f);

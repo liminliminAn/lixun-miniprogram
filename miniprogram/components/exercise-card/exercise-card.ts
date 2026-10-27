@@ -1,6 +1,6 @@
 import { buildExerciseCard, ExerciseCardView } from '../../utils/exerciseCards';
 
-const CARDS: any = require('../../config/exercise-cards.json');
+const CARDS: any = require('../../config/exercise-cards.js');
 
 Component({
   properties: {

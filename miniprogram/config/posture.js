@@ -1,4 +1,5 @@
-{
+/* 本地内容配置（由产品 JSON 转为 CommonJS，兼容基础库 2.32 require） */
+module.exports = {
   "_meta": {
     "version": "it2-v1",
     "sourceNote": "仅肩部条目来自谭成义视频的自动章节与配文（未观看视频）；其余为通用占位，不标注作者",
@@ -27,3 +28,4 @@
     { "id": "low_back", "priority": 3, "title": "腰背不适", "attribution": "generic", "placeholder": true, "selfCheck": null, "drills": [], "frequency": "待补" }
   ]
 }
+;

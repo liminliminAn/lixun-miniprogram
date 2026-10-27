@@ -1,7 +1,7 @@
 /** node tests/warmup.test.js — tests/lib/warmup.js 由 miniprogram/utils/warmup.ts 经 tsc 生成 */
 const assert = require('assert');
 const { rampSets, firstCompound, withWarmup, completedTrainDates, rampConfigFromJson, buildWarmupSections, DOSE_PLACEHOLDER } = require('./lib/warmup');
-const cfg = require('../miniprogram/config/warmup.json');
+const cfg = require('../miniprogram/config/warmup.js');
 
 const w = (a) => a.map((s) => `${s.weight}x${s.reps}`);
 assert.deepStrictEqual(w(rampSets(60)), ['20x10', '25x8', '35x5', '47.5x3']); // 24→25, 36→35, 48→47.5
@@ -42,3 +42,10 @@ const pushAct = buildWarmupSections(cfg, 'push').find((x) => x.key === 'activate
 assert.ok(pushAct.some((i) => i.source && i.source.url.startsWith('https://')));
 assert.ok(!JSON.stringify(buildWarmupSections(cfg, 'pull')).match(/\d+\s*(次|组|分钟|秒)/)); // 不显示 dose 数字
 console.log('warmup tests passed');
+// 兼容 2.32：源码不允许 require .json
+{
+  const fs2 = require('fs'), p2 = require('path');
+  const walk = (d) => fs2.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? walk(p2.join(d, e.name)) : [p2.join(d, e.name)]);
+  walk(p2.join(__dirname, '../miniprogram')).filter((f) => f.endsWith('.ts')).forEach((f) =>
+    assert.ok(!/require\([^)]*\.json/.test(fs2.readFileSync(f, 'utf8')), `json require in ${f}`));
+}

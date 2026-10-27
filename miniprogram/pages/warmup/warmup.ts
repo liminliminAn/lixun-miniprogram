@@ -8,8 +8,8 @@ import { shoulderWarmupAddon } from '../../utils/posture';
 
 // 本地 JSON 配置（占位内容）
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const CONFIG: any = require('../../config/warmup.json');
-const POSTURE: any = require('../../config/posture.json');
+const CONFIG: any = require('../../config/warmup.js');
+const POSTURE: any = require('../../config/posture.js');
 
 Page({
   data: {

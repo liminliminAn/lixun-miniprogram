@@ -1,4 +1,5 @@
-{
+/* 本地内容配置（由产品 JSON 转为 CommonJS，兼容基础库 2.32 require） */
+module.exports = {
   "_meta": {
     "version": "it2-v1",
     "sourceNote": "内容来自抖音自动章节与配文整理，未观看视频；组数/次数/时长均为待核实占位",
@@ -77,3 +78,4 @@
     }
   }
 }
+;
