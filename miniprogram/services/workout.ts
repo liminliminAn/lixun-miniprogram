@@ -1,6 +1,7 @@
 import { storage, KEYS } from './storage';
 import { exercisesByDay } from '../constants/exercises';
 import { getPlan } from './profile';
+import { suggestNext } from '../utils/progression';
 import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
 
 export function todayDayType(date: Date = new Date()): DayType {
@@ -25,6 +26,18 @@ export function getLastSetFor(exerciseId: string): SetRecord | undefined {
   return getLastSets()[exerciseId];
 }
 
+/** 某动作在已完成训练中的组记录，最近在前 */
+export function exerciseHistory(exerciseId: string): SetRecord[][] {
+  const sessions = getSessions();
+  return Object.keys(sessions)
+    .filter((d) => sessions[d] && !!sessions[d].completedAt)
+    .sort()
+    .reverse()
+    .map((d) => sessions[d].exercises.find((e) => e.exerciseId === exerciseId))
+    .filter((e): e is ExerciseLog => !!e && e.sets.length > 0)
+    .map((e) => e.sets);
+}
+
 /** 开练：若无当日 session 则按课表生成空组草稿 */
 export function startOrResumeSession(
   date: string = formatDate(),
@@ -38,9 +51,11 @@ export function startOrResumeSession(
   const lastSets = getLastSets();
   const exercises = exercisesByDay(dayType).map((ex) => {
     const last = lastSets[ex.id];
+    // IT2-01：有已完成历史则按渐进超负荷规则预填（可改）；否则沿用上次/默认
+    const sug = suggestNext(ex.id, exerciseHistory(ex.id));
     const seed = {
-      reps: last?.reps ?? 8,
-      weight: last?.weight ?? 0,
+      reps: sug ? sug.reps : last?.reps ?? 8,
+      weight: sug ? sug.weight : last?.weight ?? 0,
       done: false,
     };
     return {
