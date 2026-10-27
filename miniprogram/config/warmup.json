@@ -1,21 +1,79 @@
 {
-  "_note": "热身内容占位，后续由产品/教练替换；不在 UI 展示任何教法署名",
-  "ramp": { "emptyBarKg": 20, "roundKg": 2.5, "steps": [ { "pct": 0, "reps": 10 }, { "pct": 0.4, "reps": 8 }, { "pct": 0.6, "reps": 5 }, { "pct": 0.8, "reps": 3 } ] },
+  "_meta": {
+    "version": "it2-v1",
+    "sourceNote": "内容来自抖音自动章节与配文整理，未观看视频；组数/次数/时长均为待核实占位",
+    "disclaimer": "非医疗建议。如有麻木、放射痛、夜间痛或持续 2 周不缓解，请就医。"
+  },
+  "general": { "name": "一般热身", "detail": "低强度有氧 2–3 分钟", "dose": "2–3 分钟", "doseVerified": false },
+  "rampSets": {
+    "note": "首个复合动作递增热身组，按工作重量计算，取整到 2.5kg；不计入正式容量",
+    "steps": [
+      { "load": "空杠", "reps": 10 }, { "loadPct": 40, "reps": 8 },
+      { "loadPct": 60, "reps": 5 }, { "loadPct": 80, "reps": 3 }
+    ],
+    "verified": false
+  },
   "days": {
     "push": {
-      "general": [ { "id": "p_g1", "text": "划船机或快走 3–5 分钟（占位）" } ],
-      "dynamic": [ { "id": "p_d1", "text": "手臂绕环 前后各 10 次（占位）" }, { "id": "p_d2", "text": "胸椎旋转 每侧 8 次（占位）" } ],
-      "activation": [ { "id": "p_a1", "text": "弹力带肩外旋 2×12（占位）" }, { "id": "p_a2", "text": "跪姿俯卧撑 1×10（占位）" } ]
+      "label": "推 / 胸",
+      "source": { "title": "一次性看完三分化热身整套流程", "url": "https://www.douyin.com/video/7638569547629063665" },
+      "release": [
+        { "name": "泡沫轴放松胸小肌", "dose": "待核实" },
+        { "name": "泡沫轴放松胸大肌", "dose": "待核实" },
+        { "name": "泡沫轴放松二头肌", "dose": "待核实" }
+      ],
+      "activate": [
+        { "name": "胸廓扩张激活", "dose": "待核实" },
+        { "name": "前锯肌激活", "dose": "待核实" },
+        { "name": "下斜方肌激活", "dose": "待核实" },
+        { "name": "手腕激活", "dose": "待核实" },
+        { "name": "肩袖激活（上肢训练前必做）", "dose": "待核实",
+          "source": { "title": "ep.20", "url": "https://www.douyin.com/video/7574247205529647205" } }
+      ]
     },
     "pull": {
-      "general": [ { "id": "u_g1", "text": "划船机 3–5 分钟（占位）" } ],
-      "dynamic": [ { "id": "u_d1", "text": "猫牛式 8 次（占位）" }, { "id": "u_d2", "text": "肩胛上下回旋 10 次（占位）" } ],
-      "activation": [ { "id": "u_a1", "text": "弹力带面拉 2×15（占位）" }, { "id": "u_a2", "text": "直臂下压 1×12 轻重量（占位）" } ]
+      "label": "拉 / 背",
+      "source": { "title": "ep.16", "url": "https://www.douyin.com/video/7568344357516073082" },
+      "release": [
+        { "name": "放松中斜方肌", "dose": "待核实" },
+        { "name": "放松菱形肌", "dose": "待核实" },
+        { "name": "放松大圆肌", "dose": "待核实" },
+        { "name": "放松冈下肌", "dose": "待核实" },
+        { "name": "放松三头肌", "dose": "待核实" }
+      ],
+      "activate": [
+        { "name": "弹力带热身", "dose": "待核实" },
+        { "name": "前锯肌激活", "dose": "待核实" },
+        { "name": "肩胛下肌训练", "dose": "待核实" },
+        { "name": "蜘蛛式", "dose": "待核实" },
+        { "name": "手肘搭平板凳", "dose": "待核实" },
+        { "name": "肩袖激活（上肢训练前必做）", "dose": "待核实",
+          "source": { "title": "ep.20", "url": "https://www.douyin.com/video/7574247205529647205" } }
+      ]
     },
     "legs": {
-      "general": [ { "id": "l_g1", "text": "单车或快走 3–5 分钟（占位）" } ],
-      "dynamic": [ { "id": "l_d1", "text": "腿摆 前后/左右各 10 次（占位）" }, { "id": "l_d2", "text": "世界上最好的拉伸 每侧 5 次（占位）" } ],
-      "activation": [ { "id": "l_a1", "text": "臀桥 2×12（占位）" }, { "id": "l_a2", "text": "徒手深蹲 1×10（占位）" } ]
+      "label": "腿",
+      "source": { "title": "一次性看完三分化热身整套流程", "url": "https://www.douyin.com/video/7638569547629063665" },
+      "release": [
+        { "name": "放松小腿", "dose": "待核实" },
+        { "name": "放松腘绳肌", "dose": "待核实" },
+        { "name": "放松臀部", "dose": "待核实" },
+        { "name": "放松大腿内外侧", "dose": "待核实" }
+      ],
+      "activate": [
+        { "name": "青蛙趴（髋）", "dose": "待核实" },
+        { "name": "单腿站立（踝）", "dose": "待核实" },
+        { "name": "飞机转圈", "dose": "待核实" }
+      ]
+    },
+    "shoulder": {
+      "label": "肩日（可选，供推日或后续肩日）",
+      "source": { "title": "ep.17", "url": "https://www.douyin.com/video/7569788930779558053" },
+      "activate": [
+        { "name": "外旋位推肩", "dose": "待核实" },
+        { "name": "头枕地对抗地面", "dose": "待核实" },
+        { "name": "泡沫轴支撑", "dose": "待核实" }
+      ]
     }
   }
 }

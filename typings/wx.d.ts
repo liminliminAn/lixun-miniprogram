@@ -4,6 +4,7 @@ declare const wx: {
   getStorageSync(key: string): unknown;
   removeStorageSync(key: string): void;
   clearStorageSync(): void;
+  setClipboardData(opts: { data: string; success?: () => void }): void;
   showToast(opts: { title: string; icon?: string; duration?: number }): void;
   showModal(opts: {
     title: string;

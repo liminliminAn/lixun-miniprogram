@@ -8,10 +8,14 @@
   </view>
 
   <view class="card" wx:for="{{sections}}" wx:for-item="sec" wx:key="key">
-    <view class="title">{{sec.title}}</view>
+    <view class="title">{{sec.title}}<text class="opt" wx:if="{{sec.optional}}">可选</text></view>
     <view class="item" wx:for="{{sec.items}}" wx:key="id" data-sec="{{sec.key}}" data-idx="{{index}}" bindtap="onToggleItem">
       <text class="box {{item.checked ? 'on' : ''}}">{{item.checked ? '✓' : ''}}</text>
-      <text>{{item.text}}</text>
+      <view class="txt">
+        <text>{{item.text}}</text>
+        <text class="dose">{{item.dose}}</text>
+        <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>参考：{{item.source.title}} {{item.source.url}}（点按复制）</text>
+      </view>
     </view>
   </view>
 
@@ -23,6 +27,8 @@
       <text>{{item.text}}</text>
     </view>
   </view>
+
+  <view class="link block" wx:if="{{daySource}}" data-url="{{daySource.url}}" bindtap="onCopyLink" user-select>参考：{{daySource.title}} {{daySource.url}}（点按复制）</view>
 
   <view class="actions">
     <view class="btn ghost" bindtap="onSkip">跳过热身</view>

@@ -1,10 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_RAMP = void 0;
+exports.DOSE_PLACEHOLDER = exports.DEFAULT_RAMP = void 0;
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
 exports.completedTrainDates = completedTrainDates;
+exports.rampConfigFromJson = rampConfigFromJson;
+exports.stripDose = stripDose;
+exports.buildWarmupSections = buildWarmupSections;
 /**
  * IT2-06 热身：坡道组计算与热身状态（纯函数）。单测：tests/warmup.test.js
  * 坡道组只写在 session.warmup，不进 session.exercises，因此不计训练容量；
@@ -45,4 +48,51 @@ function completedTrainDates(sessions) {
     return Object.keys(sessions)
         .filter((d) => sessions[d] && !!sessions[d].completedAt)
         .sort();
+}
+/** 未核实的剂量统一展示文案（不展示 dose 原值） */
+exports.DOSE_PLACEHOLDER = '参考量待定';
+/** JSON rampSets → RampConfig；未提供时用 DEFAULT_RAMP */
+function rampConfigFromJson(json, base = exports.DEFAULT_RAMP) {
+    const steps = json && Array.isArray(json.steps) ? json.steps : null;
+    if (!steps || !steps.length)
+        return base;
+    return Object.assign(Object.assign({}, base), { steps: steps.map((s) => ({
+            pct: typeof s.loadPct === 'number' ? s.loadPct / 100 : 0,
+            reps: s.reps,
+        })) });
+}
+/** 去掉文案里夹带的未核实剂量（如「2–3 分钟」） */
+function stripDose(text) {
+    return String(text || '').replace(/\s*\d[\d.–~\-]*\s*(分钟|秒|次|组)\s*/g, '').trim();
+}
+function mapItems(prefix, list) {
+    return (list || []).map((it, i) => ({
+        id: `${prefix}_${i}`,
+        text: it.name,
+        dose: exports.DOSE_PLACEHOLDER,
+        source: it.source ? { title: it.source.title, url: it.source.url } : undefined,
+    }));
+}
+/** 按日类型组装：一般热身 → 放松 → 激活（推日附肩日可选激活） */
+function buildWarmupSections(cfg, dayType) {
+    const sections = [];
+    if (cfg.general) {
+        sections.push({
+            key: 'general',
+            title: cfg.general.name || '一般热身',
+            items: [{ id: 'general_0', text: stripDose(cfg.general.detail || cfg.general.name), dose: exports.DOSE_PLACEHOLDER }],
+        });
+    }
+    const day = (cfg.days && cfg.days[dayType]) || {};
+    if (day.release && day.release.length) {
+        sections.push({ key: 'release', title: '放松', items: mapItems(`${dayType}_rel`, day.release) });
+    }
+    if (day.activate && day.activate.length) {
+        sections.push({ key: 'activate', title: '激活', items: mapItems(`${dayType}_act`, day.activate) });
+    }
+    const sh = cfg.days && cfg.days.shoulder;
+    if (dayType === 'push' && sh && sh.activate && sh.activate.length) {
+        sections.push({ key: 'shoulder', title: sh.label || '肩部激活（可选）', optional: true, items: mapItems('shoulder_act', sh.activate) });
+    }
+    return sections;
 }

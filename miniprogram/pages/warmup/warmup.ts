@@ -2,24 +2,20 @@ import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { EXERCISE_MAP } from '../../constants/exercises';
 import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
-import { rampSets, firstCompound, withWarmup, RampConfig } from '../../utils/warmup';
+import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, DOSE_PLACEHOLDER, WarmupViewItem } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
 
 // 本地 JSON 配置（占位内容）
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CONFIG: any = require('../../config/warmup.json');
 
-const SECTION_TITLES: Record<string, string> = {
-  general: '一般热身',
-  dynamic: '动态拉伸',
-  activation: '专项激活',
-};
-
 Page({
   data: {
     dayLabel: '',
-    sections: [] as { key: string; title: string; items: { id: string; text: string; checked: boolean }[] }[],
+    sections: [] as { key: string; title: string; optional?: boolean; items: (WarmupViewItem & { checked: boolean })[] }[],
     ramp: [] as { id: string; text: string; checked: boolean }[],
+    daySource: null as { title: string; url: string } | null,
+    doseText: DOSE_PLACEHOLDER,
     rampName: '',
     elapsedSec: 0,
     timeText: '00:00',
@@ -36,20 +32,20 @@ Page({
       return;
     }
     this.session = session;
-    const day = CONFIG.days[session.dayType] || {};
     const checked = new Set<string>(session.warmup ? session.warmup.checked : []);
-    const sections = ['general', 'dynamic', 'activation'].map((key) => ({
-      key,
-      title: SECTION_TITLES[key],
-      items: (day[key] || []).map((it: { id: string; text: string }) => ({ ...it, checked: checked.has(it.id) })),
+    const sections = buildWarmupSections(CONFIG, session.dayType).map((sec) => ({
+      ...sec,
+      items: sec.items.map((it) => ({ ...it, checked: checked.has(it.id) })),
     }));
+    const day = CONFIG.days && CONFIG.days[session.dayType];
+    const daySource = day && day.source ? { title: day.source.title, url: day.source.url } : null;
     const fc = firstCompound(session.exercises);
     let ramp: { id: string; text: string; checked: boolean }[] = [];
     let rampName = '';
     if (fc) {
       const planned = fc.sets.length ? fc.sets[0].weight : 0;
       const isBarbell = DEFAULT_PROGRESSION.exercises[fc.exerciseId]?.equipment === 'barbell';
-      this.rampRaw = rampSets(planned, CONFIG.ramp as RampConfig, isBarbell);
+      this.rampRaw = rampSets(planned, rampConfigFromJson(CONFIG.rampSets), isBarbell);
       this.rampExerciseId = fc.exerciseId;
       rampName = (EXERCISE_MAP[fc.exerciseId] && EXERCISE_MAP[fc.exerciseId].name) || fc.exerciseId;
       ramp = this.rampRaw.map((r, i) => ({
@@ -58,7 +54,7 @@ Page({
         checked: checked.has(`ramp_${i}`),
       }));
     }
-    this.setData({ dayLabel: DAY_TYPE_LABEL[session.dayType], sections, ramp, rampName });
+    this.setData({ dayLabel: DAY_TYPE_LABEL[session.dayType], sections, ramp, rampName, daySource });
   },
   onUnload() {
     clearInterval(this.timer);
@@ -87,6 +83,9 @@ Page({
       this.setData({ [`sections[${si}].items[${idx}].checked`]: !cur });
     }
   },
+  onCopyLink(e: any) {
+    wx.setClipboardData({ data: e.currentTarget.dataset.url });
+  },
   collectChecked(): string[] {
     const ids: string[] = [];
     this.data.sections.forEach((s) => s.items.forEach((it) => it.checked && ids.push(it.id)));
@@ -96,9 +95,9 @@ Page({
   finish(status: WarmupRecord['status']) {
     clearInterval(this.timer);
     if (this.session) {
-      const total = this.data.sections.reduce((n, s) => n + s.items.length, 0) + this.data.ramp.length;
+      const total = this.data.sections.filter((s) => !s.optional).reduce((n, s) => n + s.items.length, 0) + this.data.ramp.length;
       const checked = status === 'skipped' ? [] : this.collectChecked();
-      const st = status === 'skipped' ? 'skipped' : checked.length >= total ? 'done' : 'partial';
+      const st = status === 'skipped' ? 'skipped' : this.collectChecked().filter((id) => !id.startsWith('shoulder_')).length >= total ? 'done' : 'partial';
       saveSession(
         withWarmup(this.session, {
           status: st,
