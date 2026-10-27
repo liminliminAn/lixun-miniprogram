@@ -28,6 +28,9 @@ Page({
     setPrefs({ showWarmup: v });
     this.setData({ showWarmup: v });
   },
+  onPosture() {
+    wx.navigateTo({ url: '/pages/posture/posture' });
+  },
   onReset() {
     wx.showModal({
       title: '确认清除？',

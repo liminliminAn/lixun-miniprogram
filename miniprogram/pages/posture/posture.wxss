@@ -1,0 +1,11 @@
+.notice { font-size: var(--font-caption); color: var(--color-warning); line-height: 1.5; }
+.title { font-weight: 600; font-size: var(--font-section); color: var(--color-ink); margin-bottom: 8rpx; }
+.pre { font-size: var(--font-meta); color: var(--color-ink); margin-bottom: 8rpx; }
+.sub { font-size: var(--font-caption); color: var(--color-ink-secondary); margin: 6rpx 0; }
+.label { font-size: var(--font-caption); color: var(--color-accent); margin-top: 16rpx; }
+.item { display: flex; justify-content: space-between; align-items: center; padding: 14rpx 0; border-bottom: 1rpx solid var(--color-border); font-size: var(--font-meta); color: var(--color-ink); }
+.item:last-child { border-bottom: none; }
+.txt { display: flex; flex-direction: column; }
+.cue { font-size: var(--font-caption); color: var(--color-ink-secondary); margin-top: 4rpx; }
+.dose { font-size: var(--font-caption); color: var(--color-ink-secondary); flex-shrink: 0; margin-left: 16rpx; }
+.link { margin-top: 16rpx; font-size: var(--font-caption); color: var(--color-ink-secondary); word-break: break-all; }

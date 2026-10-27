@@ -15,6 +15,10 @@
     <view class="row"><text>开练前显示热身</text><switch checked="{{showWarmup}}" bindchange="onWarmupChange" /></view>
   </view>
 
+  <view class="card" bindtap="onPosture">
+    <view class="row"><text>体态矫正</text><text>›</text></view>
+  </view>
+
   <view class="card danger" bindtap="onReset">
     <text>清除本地数据并重新问卷</text>
   </view>
