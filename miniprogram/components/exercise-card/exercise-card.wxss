@@ -80,3 +80,6 @@
   color: var(--color-ink-secondary);
   font-size: var(--font-caption);
 }
+
+.sec { margin-top: var(--space-3); font-size: var(--font-caption); color: var(--color-accent); font-weight: 600; }
+.bad { color: var(--color-danger); flex-shrink: 0; }

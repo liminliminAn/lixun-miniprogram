@@ -6,12 +6,21 @@
     </view>
   </view>
   <view wx:if="{{expanded}}" class="body">
-    <image class="img" src="/assets/exercise-placeholder.png" mode="aspectFill" />
+    <image class="img" src="{{card ? card.image : '/assets/exercise-placeholder.png'}}" mode="aspectFill" />
     <view class="tip" wx:for="{{tips}}" wx:key="*this">
       <text class="bullet">●</text>
       <text>{{item}}</text>
     </view>
     <view class="focus" wx:if="{{tips[0]}}">今日只盯：{{tips[0]}}</view>
+    <block wx:if="{{card}}">
+      <view class="sec" wx:if="{{card.steps.length}}">步骤</view>
+      <view class="tip" wx:for="{{card.steps}}" wx:key="*this"><text class="bullet">{{index + 1}}</text><text>{{item}}</text></view>
+      <view class="sec" wx:if="{{card.cues.length}}">要点提示</view>
+      <view class="tip" wx:for="{{card.cues}}" wx:key="*this"><text class="bullet">●</text><text>{{item}}</text></view>
+      <view class="sec" wx:if="{{card.mistakes.length}}">常见错误</view>
+      <view class="tip" wx:for="{{card.mistakes}}" wx:key="*this"><text class="bad">✕</text><text>{{item}}</text></view>
+      <view class="warn" wx:if="{{card.dose}}">组次：{{card.dose}}</view>
+    </block>
     <view class="warn">禁忌：{{contraindications}}</view>
   </view>
 </view>
