@@ -1,12 +1,10 @@
 <view class="chart">
-  <view class="empty" wx:if="{{!entries.length}}">暂无体重记录</view>
-  <block wx:for="{{entries}}" wx:key="date">
-    <view class="bar-row">
-      <text class="date">{{item.date}}</text>
-      <view class="bar-wrap">
-        <view class="bar" style="width: {{item.pct}}%;"></view>
-      </view>
-      <text class="kg">{{item.kg}} kg<text class="ma" wx:if="{{item.ma}}"> · 均 {{item.ma}}</text></text>
+  <view class="empty" wx:if="{{empty}}">暂无体重记录</view>
+  <block wx:else>
+    <canvas type="2d" id="wchart" class="canvas"></canvas>
+    <view class="legend">
+      <text class="dot {{hasMa ? '' : 'solo'}}"></text><text>每日体重</text>
+      <block wx:if="{{hasMa}}"><text class="line"></text><text>7 日均线</text></block>
     </view>
   </block>
 </view>
