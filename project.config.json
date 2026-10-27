@@ -1,7 +1,32 @@
 {
-  "description": "力训 - 推拉腿本地训练小程序 | App图标: miniprogram/assets/app-icon-tan-1024.png",
+  "description": "力训 - 推拉腿本地训练小程序 | App图标源文件: design/（不进包）",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "design"
+      },
+      {
+        "type": "folder",
+        "value": "tests"
+      },
+      {
+        "type": "suffix",
+        "value": ".md"
+      },
+      {
+        "type": "glob",
+        "value": "assets/**/*.jpg"
+      },
+      {
+        "type": "glob",
+        "value": "assets/**/*-1024.png"
+      },
+      {
+        "type": "glob",
+        "value": "assets/**/*-512.png"
+      }
+    ],
     "include": []
   },
   "setting": {
@@ -62,5 +87,5 @@
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "isGameTourist": false,
-  "appIconPath": "miniprogram/assets/app-icon-tan-1024.png"
+  "appIconPath": "design/app-icon-tan-1024.png"
 }
