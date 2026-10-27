@@ -1,4 +1,9 @@
 .notice { font-size: var(--font-caption); color: var(--color-warning); line-height: 1.5; }
+.medical { border: 1rpx solid var(--color-warning); }
+.medical-head { display: flex; justify-content: space-between; align-items: center; }
+.medical-title { font-weight: 600; font-size: var(--font-meta); color: var(--color-warning); }
+.medical-chev { font-size: var(--font-meta); color: var(--color-warning); }
+.medical-body { margin-top: 12rpx; font-size: var(--font-caption); color: var(--color-ink); line-height: 1.55; }
 .title { font-weight: 600; font-size: var(--font-section); color: var(--color-ink); margin-bottom: 8rpx; }
 .pre { font-size: var(--font-meta); color: var(--color-ink); margin-bottom: 8rpx; }
 .sub { font-size: var(--font-caption); color: var(--color-ink-secondary); margin: 6rpx 0; }

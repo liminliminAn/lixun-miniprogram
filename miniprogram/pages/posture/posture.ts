@@ -5,6 +5,10 @@ const CONFIG: any = require('../../config/posture.js');
 Page({
   data: {
     view: buildPostureView(CONFIG),
+    medicalOpen: true,
+  },
+  onToggleMedical() {
+    this.setData({ medicalOpen: !this.data.medicalOpen });
   },
   onCopyLink(e: any) {
     wx.setClipboardData({

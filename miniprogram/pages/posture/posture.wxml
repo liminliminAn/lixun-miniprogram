@@ -1,5 +1,13 @@
 <view class="container">
-  <view class="card notice">{{view.disclaimer}}</view>
+  <view class="card notice">{{view.shortDisclaimer}}</view>
+
+  <view class="card medical" bindtap="onToggleMedical">
+    <view class="medical-head">
+      <text class="medical-title">{{view.medicalTipTitle}}</text>
+      <text class="medical-chev">{{medicalOpen ? '▾' : '▸'}}</text>
+    </view>
+    <view class="medical-body" wx:if="{{medicalOpen}}">{{view.medicalTip}}</view>
+  </view>
 
   <view class="card" wx:for="{{view.issues}}" wx:for-item="it" wx:key="id">
     <view class="title">{{it.title}}</view>
