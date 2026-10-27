@@ -1,0 +1,24 @@
+<view class="container">
+  <rest-tip days="{{streak}}" threshold="{{restSoftWarnDays}}" />
+
+  <view class="hero card">
+    <view class="date">{{date}}</view>
+    <view class="day-type">{{dayLabel}}</view>
+    <view class="meta" wx:if="{{crowdName}}">人群：{{crowdName}} · {{daysPerWeek}} 练/周</view>
+  </view>
+
+  <block wx:if="{{isRest}}">
+    <view class="placeholder">今天是休息日，恢复也是训练的一部分。</view>
+  </block>
+  <block wx:else>
+    <view class="section-title">今日课表</view>
+    <exercise-card
+      wx:for="{{exercises}}"
+      wx:key="id"
+      name="{{item.name}}"
+      tips="{{item.tips}}"
+      contraindications="{{item.contraindications}}"
+    />
+    <view class="btn-primary start" bindtap="onStart">开始训练</view>
+  </block>
+</view>

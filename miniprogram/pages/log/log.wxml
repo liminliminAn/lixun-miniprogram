@@ -1,0 +1,24 @@
+<view class="container">
+  <rest-tip days="{{streak}}" threshold="{{restSoftWarnDays}}" />
+
+  <view class="card">
+    <view class="title">体重录入</view>
+    <view class="row">
+      <input class="input" type="digit" placeholder="今日体重 kg" value="{{weightInput}}" bindinput="onWeightInput" />
+      <view class="btn" bindtap="onAddWeight">保存</view>
+    </view>
+  </view>
+
+  <view class="section-title">体重趋势</view>
+  <weight-chart list="{{weights}}" />
+
+  <view class="section-title">最近训练</view>
+  <view class="card" wx:if="{{recentSessions.length}}">
+    <view class="sess" wx:for="{{recentSessions}}" wx:key="date">
+      <text>{{item.date}}</text>
+      <text class="tag">{{item.label}}</text>
+      <text class="done" wx:if="{{item.completed}}">已完成</text>
+    </view>
+  </view>
+  <view class="placeholder" wx:else>暂无训练记录</view>
+</view>

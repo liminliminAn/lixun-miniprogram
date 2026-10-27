@@ -1,0 +1,54 @@
+.hero { margin-bottom: var(--space-4); }
+.h1 {
+  display: block;
+  font-size: var(--font-title);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+.sub {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+  margin-top: 8rpx;
+  display: block;
+}
+.label {
+  font-size: var(--font-meta);
+  color: var(--color-ink-secondary);
+  margin-bottom: var(--space-3);
+}
+.chips { display: flex; flex-wrap: nowrap; gap: 12rpx; }
+.chips.wrap { flex-wrap: wrap; }
+.chip {
+  padding: 12rpx 24rpx;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  border-radius: 32rpx;
+  font-size: var(--font-meta);
+  border: 1rpx solid var(--color-border);
+  min-height: 64rpx;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+.chip.on {
+  background: var(--color-accent);
+  color: #FFFFFF;
+  border-color: var(--color-accent);
+}
+.row2 { display: flex; gap: 16rpx; }
+.input {
+  flex: 1;
+  background: var(--color-bg);
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+  color: var(--color-ink);
+  border: 1rpx solid var(--color-border);
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  font-size: var(--font-body);
+  color: var(--color-ink);
+}
+.submit { margin: 32rpx 0 60rpx; }

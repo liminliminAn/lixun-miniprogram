@@ -1,0 +1,18 @@
+<view class="container">
+  <view class="card">
+    <view class="title">本周课表（{{daysPerWeek}} 练）</view>
+    <view class="hint" wx:if="{{daysPerWeek===4}}">4 练：推、拉、腿、休、拉、休、休（去掉第二次推）</view>
+    <view class="hint" wx:else>5 练：推、拉、腿、休、推、拉、休</view>
+    <view class="week">
+      <view class="cell" wx:for="{{weekCells}}" wx:key="idx">
+        <text class="wd">周{{item.wd}}</text>
+        <text class="dt {{item.dayType}}">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:for="{{dayBlocks}}" wx:key="dayType">
+    <view class="title">{{item.label}}日动作</view>
+    <view class="ex" wx:for="{{item.exercises}}" wx:for-item="ex" wx:key="id">{{ex.name}}</view>
+  </view>
+</view>

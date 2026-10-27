@@ -1,0 +1,147 @@
+.set-logger {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+  border: 1rpx solid var(--color-border);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: var(--hit-min);
+  padding: 0 var(--space-1);
+}
+
+.title {
+  font-weight: 600;
+  font-size: var(--font-section);
+  color: var(--color-ink);
+}
+
+.add {
+  color: var(--color-accent);
+  font-size: var(--font-meta);
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--hit-min);
+  display: flex;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  min-height: var(--hit-min);
+  padding: var(--space-1) var(--space-2);
+  border-radius: 16rpx;
+  margin: 4rpx 0;
+  box-sizing: border-box;
+}
+
+.row.current {
+  background: var(--color-accent-soft);
+}
+
+.row.current .col-idx,
+.row.current .unit,
+.row.current .times,
+.row.current .input {
+  color: var(--color-accent);
+}
+
+.col-idx {
+  width: 56rpx;
+  text-align: center;
+  font-size: var(--font-section);
+  font-weight: 600;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.fields {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8rpx;
+  padding: 0 var(--space-2);
+}
+
+.input {
+  background: transparent;
+  text-align: center;
+  font-size: var(--font-section);
+  font-weight: 600;
+  color: var(--color-ink);
+  min-height: 72rpx;
+  padding: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.input.weight { width: 120rpx; }
+.input.reps { width: 80rpx; }
+
+.unit,
+.times {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-meta);
+}
+
+.row.done:not(.current) .col-idx,
+.row.done:not(.current) .input,
+.row.done:not(.current) .unit,
+.row.done:not(.current) .times {
+  color: var(--color-ink);
+}
+
+.check {
+  width: var(--hit-min);
+  height: var(--hit-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.check::before {
+  content: '';
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--color-border);
+  box-sizing: border-box;
+  position: absolute;
+}
+
+.check {
+  position: relative;
+}
+
+.check.on::before {
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.check.current-dot::before {
+  border-color: var(--color-accent);
+  background: transparent;
+}
+
+.check-mark {
+  position: relative;
+  z-index: 1;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--color-accent);
+}

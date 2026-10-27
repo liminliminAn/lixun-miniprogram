@@ -1,0 +1,28 @@
+.title {
+  font-weight: 600;
+  margin-bottom: 12rpx;
+  font-size: var(--font-section);
+  color: var(--color-ink);
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid var(--color-border);
+  font-size: var(--font-meta);
+  color: var(--color-ink);
+  min-height: 64rpx;
+  align-items: center;
+}
+.row:last-child { border-bottom: none; }
+.danger {
+  color: var(--color-danger);
+  text-align: center;
+  font-weight: 600;
+}
+.foot {
+  text-align: center;
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+  margin: 40rpx 0;
+}

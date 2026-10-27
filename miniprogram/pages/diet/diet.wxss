@@ -1,0 +1,40 @@
+.hero .badge {
+  display: inline-block;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: var(--font-caption);
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
+  font-weight: 600;
+}
+.h1 {
+  font-size: var(--font-title);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+.sub {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+  margin-top: 8rpx;
+  line-height: 1.5;
+}
+.title {
+  font-weight: 600;
+  font-size: var(--font-section);
+  margin-bottom: 8rpx;
+  color: var(--color-ink);
+}
+.summary {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+  margin-bottom: 16rpx;
+}
+.item {
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid var(--color-border);
+  font-size: var(--font-meta);
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+.item:last-child { border-bottom: none; }

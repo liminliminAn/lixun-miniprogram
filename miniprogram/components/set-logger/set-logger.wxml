@@ -1,0 +1,48 @@
+<view class="set-logger">
+  <view class="head" wx:if="{{title}}">
+    <text class="title">{{title}}</text>
+    <text class="add" bindtap="onAddSet">+ 组</text>
+  </view>
+
+  <view
+    wx:for="{{viewSets}}"
+    wx:key="index"
+    class="row {{item.isCurrent ? 'current' : ''}} {{item.done ? 'done' : ''}}"
+    data-index="{{index}}"
+    bindtap="onSelect"
+  >
+    <text class="col-idx tabular">{{index + 1}}</text>
+
+    <view class="fields" catchtap="">
+      <input
+        class="input weight tabular"
+        type="digit"
+        value="{{item.weightDisplay}}"
+        data-index="{{index}}"
+        data-field="weight"
+        bindinput="onField"
+        placeholder="—"
+      />
+      <text class="unit">kg</text>
+      <text class="times">×</text>
+      <input
+        class="input reps tabular"
+        type="number"
+        value="{{item.repsDisplay}}"
+        data-index="{{index}}"
+        data-field="reps"
+        bindinput="onField"
+        placeholder="—"
+      />
+    </view>
+
+    <view
+      class="check {{item.done ? 'on' : ''}} {{item.isCurrent && !item.done ? 'current-dot' : ''}}"
+      data-index="{{index}}"
+      catchtap="onToggleDone"
+    >
+      <text wx:if="{{item.done}}" class="check-mark">✓</text>
+      <view wx:elif="{{item.isCurrent}}" class="dot"></view>
+    </view>
+  </view>
+</view>

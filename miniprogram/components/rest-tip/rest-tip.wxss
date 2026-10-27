@@ -1,0 +1,15 @@
+.tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  background: var(--color-accent-soft);
+  border: 1rpx solid var(--color-warning);
+  color: var(--color-ink);
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-meta);
+  line-height: 1.5;
+}
+.icon { font-size: 32rpx; }
+.text { color: var(--color-ink); flex: 1; }

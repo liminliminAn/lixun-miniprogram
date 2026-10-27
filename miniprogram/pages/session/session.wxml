@@ -1,0 +1,61 @@
+<view class="container session">
+  <view class="top" wx:if="{{current}}">
+    <view class="top-row">
+      <text class="ex-name">{{current.name}}</text>
+      <text class="set-meta">
+        组 <text class="accent tabular">{{currentSetIndex + 1}}</text>/{{current.sets.length}}
+      </text>
+    </view>
+    <view class="tips-link" bindtap="onToggleTips">动作要点</view>
+  </view>
+
+  <!-- 大号当前组读数 -->
+  <view class="display card" wx:if="{{current}}">
+    <view class="display-weight">
+      <text class="num tabular">{{displayWeight}}</text>
+      <text class="unit">kg</text>
+    </view>
+    <view class="divider"></view>
+    <view class="display-reps">
+      <text class="num tabular">{{displayReps}}</text>
+      <text class="unit">次</text>
+    </view>
+  </view>
+
+  <set-logger
+    wx:if="{{current}}"
+    title=""
+    exercise-id="{{current.exerciseId}}"
+    sets="{{current.sets}}"
+    current-index="{{currentSetIndex}}"
+    bind:change="onSetsChange"
+    bind:select="onSelectSet"
+  />
+
+  <!-- 动作要点展开 -->
+  <view class="tips-panel card" wx:if="{{showTips && current}}">
+    <view class="tips-title">动作要点 · <text class="accent">{{current.name}}</text></view>
+    <image class="tips-img" src="/assets/exercise-placeholder.png" mode="aspectFill" />
+    <view class="tip-item" wx:for="{{current.tips}}" wx:key="*this">
+      <text class="bullet">●</text>
+      <text class="tip-text">{{item}}</text>
+    </view>
+    <view class="focus-banner">今日只盯一个细节：{{current.tips[0]}}</view>
+    <view class="warn">禁忌：{{current.contraindications}}</view>
+  </view>
+
+  <view class="ex-dots" wx:if="{{rows.length}}">
+    <view
+      wx:for="{{rows}}"
+      wx:key="exerciseId"
+      class="dot {{index === exerciseIndex ? 'on' : ''}} {{item.allDone ? 'done' : ''}}"
+    ></view>
+  </view>
+
+  <view class="actions">
+    <view class="btn-primary act" bindtap="onCompleteSet">完成本组</view>
+    <view class="btn-secondary act" bindtap="onNextExercise">{{nextLabel}}</view>
+  </view>
+
+  <view class="finish-link" bindtap="onComplete">完成本次训练</view>
+</view>

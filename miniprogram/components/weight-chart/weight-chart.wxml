@@ -1,0 +1,12 @@
+<view class="chart">
+  <view class="empty" wx:if="{{!entries.length}}">暂无体重记录</view>
+  <block wx:for="{{entries}}" wx:key="date">
+    <view class="bar-row">
+      <text class="date">{{item.date}}</text>
+      <view class="bar-wrap">
+        <view class="bar" style="width: {{item.pct}}%;"></view>
+      </view>
+      <text class="kg">{{item.kg}} kg</text>
+    </view>
+  </block>
+</view>

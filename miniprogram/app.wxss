@@ -1,0 +1,124 @@
+/** app.wxss — Charcoal & Teal（炭黑底 + 青绿强调，暗色默认） */
+page {
+  /* Color — dark default（对齐今日页参考） */
+  --color-bg: #0E1116;
+  --color-surface: #1A1E26;
+  --color-ink: #F2F4F7;
+  --color-ink-secondary: #8B93A1;
+  --color-accent: #2EE6C5;
+  --color-accent-soft: #14352F;
+  --color-accent-ink: #0E1116;
+  --color-success: #3DDC97;
+  --color-warning: #F0B429;
+  --color-info: #2EE6C5;
+  --color-border: #2A303C;
+  --color-danger: #FF6B6B;
+  --color-tab-muted: #5A6270;
+
+  /* Typography (设计稿 px×2 → rpx) */
+  --font-display: 56rpx;
+  --font-title: 40rpx;
+  --font-section: 34rpx;
+  --font-body: 30rpx;
+  --font-meta: 26rpx;
+  --font-caption: 24rpx;
+
+  /* Spacing（4px 基准） */
+  --space-1: 8rpx;
+  --space-2: 16rpx;
+  --space-3: 24rpx;
+  --space-4: 32rpx;
+  --space-5: 48rpx;
+  --space-6: 64rpx;
+  --page-pad: 32rpx;
+
+  /* Radius / control */
+  --radius-card: 24rpx;
+  --radius-btn: 20rpx;
+  --btn-height: 96rpx;
+  --hit-min: 88rpx;
+
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-size: var(--font-body);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: light) {
+  page {
+    --color-bg: #F3F5F7;
+    --color-surface: #FFFFFF;
+    --color-ink: #12141A;
+    --color-ink-secondary: #5C6370;
+    --color-accent: #0D9B86;
+    --color-accent-soft: #E6F8F4;
+    --color-accent-ink: #FFFFFF;
+    --color-success: #1B7F5A;
+    --color-warning: #C47F17;
+    --color-info: #0D9B86;
+    --color-border: #E6E8EC;
+    --color-danger: #D14343;
+    --color-tab-muted: #9AA0AB;
+  }
+}
+
+.container {
+  padding: var(--page-pad);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  border: 1rpx solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-height);
+  min-height: var(--hit-min);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border-radius: var(--radius-btn);
+  text-align: center;
+  font-size: var(--font-section);
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-height);
+  min-height: var(--hit-min);
+  background: transparent;
+  color: var(--color-accent);
+  border: 2rpx solid var(--color-accent);
+  border-radius: var(--radius-btn);
+  text-align: center;
+  font-size: var(--font-section);
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.placeholder {
+  color: var(--color-ink-secondary);
+  text-align: center;
+  padding: var(--space-6) var(--space-5);
+  font-size: var(--font-meta);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}

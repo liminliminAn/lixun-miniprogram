@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "今日",
+  "usingComponents": {
+    "exercise-card": "/components/exercise-card/exercise-card",
+    "rest-tip": "/components/rest-tip/rest-tip"
+  }
+}

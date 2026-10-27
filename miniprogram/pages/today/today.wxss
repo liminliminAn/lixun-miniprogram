@@ -1,0 +1,23 @@
+.hero .date {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+}
+.hero .day-type {
+  font-size: var(--font-display);
+  font-weight: 700;
+  margin: 8rpx 0;
+  color: var(--color-ink);
+}
+.hero .meta {
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+}
+.section-title {
+  font-size: var(--font-section);
+  font-weight: 600;
+  margin: 8rpx 0 16rpx;
+  color: var(--color-ink);
+}
+.start {
+  margin: 24rpx 0 48rpx;
+}

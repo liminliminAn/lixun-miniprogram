@@ -1,0 +1,4 @@
+<view class="tip" wx:if="{{visible}}">
+  <text class="icon">💤</text>
+  <text class="text">已连练 {{days}} 天，建议安排休息日恢复（仅提示，不拦截开练）。</text>
+</view>

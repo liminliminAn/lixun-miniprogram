@@ -1,0 +1,168 @@
+.session {
+  padding-bottom: 48rpx;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-1);
+}
+
+.ex-name {
+  font-size: var(--font-title);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.set-meta {
+  font-size: var(--font-meta);
+  color: var(--color-ink-secondary);
+}
+
+.accent {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.tips-link {
+  color: var(--color-accent);
+  font-size: var(--font-meta);
+  margin-bottom: var(--space-4);
+  min-height: 64rpx;
+  display: flex;
+  align-items: center;
+}
+
+.display {
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.display-weight,
+.display-reps {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.display .num {
+  font-size: 96rpx;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.display .unit {
+  font-size: var(--font-section);
+  color: var(--color-ink-secondary);
+  font-weight: 500;
+}
+
+.divider {
+  height: 1rpx;
+  background: var(--color-border);
+  margin: var(--space-4) var(--space-6);
+}
+
+.tips-panel {
+  margin-bottom: var(--space-4);
+}
+
+.tips-title {
+  font-size: var(--font-section);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+}
+
+.tips-img {
+  width: 100%;
+  height: 280rpx;
+  border-radius: 16rpx;
+  background: var(--color-bg);
+  margin-bottom: var(--space-3);
+}
+
+.tip-item {
+  display: flex;
+  gap: 16rpx;
+  padding: var(--space-3) 0;
+  border-bottom: 1rpx solid var(--color-border);
+  font-size: var(--font-body);
+  color: var(--color-ink);
+}
+
+.tip-item:last-of-type {
+  border-bottom: none;
+}
+
+.bullet {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.focus-banner {
+  margin-top: var(--space-3);
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
+  border-radius: 16rpx;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-meta);
+  font-weight: 600;
+}
+
+.focus-banner {
+  border-left: 6rpx solid var(--color-accent);
+}
+
+.warn {
+  margin-top: var(--space-3);
+  color: var(--color-ink-secondary);
+  font-size: var(--font-caption);
+}
+
+.ex-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12rpx;
+  margin: var(--space-3) 0 var(--space-4);
+}
+
+.ex-dots .dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.ex-dots .dot.on {
+  background: var(--color-accent);
+  width: 28rpx;
+  border-radius: 8rpx;
+}
+
+.ex-dots .dot.done {
+  background: var(--color-success);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.actions .act {
+  flex: 1;
+}
+
+.finish-link {
+  text-align: center;
+  color: var(--color-ink-secondary);
+  font-size: var(--font-meta);
+  padding: var(--space-5) 0 var(--space-4);
+  min-height: var(--hit-min);
+}

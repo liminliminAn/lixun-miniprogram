@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "记录",
+  "usingComponents": {
+    "weight-chart": "/components/weight-chart/weight-chart",
+    "rest-tip": "/components/rest-tip/rest-tip"
+  }
+}

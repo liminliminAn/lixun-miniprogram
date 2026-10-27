@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="card hero">
+    <view class="badge">一期只读</view>
+    <view class="h1">第二期开放宏量目标</view>
+    <view class="sub">当前仅展示与你人群匹配的饮食原则摘要，不记录食物与热量。</view>
+  </view>
+
+  <view class="card" wx:if="{{crowd}}">
+    <view class="title">{{crowd.name}} · 饮食原则</view>
+    <view class="summary">{{crowd.summary}}</view>
+    <view class="item" wx:for="{{crowd.dietPrinciples}}" wx:key="*this">{{item}}</view>
+  </view>
+  <view class="placeholder" wx:else>请先完成问卷</view>
+</view>

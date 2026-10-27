@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="card" wx:if="{{profile}}">
+    <view class="title">档案</view>
+    <view class="row"><text>人群</text><text>{{crowdName}}</text></view>
+    <view class="row"><text>性别</text><text>{{profile.sex === 'male' ? '男' : '女'}}</text></view>
+    <view class="row"><text>身高/体重</text><text>{{profile.heightCm}} cm / {{profile.weightKg}} kg</text></view>
+    <view class="row"><text>体脂区间</text><text>{{profile.bfBand}}</text></view>
+    <view class="row"><text>目标</text><text>{{profile.goal}}</text></view>
+    <view class="row"><text>每周</text><text>{{profile.daysPerWeek}} 练</text></view>
+  </view>
+
+  <view class="card">
+    <view class="title">偏好</view>
+    <view class="row"><text>连练软提示阈值</text><text>> {{restSoftWarnDays}} 天</text></view>
+  </view>
+
+  <view class="card danger" bindtap="onReset">
+    <text>清除本地数据并重新问卷</text>
+  </view>
+
+  <view class="foot">力训 v0.1 · 仅本地存储 · 基础库 ≥ 2.32.0</view>
+</view>

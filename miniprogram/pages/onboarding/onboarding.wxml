@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="hero">
+    <text class="h1">认识你一下</text>
+    <text class="sub">用于分人群与生成推拉腿课表（本地保存）</text>
+  </view>
+
+  <view class="card">
+    <view class="label">性别</view>
+    <view class="chips">
+      <view class="chip {{sex==='male'?'on':''}}" data-v="male" bindtap="onSex">男</view>
+      <view class="chip {{sex==='female'?'on':''}}" data-v="female" bindtap="onSex">女</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">身高 (cm) / 体重 (kg)</view>
+    <view class="row2">
+      <input class="input" type="digit" placeholder="身高" value="{{heightCm}}" bindinput="onHeight" />
+      <input class="input" type="digit" placeholder="体重" value="{{weightKg}}" bindinput="onWeight" />
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">自报体脂区间</view>
+    <view class="chips wrap">
+      <view
+        wx:for="{{bfOptions}}"
+        wx:key="band"
+        class="chip {{bfBand===item.band?'on':''}}"
+        data-v="{{item.band}}"
+        bindtap="onBf"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">训练目标</view>
+    <view class="chips wrap">
+      <view class="chip {{goal==='recomp'?'on':''}}" data-v="recomp" bindtap="onGoal">增肌减脂</view>
+      <view class="chip {{goal==='cut'?'on':''}}" data-v="cut" bindtap="onGoal">减脂</view>
+      <view class="chip {{goal==='bulk'?'on':''}}" data-v="bulk" bindtap="onGoal">增肌</view>
+      <view class="chip {{goal==='beginner'?'on':''}}" data-v="beginner" bindtap="onGoal">入门</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">训练年限</view>
+    <view class="chips wrap">
+      <view class="chip {{trainYears==='lt_half'?'on':''}}" data-v="lt_half" bindtap="onYears">不到半年</view>
+      <view class="chip {{trainYears==='half_to_2'?'on':''}}" data-v="half_to_2" bindtap="onYears">半年～2年</view>
+      <view class="chip {{trainYears==='gt_2'?'on':''}}" data-v="gt_2" bindtap="onYears">2年以上</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="label">每周训练天数</view>
+    <view class="chips">
+      <view class="chip {{daysPerWeek===4?'on':''}}" data-v="4" bindtap="onDays">4 练</view>
+      <view class="chip {{daysPerWeek===5?'on':''}}" data-v="5" bindtap="onDays">5 练</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <label class="check">
+      <switch checked="{{jointLimit}}" bindchange="onJoint" color="#E4572E" />
+      <text>有关节限制 / 伤痛需保守</text>
+    </label>
+  </view>
+
+  <view class="btn-primary submit" bindtap="onSubmit">完成，去今日</view>
+</view>
