@@ -97,3 +97,10 @@ declare function require(path: string): any;
 declare function setTimeout(cb: () => void, ms?: number): number;
 declare function setInterval(cb: () => void, ms?: number): number;
 declare function clearInterval(id?: number): void;
+interface DietLogEntry {
+  proteinHit: boolean;
+}
+
+interface DietLogStore {
+  [date: string]: DietLogEntry;
+}

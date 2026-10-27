@@ -1,8 +1,20 @@
 <view class="container">
-  <view class="card hero">
-    <view class="badge">一期只读</view>
-    <view class="h1">第二期开放宏量目标</view>
-    <view class="sub">当前仅展示与你人群匹配的饮食原则摘要，不记录食物与热量。</view>
+  <view class="card" wx:if="{{target}}">
+    <view class="title">今日宏量目标</view>
+    <view class="sub">按体重 {{bodyweightKg}} kg · {{isRestDay ? '休息日（碳水取下限）' : '训练日'}}</view>
+    <view class="row">
+      <view class="cell"><view class="num">{{target.proteinG}}</view><view class="lab">蛋白 g</view></view>
+      <block wx:if="{{!target.proteinOnly}}">
+        <view class="cell"><view class="num">{{target.carbsG}}</view><view class="lab">碳水 g</view></view>
+        <view class="cell"><view class="num">{{target.fatG}}</view><view class="lab">脂肪 g</view></view>
+        <view class="cell"><view class="num">{{target.kcal}}</view><view class="lab">kcal</view></view>
+      </block>
+    </view>
+    <view class="sub" wx:if="{{target.proteinOnly}}">新手阶段先只盯蛋白质。</view>
+    <view class="check {{proteinHit ? 'on' : ''}}" bindtap="onToggleProtein">
+      {{proteinHit ? '✓ 今日蛋白已达标' : '今日蛋白达标打卡'}}
+    </view>
+    <view class="disclaimer">{{disclaimer}}</view>
   </view>
 
   <view class="card" wx:if="{{crowd}}">
@@ -10,5 +22,5 @@
     <view class="summary">{{crowd.summary}}</view>
     <view class="item" wx:for="{{crowd.dietPrinciples}}" wx:key="*this">{{item}}</view>
   </view>
-  <view class="placeholder" wx:else>请先完成问卷</view>
+  <view class="placeholder" wx:if="{{!crowd}}">请先完成问卷</view>
 </view>

@@ -6,6 +6,8 @@ export const KEYS = {
   lastSets: 'lixun:v1:lastSets',
   bodyweight: 'lixun:v1:bodyweight',
   prefs: 'lixun:v1:prefs',
+  /** IT2-02 每日蛋白达标打卡 { [YYYY-MM-DD]: { proteinHit } } */
+  dietLog: 'lixun:v1:dietLog',
 } as const;
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];
