@@ -2,7 +2,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const { buildPostureView, TAN_AUTHOR } = require('./lib/posture');
+const { buildPostureView, TAN_AUTHOR, shoulderWarmupAddon } = require('./lib/posture');
 const cfg = require('../miniprogram/config/posture.json');
 
 const v = buildPostureView(cfg);
@@ -26,6 +26,16 @@ v.issues.filter((i) => i.id !== 'shoulder_impingement').forEach((i) => {
 // 带来源但 attribution=generic → 不展示来源
 const g = buildPostureView({ issues: [{ id: 'x', title: 't', attribution: 'generic', source: { title: 'a', url: 'https://x' }, selfCheck: '站墙' }] });
 assert.deepStrictEqual([g.issues[0].sourceUrl, g.issues[0].author, g.issues[0].showSelfCheck], ['', '', true]);
+
+// 热身附加：仅推/拉日，仅 tan 肩部条目，可选，dose 占位
+['push', 'pull'].forEach((d) => {
+  const a = shoulderWarmupAddon(cfg, d);
+  assert.strictEqual(a.optional, true);
+  assert.deepStrictEqual(a.items.map((i) => i.text), ['训练前放松小圆肌', '跪姿死虫', '弹力带肩胛后倾']);
+  a.items.forEach((i) => { assert.strictEqual(i.dose, '参考量待定'); assert.ok(i.source.title.startsWith(TAN_AUTHOR)); });
+});
+assert.strictEqual(shoulderWarmupAddon(cfg, 'legs'), null);
+assert.strictEqual(shoulderWarmupAddon({ issues: [{ id: 'shoulder_x', attribution: 'generic', drills: [{ name: 'a' }] }] }, 'push'), null);
 
 // UI 全量扫描：任何页面/组件/配置都不能出现「谭成义教法」；
 // 「谭成义」只允许出现在 posture 归因代码与 posture.json（且展示层只对 attribution=tan 输出，见上）

@@ -4,10 +4,12 @@ import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
 import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, DOSE_PLACEHOLDER, WarmupViewItem } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
+import { shoulderWarmupAddon } from '../../utils/posture';
 
 // 本地 JSON 配置（占位内容）
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CONFIG: any = require('../../config/warmup.json');
+const POSTURE: any = require('../../config/posture.json');
 
 Page({
   data: {
@@ -33,7 +35,13 @@ Page({
     }
     this.session = session;
     const checked = new Set<string>(session.warmup ? session.warmup.checked : []);
-    const sections = buildWarmupSections(CONFIG, session.dayType).map((sec) => ({
+    const base = buildWarmupSections(CONFIG, session.dayType);
+    const addon = shoulderWarmupAddon(POSTURE, session.dayType);
+    if (addon) {
+      const ai = base.findIndex((x) => x.key === 'activate');
+      base.splice(ai >= 0 ? ai + 1 : base.length, 0, addon);
+    }
+    const sections = base.map((sec) => ({
       ...sec,
       items: sec.items.map((it) => ({ ...it, checked: checked.has(it.id) })),
     }));
@@ -86,6 +94,13 @@ Page({
   onCopyLink(e: any) {
     wx.setClipboardData({ data: e.currentTarget.dataset.url });
   },
+  /** 只统计必做项（可选段不影响完成判定） */
+  requiredChecked(): number {
+    let n = 0;
+    this.data.sections.forEach((s) => !s.optional && s.items.forEach((it) => it.checked && n++));
+    this.data.ramp.forEach((it) => it.checked && n++);
+    return n;
+  },
   collectChecked(): string[] {
     const ids: string[] = [];
     this.data.sections.forEach((s) => s.items.forEach((it) => it.checked && ids.push(it.id)));
@@ -97,7 +112,7 @@ Page({
     if (this.session) {
       const total = this.data.sections.filter((s) => !s.optional).reduce((n, s) => n + s.items.length, 0) + this.data.ramp.length;
       const checked = status === 'skipped' ? [] : this.collectChecked();
-      const st = status === 'skipped' ? 'skipped' : this.collectChecked().filter((id) => !id.startsWith('shoulder_')).length >= total ? 'done' : 'partial';
+      const st = status === 'skipped' ? 'skipped' : this.requiredChecked() >= total ? 'done' : 'partial';
       saveSession(
         withWarmup(this.session, {
           status: st,

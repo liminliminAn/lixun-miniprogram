@@ -69,3 +69,24 @@ export function buildPostureView(json: any): PostureView {
     issues,
   };
 }
+
+/** 热身附加：推/拉日激活段可选加做 attribution=tan 的肩部条目（不影响热身完成判定） */
+export const SHOULDER_ADDON_DAYS = ['push', 'pull'];
+
+export function shoulderWarmupAddon(json: any, dayType: string): {
+  key: string; title: string; optional: true;
+  items: { id: string; text: string; dose: string; source?: { title: string; url: string } }[];
+} | null {
+  if (SHOULDER_ADDON_DAYS.indexOf(dayType) < 0) return null;
+  const issues = ((json && json.issues) || []).filter(
+    (it: any) => it.attribution === 'tan' && String(it.id).indexOf('shoulder') === 0,
+  );
+  const items: { id: string; text: string; dose: string; source?: { title: string; url: string } }[] = [];
+  issues.forEach((it: any) => {
+    const src = it.source ? { title: `${TAN_AUTHOR} · ${it.source.title}`, url: String(it.source.url) } : undefined;
+    [...(it.pre || []), ...(it.drills || [])].forEach((d: any, i: number) => {
+      items.push({ id: `posture_${it.id}_${i}`, text: String(d.name), dose: DOSE_PLACEHOLDER, source: src });
+    });
+  });
+  return items.length ? { key: 'posture_shoulder', title: '肩部加做（可选）', optional: true, items } : null;
+}
