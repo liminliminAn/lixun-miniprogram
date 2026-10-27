@@ -1,5 +1,5 @@
 import { CROWDS } from '../../constants/crowds';
-import { getProfile, getPrefs, isOnboardingDone } from '../../services/profile';
+import { getProfile, getPrefs, setPrefs, isOnboardingDone } from '../../services/profile';
 import { KEYS, remove } from '../../services/storage';
 
 Page({
@@ -7,6 +7,7 @@ Page({
     profile: null as UserProfile | null,
     crowdName: '',
     restSoftWarnDays: 3,
+    showWarmup: true,
   },
   onShow() {
     if (!isOnboardingDone()) {
@@ -19,7 +20,13 @@ Page({
       profile,
       crowdName: profile ? CROWDS[profile.crowd].name : '',
       restSoftWarnDays: prefs.restSoftWarnDays,
+      showWarmup: prefs.showWarmup !== false,
     });
+  },
+  onWarmupChange(e: any) {
+    const v = !!e.detail.value;
+    setPrefs({ showWarmup: v });
+    this.setData({ showWarmup: v });
   },
   onReset() {
     wx.showModal({

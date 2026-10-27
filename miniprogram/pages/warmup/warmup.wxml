@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="card head">
+    <view>
+      <view class="title">{{dayLabel}}日热身</view>
+      <view class="sub">可逐项勾选，也可整段跳过</view>
+    </view>
+    <view class="timer {{running ? 'on' : ''}}" bindtap="onToggleTimer">{{timeText}} {{running ? '暂停' : '计时'}}</view>
+  </view>
+
+  <view class="card" wx:for="{{sections}}" wx:for-item="sec" wx:key="key">
+    <view class="title">{{sec.title}}</view>
+    <view class="item" wx:for="{{sec.items}}" wx:key="id" data-sec="{{sec.key}}" data-idx="{{index}}" bindtap="onToggleItem">
+      <text class="box {{item.checked ? 'on' : ''}}">{{item.checked ? '✓' : ''}}</text>
+      <text>{{item.text}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{ramp.length}}">
+    <view class="title">坡道组 · {{rampName}}</view>
+    <view class="sub">不计入训练容量</view>
+    <view class="item" wx:for="{{ramp}}" wx:key="id" data-sec="ramp" data-idx="{{index}}" bindtap="onToggleItem">
+      <text class="box {{item.checked ? 'on' : ''}}">{{item.checked ? '✓' : ''}}</text>
+      <text>{{item.text}}</text>
+    </view>
+  </view>
+
+  <view class="actions">
+    <view class="btn ghost" bindtap="onSkip">跳过热身</view>
+    <view class="btn primary" bindtap="onDone">完成热身，开练</view>
+  </view>
+</view>

@@ -6,7 +6,8 @@
     "pages/diet/diet",
     "pages/me/me",
     "pages/onboarding/onboarding",
-    "pages/session/session"
+    "pages/session/session",
+    "pages/warmup/warmup"
   ],
   "window": {
     "navigationBarBackgroundColor": "@navBg",

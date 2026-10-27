@@ -34,5 +34,9 @@ export function getPlan(): WeekPlan | null {
 }
 
 export function getPrefs(): Prefs {
-  return storage.get<Prefs>(KEYS.prefs, { ...storage.DEFAULT_PREFS });
+  return { ...storage.DEFAULT_PREFS, ...storage.get<Prefs>(KEYS.prefs, { ...storage.DEFAULT_PREFS }) };
+}
+
+export function setPrefs(patch: Partial<Prefs>): void {
+  storage.set(KEYS.prefs, { ...getPrefs(), ...patch });
 }

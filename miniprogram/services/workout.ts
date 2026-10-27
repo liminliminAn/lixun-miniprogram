@@ -2,6 +2,7 @@ import { storage, KEYS } from './storage';
 import { exercisesByDay } from '../constants/exercises';
 import { getPlan } from './profile';
 import { suggestNext } from '../utils/progression';
+import { completedTrainDates } from '../utils/warmup';
 import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
 
 export function todayDayType(date: Date = new Date()): DayType {
@@ -105,10 +106,7 @@ export function completeSession(date: string = formatDate()): void {
 
 /** 仅已完成训练日计入连练（需 completedAt；草稿开练不算） */
 export function listTrainDates(): string[] {
-  const sessions = getSessions();
-  return Object.keys(sessions)
-    .filter((d) => sessions[d] && !!sessions[d].completedAt)
-    .sort();
+  return completedTrainDates(getSessions());
 }
 
 export function consecutiveTrainDays(today: string = formatDate()): number {

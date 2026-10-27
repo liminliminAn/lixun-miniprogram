@@ -12,6 +12,7 @@ export type StorageKey = (typeof KEYS)[keyof typeof KEYS];
 
 const DEFAULT_PREFS: Prefs = {
   restSoftWarnDays: 3,
+  showWarmup: true,
 };
 
 export function get<T>(key: string, fallback: T): T {

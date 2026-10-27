@@ -1,0 +1,13 @@
+.head { display: flex; justify-content: space-between; align-items: center; }
+.title { font-weight: 600; font-size: var(--font-section); color: var(--color-ink); margin-bottom: 8rpx; }
+.sub { font-size: var(--font-caption); color: var(--color-ink-secondary); margin-bottom: 8rpx; }
+.timer { padding: 12rpx 20rpx; border-radius: 12rpx; border: 1rpx solid var(--color-border); color: var(--color-ink); font-size: var(--font-meta); }
+.timer.on { background: var(--color-accent-soft); color: var(--color-accent); border-color: var(--color-accent); }
+.item { display: flex; align-items: center; padding: 16rpx 0; border-bottom: 1rpx solid var(--color-border); font-size: var(--font-meta); color: var(--color-ink); }
+.item:last-child { border-bottom: none; }
+.box { width: 40rpx; height: 40rpx; line-height: 40rpx; text-align: center; border-radius: 8rpx; border: 1rpx solid var(--color-border); margin-right: 16rpx; color: var(--color-accent-ink); flex-shrink: 0; }
+.box.on { background: var(--color-accent); border-color: var(--color-accent); }
+.actions { display: flex; gap: 20rpx; margin-top: 24rpx; }
+.btn { flex: 1; text-align: center; padding: 24rpx 0; border-radius: 12rpx; font-size: var(--font-meta); }
+.btn.ghost { border: 1rpx solid var(--color-border); color: var(--color-ink-secondary); }
+.btn.primary { background: var(--color-accent); color: var(--color-accent-ink); font-weight: 600; }

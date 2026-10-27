@@ -12,6 +12,7 @@
   <view class="card">
     <view class="title">偏好</view>
     <view class="row"><text>连练软提示阈值</text><text>> {{restSoftWarnDays}} 天</text></view>
+    <view class="row"><text>开练前显示热身</text><switch checked="{{showWarmup}}" bindchange="onWarmupChange" /></view>
   </view>
 
   <view class="card danger" bindtap="onReset">

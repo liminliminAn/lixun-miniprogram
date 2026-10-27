@@ -55,6 +55,23 @@ interface SessionRecord {
   dayType: Exclude<DayType, 'rest'>;
   exercises: ExerciseLog[];
   completedAt?: string;
+  /** IT2-06 热身状态；不计容量、不影响连练 */
+  warmup?: WarmupRecord;
+}
+
+interface WarmupRampSet {
+  pct: number;
+  reps: number;
+  weight: number;
+}
+
+interface WarmupRecord {
+  status: 'done' | 'partial' | 'skipped';
+  checked: string[];
+  ramp: WarmupRampSet[];
+  rampExerciseId?: string;
+  elapsedSec: number;
+  at: string;
 }
 
 interface SessionsStore {
@@ -72,4 +89,11 @@ interface BodyWeightEntry {
 
 interface Prefs {
   restSoftWarnDays: number;
+  /** IT2-06 开练前默认显示热身 */
+  showWarmup?: boolean;
 }
+
+declare function require(path: string): any;
+declare function setTimeout(cb: () => void, ms?: number): number;
+declare function setInterval(cb: () => void, ms?: number): number;
+declare function clearInterval(id?: number): void;

@@ -2,7 +2,7 @@ import { CROWDS } from '../../constants/crowds';
 import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { exercisesByDay } from '../../constants/exercises';
 import { getProfile, getPlan, getPrefs, isOnboardingDone } from '../../services/profile';
-import { todayDayType, consecutiveTrainDays } from '../../services/workout';
+import { todayDayType, consecutiveTrainDays, getSession } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 
 Page({
@@ -46,6 +46,8 @@ Page({
   },
   onStart() {
     if (this.data.isRest) return;
-    wx.navigateTo({ url: '/pages/session/session' });
+    const s = getSession(formatDate());
+    const needWarmup = getPrefs().showWarmup !== false && !(s && s.warmup);
+    wx.navigateTo({ url: needWarmup ? '/pages/warmup/warmup' : '/pages/session/session' });
   },
 });
