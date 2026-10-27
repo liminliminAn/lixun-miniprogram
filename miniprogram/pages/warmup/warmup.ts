@@ -4,7 +4,7 @@ import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
 import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, DOSE_PLACEHOLDER, WarmupViewItem } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
-import { shoulderWarmupAddon } from '../../utils/posture';
+import { shoulderWarmupAddon, COPY_TOAST } from '../../utils/posture';
 
 // 本地 JSON 配置（占位内容）
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -92,7 +92,10 @@ Page({
     }
   },
   onCopyLink(e: any) {
-    wx.setClipboardData({ data: e.currentTarget.dataset.url });
+    wx.setClipboardData({
+      data: e.currentTarget.dataset.url,
+      success: () => wx.showToast({ title: COPY_TOAST, icon: 'none' }),
+    });
   },
   /** 只统计必做项（可选段不影响完成判定） */
   requiredChecked(): number {

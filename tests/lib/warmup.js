@@ -70,7 +70,7 @@ function mapItems(prefix, list) {
         id: `${prefix}_${i}`,
         text: it.name,
         dose: exports.DOSE_PLACEHOLDER,
-        source: it.source ? { title: it.source.title, url: it.source.url } : undefined,
+        source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
     }));
 }
 /** 按日类型组装：一般热身 → 放松 → 激活（推日附肩日可选激活） */

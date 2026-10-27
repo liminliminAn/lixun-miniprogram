@@ -21,7 +21,7 @@
 }
 .btn {
   background: var(--color-accent);
-  color: #FFFFFF;
+  color: var(--color-accent-ink);
   padding: 16rpx 28rpx;
   border-radius: var(--radius-btn);
   font-size: var(--font-meta);

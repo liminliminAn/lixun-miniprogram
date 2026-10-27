@@ -14,7 +14,7 @@
       <view class="txt">
         <text>{{item.text}}</text>
         <text class="dose">{{item.dose}}</text>
-        <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>参考：{{item.source.title}} {{item.source.url}}（点按复制）</text>
+        <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>{{item.source.title}} {{item.source.url}}（点按复制）</text>
       </view>
     </view>
   </view>
@@ -28,7 +28,7 @@
     </view>
   </view>
 
-  <view class="link block" wx:if="{{daySource}}" data-url="{{daySource.url}}" bindtap="onCopyLink" user-select>参考：{{daySource.title}} {{daySource.url}}（点按复制）</view>
+  <view class="link block" wx:if="{{daySource}}" data-url="{{daySource.url}}" bindtap="onCopyLink" user-select>参考来源 · {{daySource.title}} {{daySource.url}}（点按复制）</view>
 
   <view class="actions">
     <view class="btn ghost" bindtap="onSkip">跳过热身</view>

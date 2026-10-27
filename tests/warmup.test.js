@@ -39,7 +39,7 @@ assert.deepStrictEqual(completedTrainDates({ a: skippedCompleted }), ['a']); // 
 assert.strictEqual(buildWarmupSections(cfg, 'push').pop().optional, true);
 assert.strictEqual(buildWarmupSections(cfg, 'legs').length, 3);
 const pushAct = buildWarmupSections(cfg, 'push').find((x) => x.key === 'activate').items;
-assert.ok(pushAct.some((i) => i.source && i.source.url.startsWith('https://')));
+assert.ok(pushAct.some((i) => i.source && i.source.url.startsWith('https://') && i.source.title.startsWith('参考来源')));
 assert.ok(!JSON.stringify(buildWarmupSections(cfg, 'pull')).match(/\d+\s*(次|组|分钟|秒)/)); // 不显示 dose 数字
 console.log('warmup tests passed');
 // 兼容 2.32：源码不允许 require .json

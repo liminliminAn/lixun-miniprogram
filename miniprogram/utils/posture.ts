@@ -2,12 +2,14 @@
  * IT2-05 体态矫正：把本地 posture.json 组装成展示模型（纯函数）。单测：tests/posture.test.js
  * - precheck 与 disclaimer 总是展示；selfCheck 为 null 时隐藏自查
  * - 所有 dose / frequency 显示「参考量待定」
- * - 仅 attribution === 'tan' 的条目可展示作者与来源；generic 不显示作者
+ * - 仅 attribution === 'tan' 的条目可展示来源；且仅 verified===true 时显示作者名，未核实只显示「参考来源」；generic 不显示作者与来源
  * - 来源链接仅作可复制的纯文本
  */
 import { DOSE_PLACEHOLDER } from './warmup';
 
 export const TAN_AUTHOR = '谭成义';
+export const SOURCE_LABEL = '参考来源';
+export const COPY_TOAST = '链接已复制，请到浏览器打开';
 
 export interface PostureDrillView {
   name: string;
@@ -59,8 +61,9 @@ export function buildPostureView(json: any): PostureView {
         drills: (it.drills || []).map(drill),
         frequency: DOSE_PLACEHOLDER,
         placeholder: !!it.placeholder,
-        author: tan ? TAN_AUTHOR : '',
-        sourceText: src ? `${TAN_AUTHOR} · ${src.title}` : '',
+        // 署名仅限 tan 且已核实（verified===true）；未核实只显示「参考来源」
+        author: tan && it.verified === true ? TAN_AUTHOR : '',
+        sourceText: src ? (it.verified === true ? `${TAN_AUTHOR} · ${src.title}` : `${SOURCE_LABEL} · ${src.title}`) : '',
         sourceUrl: src ? String(src.url) : '',
       };
     });
@@ -83,7 +86,8 @@ export function shoulderWarmupAddon(json: any, dayType: string): {
   );
   const items: { id: string; text: string; dose: string; source?: { title: string; url: string } }[] = [];
   issues.forEach((it: any) => {
-    const src = it.source ? { title: `${TAN_AUTHOR} · ${it.source.title}`, url: String(it.source.url) } : undefined;
+    const label = it.verified === true ? TAN_AUTHOR : SOURCE_LABEL;
+    const src = it.source ? { title: `${label} · ${it.source.title}`, url: String(it.source.url) } : undefined;
     [...(it.pre || []), ...(it.drills || [])].forEach((d: any, i: number) => {
       items.push({ id: `posture_${it.id}_${i}`, text: String(d.name), dose: DOSE_PLACEHOLDER, source: src });
     });

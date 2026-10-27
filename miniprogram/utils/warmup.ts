@@ -96,7 +96,7 @@ function mapItems(prefix: string, list: any[]): WarmupViewItem[] {
     id: `${prefix}_${i}`,
     text: it.name,
     dose: DOSE_PLACEHOLDER,
-    source: it.source ? { title: it.source.title, url: it.source.url } : undefined,
+    source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
   }));
 }
 

@@ -2,7 +2,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const { buildPostureView, TAN_AUTHOR, shoulderWarmupAddon } = require('./lib/posture');
+const { buildPostureView, TAN_AUTHOR, shoulderWarmupAddon, SOURCE_LABEL, COPY_TOAST } = require('./lib/posture');
 const cfg = require('../miniprogram/config/posture.js');
 
 const v = buildPostureView(cfg);
@@ -15,8 +15,17 @@ v.issues.forEach((it) => {
   [...it.pre, ...it.drills].forEach((d) => assert.strictEqual(d.dose, '参考量待定'));
 });
 const tan = v.issues.find((i) => i.id === 'shoulder_impingement');
-assert.strictEqual(tan.author, TAN_AUTHOR);
-assert.ok(tan.sourceUrl.startsWith('https://') && tan.sourceText.includes('ep.21'));
+// 未核实（posture.json 无 verified）→ 不显示人名，只显示「参考来源」+ 链接
+assert.strictEqual(tan.author, '');
+assert.strictEqual(tan.sourceText, `${SOURCE_LABEL} · ep.21`);
+assert.ok(tan.sourceUrl.startsWith('https://'));
+assert.ok(!JSON.stringify(v).includes(TAN_AUTHOR));
+// 已核实的 tan 条目才允许署名
+const ver = buildPostureView({ issues: [{ id: 'shoulder_v', title: 't', attribution: 'tan', verified: true, source: { title: 'ep.1', url: 'https://x' }, selfCheck: null }] });
+assert.deepStrictEqual([ver.issues[0].author, ver.issues[0].sourceText], [TAN_AUTHOR, `${TAN_AUTHOR} · ep.1`]);
+// generic 即使 verified 也不署名
+assert.strictEqual(buildPostureView({ issues: [{ id: 'g', attribution: 'generic', verified: true, source: { title: 'a', url: 'https://x' } }] }).issues[0].author, '');
+assert.strictEqual(COPY_TOAST, '链接已复制，请到浏览器打开');
 assert.strictEqual(tan.drills[1].cue, ''); // 「待核实」cue 不显示
 v.issues.filter((i) => i.id !== 'shoulder_impingement').forEach((i) => {
   assert.strictEqual(i.author, '');
@@ -32,7 +41,7 @@ assert.deepStrictEqual([g.issues[0].sourceUrl, g.issues[0].author, g.issues[0].s
   const a = shoulderWarmupAddon(cfg, d);
   assert.strictEqual(a.optional, true);
   assert.deepStrictEqual(a.items.map((i) => i.text), ['训练前放松小圆肌', '跪姿死虫', '弹力带肩胛后倾']);
-  a.items.forEach((i) => { assert.strictEqual(i.dose, '参考量待定'); assert.ok(i.source.title.startsWith(TAN_AUTHOR)); });
+  a.items.forEach((i) => { assert.strictEqual(i.dose, '参考量待定'); assert.ok(i.source.title.startsWith(SOURCE_LABEL) && !i.source.title.includes(TAN_AUTHOR)); });
 });
 assert.strictEqual(shoulderWarmupAddon(cfg, 'legs'), null);
 assert.strictEqual(shoulderWarmupAddon({ issues: [{ id: 'shoulder_x', attribution: 'generic', drills: [{ name: 'a' }] }] }, 'push'), null);
@@ -49,4 +58,11 @@ walk(root).filter((f) => /\.(wxml|ts|json|wxss|js)$/.test(f)).forEach((f) => {
   assert.ok(!txt.includes('谭成义教法'), `谭成义教法 in ${rel}`);
   if (!allowTan.has(rel)) assert.ok(!txt.includes('谭成义'), `谭成义 in ${rel}`);
 });
+// 复制链接均带 toast；页面样式无硬编码白色
+['pages/posture/posture.ts', 'pages/warmup/warmup.ts'].forEach((f) => {
+  const t = fs.readFileSync(path.join(root, f), 'utf8');
+  assert.ok(t.includes('setClipboardData') && t.includes('COPY_TOAST'), f);
+});
+walk(root).filter((f) => f.endsWith('.wxss') && !f.endsWith('app.wxss')).forEach((f) =>
+  assert.ok(!/#fff(fff)?\b|\bwhite\b/i.test(fs.readFileSync(f, 'utf8')), `hardcoded white in ${path.relative(root, f)}`));
 console.log('posture tests passed');

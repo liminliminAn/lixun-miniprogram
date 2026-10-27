@@ -22,6 +22,6 @@
       <view class="sub">频率：{{it.frequency}}</view>
     </block>
 
-    <view class="link" wx:if="{{it.sourceUrl}}" data-url="{{it.sourceUrl}}" bindtap="onCopyLink" user-select>来源：{{it.sourceText}} {{it.sourceUrl}}（点按复制）</view>
+    <view class="link" wx:if="{{it.sourceUrl}}" data-url="{{it.sourceUrl}}" bindtap="onCopyLink" user-select>{{it.sourceText}} {{it.sourceUrl}}（点按复制）</view>
   </view>
 </view>

@@ -1,17 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SHOULDER_ADDON_DAYS = exports.TAN_AUTHOR = void 0;
+exports.SHOULDER_ADDON_DAYS = exports.COPY_TOAST = exports.SOURCE_LABEL = exports.TAN_AUTHOR = void 0;
 exports.buildPostureView = buildPostureView;
 exports.shoulderWarmupAddon = shoulderWarmupAddon;
 /**
  * IT2-05 体态矫正：把本地 posture.json 组装成展示模型（纯函数）。单测：tests/posture.test.js
  * - precheck 与 disclaimer 总是展示；selfCheck 为 null 时隐藏自查
  * - 所有 dose / frequency 显示「参考量待定」
- * - 仅 attribution === 'tan' 的条目可展示作者与来源；generic 不显示作者
+ * - 仅 attribution === 'tan' 的条目可展示来源；且仅 verified===true 时显示作者名，未核实只显示「参考来源」；generic 不显示作者与来源
  * - 来源链接仅作可复制的纯文本
  */
 const warmup_1 = require("./warmup");
 exports.TAN_AUTHOR = '谭成义';
+exports.SOURCE_LABEL = '参考来源';
+exports.COPY_TOAST = '链接已复制，请到浏览器打开';
 const DEFAULT_PRECHECK = '先排除外伤、急性疼痛与神经症状，再做矫正练习';
 function drill(d) {
     const cue = d.cue && !String(d.cue).includes('待核实') ? String(d.cue) : '';
@@ -34,8 +36,9 @@ function buildPostureView(json) {
             drills: (it.drills || []).map(drill),
             frequency: warmup_1.DOSE_PLACEHOLDER,
             placeholder: !!it.placeholder,
-            author: tan ? exports.TAN_AUTHOR : '',
-            sourceText: src ? `${exports.TAN_AUTHOR} · ${src.title}` : '',
+            // 署名仅限 tan 且已核实（verified===true）；未核实只显示「参考来源」
+            author: tan && it.verified === true ? exports.TAN_AUTHOR : '',
+            sourceText: src ? (it.verified === true ? `${exports.TAN_AUTHOR} · ${src.title}` : `${exports.SOURCE_LABEL} · ${src.title}`) : '',
             sourceUrl: src ? String(src.url) : '',
         };
     });
@@ -52,7 +55,8 @@ function shoulderWarmupAddon(json, dayType) {
     const issues = ((json && json.issues) || []).filter((it) => it.attribution === 'tan' && String(it.id).indexOf('shoulder') === 0);
     const items = [];
     issues.forEach((it) => {
-        const src = it.source ? { title: `${exports.TAN_AUTHOR} · ${it.source.title}`, url: String(it.source.url) } : undefined;
+        const label = it.verified === true ? exports.TAN_AUTHOR : exports.SOURCE_LABEL;
+        const src = it.source ? { title: `${label} · ${it.source.title}`, url: String(it.source.url) } : undefined;
         [...(it.pre || []), ...(it.drills || [])].forEach((d, i) => {
             items.push({ id: `posture_${it.id}_${i}`, text: String(d.name), dose: warmup_1.DOSE_PLACEHOLDER, source: src });
         });

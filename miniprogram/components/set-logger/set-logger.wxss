@@ -131,7 +131,7 @@
 .check-mark {
   position: relative;
   z-index: 1;
-  color: #FFFFFF;
+  color: var(--color-accent-ink);
   font-size: 28rpx;
   font-weight: 700;
   line-height: 1;
