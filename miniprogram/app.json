@@ -9,17 +9,17 @@
     "pages/session/session"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarBackgroundColor": "@navBg",
     "navigationBarTitleText": "力训",
-    "navigationBarTextStyle": "black",
-    "backgroundColor": "#F4F5F7",
-    "backgroundTextStyle": "dark"
+    "navigationBarTextStyle": "@navText",
+    "backgroundColor": "@bg",
+    "backgroundTextStyle": "@bgText"
   },
   "tabBar": {
-    "color": "#5C6370",
-    "selectedColor": "#2EE6C5",
-    "backgroundColor": "#FFFFFF",
-    "borderStyle": "black",
+    "color": "@tabColor",
+    "selectedColor": "@tabSelected",
+    "backgroundColor": "@tabBg",
+    "borderStyle": "@tabBorder",
     "list": [
       {
         "pagePath": "pages/today/today",
@@ -55,5 +55,7 @@
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "darkmode": true,
+  "themeLocation": "theme.json"
 }
