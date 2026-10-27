@@ -36,3 +36,5 @@
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
+
+.ma { color: var(--color-ink-secondary); font-size: var(--font-caption); }

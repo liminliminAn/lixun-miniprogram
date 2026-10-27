@@ -50,3 +50,5 @@
 .sess:last-child { border-bottom: none; }
 .tag { color: var(--color-accent); }
 .done { color: var(--color-success); }
+
+.hint { font-size: var(--font-caption); color: var(--color-ink-secondary); line-height: 1.5; margin: 8rpx 0; }

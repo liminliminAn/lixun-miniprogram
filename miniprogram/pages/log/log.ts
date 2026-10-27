@@ -1,5 +1,6 @@
 import { listBodyWeights, addBodyWeight } from '../../services/body';
-import { getPrefs, isOnboardingDone } from '../../services/profile';
+import { getPrefs, getProfile, isOnboardingDone } from '../../services/profile';
+import { buildWeightTrend, WeightTrendView } from '../../utils/weightTrend';
 import { getSessions, consecutiveTrainDays } from '../../services/workout';
 import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { formatDate } from '../../utils/date';
@@ -11,6 +12,9 @@ Page({
     recentSessions: [] as any[],
     streak: 0,
     restSoftWarnDays: 3,
+    trend: null as WeightTrendView | null,
+    chartList: [] as any[],
+    weeklyText: '',
   },
   onShow() {
     if (!isOnboardingDone()) {
@@ -31,8 +35,19 @@ Page({
         label: DAY_TYPE_LABEL[sessions[date].dayType],
         completed: !!sessions[date].completedAt,
       }));
+    const weights = listBodyWeights();
+    const profile = getProfile();
+    const trend = buildWeightTrend(weights, formatDate(), profile ? profile.crowd : 'recomp');
+    const maMap: Record<string, number> = {};
+    (trend.ma || []).forEach((m) => (maMap[m.date] = m.ma));
+    const chartList = weights.map((w) => ({ ...w, ma: maMap[w.date] }));
+    const wc = trend.weeklyChange;
+    const weeklyText = wc === null ? '' : `${wc > 0 ? '+' : ''}${wc} kg`;
     this.setData({
-      weights: listBodyWeights(),
+      trend,
+      chartList,
+      weeklyText,
+      weights,
       recentSessions,
       streak: consecutiveTrainDays(),
       restSoftWarnDays: prefs.restSoftWarnDays,

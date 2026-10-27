@@ -10,7 +10,22 @@
   </view>
 
   <view class="section-title">体重趋势</view>
-  <weight-chart list="{{weights}}" />
+  <view class="placeholder" wx:if="{{trend.empty}}">至少记录 2 次体重后显示趋势</view>
+  <block wx:else>
+    <weight-chart list="{{chartList}}" />
+    <view class="card" wx:if="{{weeklyText}}">
+      <view class="row"><text>周均变化</text><text>{{weeklyText}}</text></view>
+    </view>
+    <view class="card" wx:if="{{trend.rhythm}}">
+      <view class="title" wx:if="{{trend.rhythm === 'stable'}}">节奏稳定</view>
+      <view class="title" wx:elif="{{trend.rhythm === 'too_fast'}}">下降偏快</view>
+      <view class="title" wx:else>变化较慢</view>
+      <view class="hint" wx:if="{{trend.softTip}}">周均下降已超过体重的 1%（或 1kg），可适当放缓，避免流失肌肉。</view>
+      <view class="hint" wx:elif="{{trend.rhythm === 'stable'}}">每周下降 0.2kg～1%，保持当前节奏。</view>
+      <view class="hint" wx:else>每周下降不足 0.2kg，可再观察一周。</view>
+    </view>
+    <view class="hint" wx:if="{{!trend.dense}}">最近 7 天记录满 4 次后显示 7 日均线与周均变化</view>
+  </block>
 
   <view class="section-title">最近训练</view>
   <view class="card" wx:if="{{recentSessions.length}}">

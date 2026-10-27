@@ -6,7 +6,7 @@
       <view class="bar-wrap">
         <view class="bar" style="width: {{item.pct}}%;"></view>
       </view>
-      <text class="kg">{{item.kg}} kg</text>
+      <text class="kg">{{item.kg}} kg<text class="ma" wx:if="{{item.ma}}"> · 均 {{item.ma}}</text></text>
     </view>
   </block>
 </view>
