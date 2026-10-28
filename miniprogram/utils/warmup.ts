@@ -57,7 +57,7 @@ export function completedTrainDates(sessions: SessionsStore): string[] {
     .sort();
 }
 
-export const DOSE_NOTE = '通用建议，因人而异';
+export const DOSE_NOTE = '通用康复建议，因人而异';
 export const PICK_NOTE = '热身动作按需挑选，不必全做';
 
 /** 配置 _meta 的剂量说明 / 挑选说明（缺省回退常量） */

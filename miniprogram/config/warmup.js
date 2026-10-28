@@ -4,7 +4,7 @@ module.exports = {
     "version": "it2-v2",
     "sourceNote": "动作来自抖音章节与配文；作者未给剂量，剂量按常规康复逻辑设定（用户已同意）",
     "disclaimer": "非医疗建议。如有麻木、放射痛、夜间痛或持续 2 周不缓解，请就医。",
-    "doseNote": "通用建议，因人而异",
+    "doseNote": "通用康复建议，因人而异",
     "pickNote": "热身动作按需挑选，不必全做"
   },
   "general": {
@@ -34,7 +34,7 @@ module.exports = {
       }
     ],
     "verified": true,
-    "label": "通用建议，因人而异"
+    "label": "通用康复建议，因人而异"
   },
   "days": {
     "push": {

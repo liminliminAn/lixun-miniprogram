@@ -24,7 +24,7 @@ v.issues.forEach((it) => {
   [...it.pre, ...it.drills].forEach((d) => assert.ok(d.dose && /\d/.test(d.dose) && !/待定|待核实/.test(d.dose))); // dose 存在
 });
 assert.ok(!JSON.stringify(v).match(/参考量待定|待核实/));
-assert.strictEqual(v.doseNote, '通用建议，因人而异');
+assert.strictEqual(v.doseNote, '通用康复建议，因人而异');
 assert.strictEqual(v.pickNote, '热身动作按需挑选，不必全做');
 v.issues.filter((i) => i.placeholder).forEach((i) => assert.strictEqual(i.showSelfCheck, false)); // selfCheck=null 隐藏
 const tan = v.issues.find((i) => i.id === 'shoulder_impingement');
