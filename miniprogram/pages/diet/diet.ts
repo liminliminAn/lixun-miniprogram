@@ -3,7 +3,7 @@ import { getProfile, isOnboardingDone } from '../../services/profile';
 import { listBodyWeights } from '../../services/body';
 import { todayDayType } from '../../services/workout';
 import { getDietLog, setProteinHit } from '../../services/diet';
-import { calcMacros, DIET_DISCLAIMER } from '../../utils/diet';
+import { calcMacros, DIET_DISCLAIMER, dietDisclaimer } from '../../utils/diet';
 import { formatDate } from '../../utils/date';
 
 Page({
@@ -34,6 +34,7 @@ Page({
       crowd: CROWDS[profile.crowd],
       bodyweightKg,
       isRestDay,
+      disclaimer: dietDisclaimer(profile.crowd),
       target: calcMacros(profile.crowd, bodyweightKg, isRestDay),
       proteinHit: !!(today && today.proteinHit),
     });

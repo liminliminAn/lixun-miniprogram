@@ -34,7 +34,7 @@ export const CROWDS: Record<CrowdId, CrowdInfo> = {
   bulk: {
     id: 'bulk',
     name: '增肌',
-    summary: '小盈余推进容量与重量。',
+    summary: '推进容量与重量；饮食为参考起点，两周体重不涨再加碳水。',
     dietPrinciples: [
       '热量：每日盈余约 200～300 kcal',
       '蛋白：约 1.6～2.0 g/kg 体重',
