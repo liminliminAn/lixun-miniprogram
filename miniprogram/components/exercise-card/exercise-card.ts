@@ -5,8 +5,6 @@ const CARDS: any = require('../../config/exercise-cards.js');
 Component({
   properties: {
     name: { type: String, value: '' },
-    tips: { type: Array, value: [] },
-    contraindications: { type: String, value: '' },
     exerciseId: { type: String, value: '' },
   },
   data: {

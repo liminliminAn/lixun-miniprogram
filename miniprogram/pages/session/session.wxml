@@ -35,13 +35,25 @@
   <!-- 动作要点展开 -->
   <view class="tips-panel card" wx:if="{{showTips && current}}">
     <view class="tips-title">动作要点 · <text class="accent">{{current.name}}</text></view>
-    <image class="tips-img" src="/assets/exercise-placeholder.png" mode="aspectFill" />
-    <view class="tip-item" wx:for="{{current.tips}}" wx:key="*this">
-      <text class="bullet">●</text>
-      <text class="tip-text">{{item}}</text>
-    </view>
-    <view class="focus-banner">今日只盯一个细节：{{current.tips[0]}}</view>
-    <view class="warn">禁忌：{{current.contraindications}}</view>
+    <block wx:if="{{current.card}}">
+      <view class="focus-banner" wx:if="{{current.card.cues[0]}}">今日只盯一个细节：{{current.card.cues[0]}}</view>
+      <view class="tip-item" wx:for="{{current.card.cues}}" wx:key="*this">
+        <text class="bullet">●</text>
+        <text class="tip-text">{{item}}</text>
+      </view>
+      <view class="tip-item" wx:for="{{current.card.mistakes}}" wx:key="*this">
+        <text class="bullet">✕</text>
+        <text class="tip-text">{{item}}</text>
+      </view>
+      <view class="tip-text" wx:if="{{current.card.dose}}">正式组：{{current.card.dose}}</view>
+      <view class="tip-text" wx:if="{{current.card.doseNote}}">{{current.card.doseNote}}</view>
+      <block wx:if="{{current.card.contraindications.length}}">
+        <view class="tips-title">注意</view>
+        <view class="warn" wx:for="{{current.card.contraindications}}" wx:key="*this">{{item}}</view>
+      </block>
+      <view class="detail-link accent" wx:if="{{current.card.hasImage}}" data-url="{{current.card.detailUrl}}" bindtap="onOpenDetail">查看动作图解 ›</view>
+      <view class="tip-text">{{current.card.medicalNote}}</view>
+    </block>
   </view>
 
   <view class="ex-dots" wx:if="{{rows.length}}">

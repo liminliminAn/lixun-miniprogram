@@ -45,7 +45,7 @@ assert.strictEqual(tan.frequency, '放在上肢训练日热身中，每周 3–5
 assert.deepStrictEqual(tan.drills.map((d) => d.dose), ['2–3 组 × 10–15 次，不疲劳为度', '2–3 组 × 10–15 次，不疲劳为度']);
 assert.strictEqual(tan.pre[0].dose, '30–60 秒');
 assert.ok(tan.pre[0].cue.startsWith('泡沫轴或按摩球')); // it2-v3：pre 带 cue
-assert.strictEqual(cfg._meta.version, 'it2-v3');
+assert.strictEqual(cfg._meta.version, 'it2-v5');
 assert.strictEqual(v.doseNote, '剂量为通用建议，因人而异');
 { const w = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/posture/posture.wxml'), 'utf8');
   assert.ok(/it\.pre[\s\S]*?d\.cue[\s\S]*?it\.drills/.test(w), 'pre cue rendered'); }
@@ -113,4 +113,15 @@ walk(root).filter((f) => f.endsWith('.wxss') && !f.endsWith('app.wxss')).forEach
     assert.ok(t.includes('{{doseLabel}}'), f);
     (t.match(/<view class="dose-row"[^\n]*/g) || []).forEach((row) => assert.ok(!/link|source|参考来源/.test(row), `${f}: ${row}`));
   }); }
+// it2-v5：5 条全部可见、全部写全、不署名；visible=false 仍被过滤
+assert.strictEqual(v.issues.length, 5);
+v.issues.forEach((it) => {
+  assert.ok(it.showSelfCheck && it.selfCheck.includes('：'), it.id);
+  assert.ok(it.frequency && !it.placeholder, it.id);
+  assert.ok(it.drills.length >= 2 && it.drills.every((d) => d.dose), it.id);
+  assert.strictEqual(it.author, '');
+});
+v.issues.filter((i) => i.id !== 'shoulder_impingement').forEach((i) => { assert.strictEqual(i.drills.length, 3); assert.ok(i.medicalNote.includes('就医')); });
+assert.deepStrictEqual(buildPostureView({ issues: [{ id: 'a', visible: false }, { id: 'b' }] }).issues.map((i) => i.id), ['b']);
+{ const w = fs.readFileSync(path.join(root, 'pages/posture/posture.wxml'), 'utf8'); assert.ok(w.includes('it.medicalNote') && !w.includes('内容待补')); }
 console.log('posture tests passed');

@@ -1,13 +1,33 @@
-/* 本地内容配置（由产品 exercises.json 转为 CommonJS，兼容基础库 2.32 require）；配图在分包 subpkg/exercises/ */
+/* 本地内容配置（由产品 exercises.json it2-v2 转为 CommonJS，兼容基础库 2.32 require）；配图在分包 subpkg/exercises/，_meta.images 为已入库配图 contentId */
 module.exports = {
   "_meta": {
-    "version": "it2-v1",
+    "version": "it2-v2",
     "doseNote": "剂量为通用建议，因人而异",
     "imageNote": "配图为 UI 自制线稿，放分包",
+    "displayRules": {
+      "image": "有图才显示图片区，无图时整块隐藏，不用占位图",
+      "medicalNote": "出现明显疼痛、麻木或放射痛时停止，并就医确认"
+    },
     "source": "lixun-pm/exercises.json",
     "idMap": "按名称映射到 constants/exercises.ts 的 id；contentId 为产品 id（配图文件名）",
-    "placeholderImage": "/assets/exercise-placeholder.png",
-    "doseScope": "仅指正式组（working sets）"
+    "doseScope": "仅指正式组（working sets）",
+    "images": [
+      "back_extension",
+      "bench_press",
+      "bulgarian_split_squat",
+      "cable_curl",
+      "dips",
+      "front_goblet_squat",
+      "incline_db_press",
+      "machine_row",
+      "neutral_pulldown",
+      "rdl",
+      "single_arm_pulldown",
+      "single_leg_rdl",
+      "skull_crusher",
+      "wide_row",
+      "y_raise"
+    ]
   },
   "exercises": {
     "barbell_bench": {
@@ -30,6 +50,10 @@ module.exports = {
         "肩胛松开、肩膀前顶",
         "臀部离凳",
         "手腕后折"
+      ],
+      "contraindications": [
+        "肩前侧疼痛时改用哑铃或对握，并缩小下放幅度",
+        "大重量必须有保护人或使用安全杠"
       ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
@@ -58,6 +82,10 @@ module.exports = {
         "哑铃顶端互撞、卸掉张力",
         "耸肩"
       ],
+      "contraindications": [
+        "肩部不适时降低凳面角度或改用对握",
+        "放下哑铃时先回到大腿再坐起，不要直接从肩上丢下"
+      ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
         "repMin": 6,
@@ -84,6 +112,10 @@ module.exports = {
         "下放过深、肩前顶",
         "耸肩缩脖",
         "借身体摆动"
+      ],
+      "contraindications": [
+        "肩前侧疼痛或肩不稳时不做，改为器械或窄距推",
+        "下放时肩不低于肘太多，避免肩关节过度伸展"
       ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
@@ -112,6 +144,10 @@ module.exports = {
         "手肘外开",
         "重量过大导致肘痛"
       ],
+      "contraindications": [
+        "肘关节疼痛时改用钢线下压或减重",
+        "重量过大时要有人保护，避免杠铃砸到头部"
+      ],
       "dose": {
         "text": "3 组 × 10–15 次，可接近力竭，组间 60–90 秒",
         "repMin": 10,
@@ -138,6 +174,10 @@ module.exports = {
         "耸肩用斜方肌代偿",
         "身体摇晃借力",
         "举得过高"
+      ],
+      "contraindications": [
+        "肩部撞击感或弹响时降低高度或停止",
+        "用轻重量，不要甩"
       ],
       "dose": {
         "text": "3 组 × 10–15 次，可接近力竭，组间 60–90 秒",
@@ -166,6 +206,10 @@ module.exports = {
         "躯干大幅侧倾",
         "肩膀在顶端耸起"
       ],
+      "contraindications": [
+        "肩部疼痛时缩小顶端拉伸幅度",
+        "不要用颈部代偿发力"
+      ],
       "dose": {
         "text": "3 组 × 8–12 次，RPE≈8，组间 90 秒",
         "repMin": 8,
@@ -192,6 +236,10 @@ module.exports = {
         "身体后仰过多",
         "拉到颈后",
         "离心太快"
+      ],
+      "contraindications": [
+        "禁止拉到颈后",
+        "肩部疼痛时缩小行程"
       ],
       "dose": {
         "text": "3 组 × 8–12 次，RPE≈8，组间 90 秒",
@@ -220,6 +268,10 @@ module.exports = {
         "耸肩",
         "只做半程"
       ],
+      "contraindications": [
+        "腰部不适时保持胸贴靠垫，不离垫",
+        "不要猛拉，避免肘和腰部受伤"
+      ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
         "repMin": 6,
@@ -246,6 +298,10 @@ module.exports = {
         "耸肩",
         "下背弓起",
         "重量太大变成甩动"
+      ],
+      "contraindications": [
+        "肩部不适时缩小肘外展角度",
+        "腰背痛时改用有胸垫支撑的版本"
       ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
@@ -274,6 +330,10 @@ module.exports = {
         "手肘前移",
         "下放过快"
       ],
+      "contraindications": [
+        "肘部或前臂疼痛时减重或换握法",
+        "不要借腰部后仰起重"
+      ],
       "dose": {
         "text": "3 组 × 10–15 次，可接近力竭，组间 60–90 秒",
         "repMin": 10,
@@ -300,6 +360,10 @@ module.exports = {
         "弓背",
         "骨盆旋开",
         "支撑腿膝盖锁死"
+      ],
+      "contraindications": [
+        "平衡差时先扶物，避免摔倒",
+        "腰部疼痛时停止，改用双腿 RDL 并减重"
       ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
@@ -328,6 +392,10 @@ module.exports = {
         "前脚太近导致脚跟离地",
         "弹起借力"
       ],
+      "contraindications": [
+        "膝盖疼痛时缩小下蹲深度或调整前脚位置",
+        "平衡差时先徒手或扶物"
+      ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
         "repMin": 6,
@@ -354,6 +422,10 @@ module.exports = {
         "膝盖内扣",
         "脚跟离地",
         "低位腰背塌陷"
+      ],
+      "contraindications": [
+        "膝盖或髋部疼痛时缩小深度",
+        "腰部无法保持中立时减重"
       ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
@@ -382,6 +454,10 @@ module.exports = {
         "屈膝过多变成深蹲",
         "杠铃离腿太远"
       ],
+      "contraindications": [
+        "腰椎间盘问题或下背痛发作期不做",
+        "全程保持背部中立，出现弓背立即减重"
+      ],
       "dose": {
         "text": "3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟",
         "repMin": 6,
@@ -408,6 +484,10 @@ module.exports = {
         "腰部代偿过伸",
         "下放过快",
         "耸肩"
+      ],
+      "contraindications": [
+        "腰椎间盘问题或下背痛发作期不做",
+        "不要在顶端过度后仰"
       ],
       "dose": {
         "text": "3 组 × 8–12 次，RPE≈8，组间 90 秒",

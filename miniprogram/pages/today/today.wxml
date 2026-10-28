@@ -16,8 +16,6 @@
       wx:for="{{exercises}}"
       wx:key="id"
       name="{{item.name}}"
-      tips="{{item.tips}}"
-      contraindications="{{item.contraindications}}"
       exercise-id="{{item.id}}"
     />
     <view class="btn-primary start" bindtap="onStart">开始训练</view>

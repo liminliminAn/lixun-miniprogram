@@ -2,7 +2,7 @@ import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { EXERCISE_MAP } from '../../constants/exercises';
 import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
-import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, WarmupViewItem } from '../../utils/warmup';
+import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, videoLine, VIDEO_TOAST, WarmupViewItem } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
 import { shoulderWarmupAddon, COPY_TOAST } from '../../utils/posture';
 
@@ -17,6 +17,7 @@ Page({
     sections: [] as { key: string; title: string; optional?: boolean; frequency?: string; items: (WarmupViewItem & { checked: boolean })[] }[],
     ramp: [] as { id: string; text: string; checked: boolean }[],
     daySource: null as { title: string; url: string } | null,
+    dayVideo: null as any,
     doseNote: contentNotes(CONFIG).doseNote,
     pickNote: contentNotes(CONFIG).pickNote,
     doseLabel: DOSE_LABEL,
@@ -64,7 +65,8 @@ Page({
         checked: checked.has(`ramp_${i}`),
       }));
     }
-    this.setData({ dayLabel: DAY_TYPE_LABEL[session.dayType], sections, ramp, rampName, daySource });
+    this.setData({
+      dayVideo: day ? videoLine(day.video) : null, dayLabel: DAY_TYPE_LABEL[session.dayType], sections, ramp, rampName, daySource });
   },
   onUnload() {
     clearInterval(this.timer);
@@ -92,6 +94,13 @@ Page({
       const cur = this.data.sections[si].items[idx].checked;
       this.setData({ [`sections[${si}].items[${idx}].checked`]: !cur });
     }
+  },
+  /** 视频：复制「<url> <time>」，不内嵌 */
+  onCopyVideo(e: any) {
+    wx.setClipboardData({
+      data: e.currentTarget.dataset.copy,
+      success: () => wx.showToast({ title: VIDEO_TOAST, icon: 'none' }),
+    });
   },
   onCopyLink(e: any) {
     wx.setClipboardData({

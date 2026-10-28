@@ -64,6 +64,7 @@ function placementDays(placement) {
 }
 function buildPostureView(json) {
     const issues = ((json && json.issues) || [])
+        .filter((it) => it && it.visible !== false) // D3：visible=false 完全隐藏
         .slice()
         .sort((a, b) => (a.priority || 99) - (b.priority || 99))
         .map((it) => {
@@ -83,6 +84,7 @@ function buildPostureView(json) {
             author: '',
             sourceText: src ? `${exports.SOURCE_LABEL} · ${src.title}` : '',
             sourceUrl: src ? String(src.url) : '',
+            medicalNote: it.medicalNote ? String(it.medicalNote) : '',
         };
     });
     const rawDisclaimer = (json && json._meta && json._meta.disclaimer) || `${exports.SHORT_DISCLAIMER}${DEFAULT_MEDICAL}`;

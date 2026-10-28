@@ -20,3 +20,5 @@
 .move { display: flex; flex-direction: column; }
 .dose-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1); }
 .dose-label { font-size: var(--font-caption); color: var(--color-ink-secondary); }
+.wu-img { width: 100%; height: 320rpx; border-radius: var(--radius-card); }
+.sub-tip { font-size: var(--font-caption); color: var(--color-ink-secondary); line-height: 1.6; }

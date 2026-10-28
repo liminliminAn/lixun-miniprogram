@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
+exports.VIDEO_TOAST = exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
 exports.completedTrainDates = completedTrainDates;
 exports.contentNotes = contentNotes;
+exports.videoLine = videoLine;
+exports.mainPkgImage = mainPkgImage;
 exports.rampConfigFromJson = rampConfigFromJson;
 exports.buildWarmupSections = buildWarmupSections;
 /**
@@ -59,6 +61,19 @@ function contentNotes(cfg) {
     const m = (cfg && cfg._meta) || {};
     return { doseNote: m.doseNote || exports.DOSE_NOTE, pickNote: m.pickNote || exports.PICK_NOTE };
 }
+exports.VIDEO_TOAST = '已复制，可在抖音打开';
+/** video {url,time} → 可点按复制的一行；复制内容为「<url> <time>」，不内嵌 */
+function videoLine(v) {
+    if (!v || typeof v.url !== 'string' || !/^https:\/\//.test(v.url))
+        return null;
+    const time = v.time ? String(v.time) : '';
+    return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
+}
+/** 主包页面只显示主包图片；分包路径/空值一律隐藏 */
+function mainPkgImage(img) {
+    return typeof img === 'string' && img.charAt(0) === '/' && img.indexOf('/subpkg/') !== 0 ? img : '';
+}
+const strList = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === 'string' && x.trim()) : []);
 /** JSON rampSets → RampConfig；未提供时用 DEFAULT_RAMP */
 function rampConfigFromJson(json, base = exports.DEFAULT_RAMP) {
     const steps = json && Array.isArray(json.steps) ? json.steps : null;
@@ -75,6 +90,10 @@ function mapItems(prefix, list) {
         text: it.name,
         dose: it.dose ? String(it.dose) : '',
         source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
+        steps: strList(it.steps),
+        cues: strList(it.cues),
+        image: mainPkgImage(it.image),
+        video: videoLine(it.video),
     }));
 }
 /** 按日类型组装：一般热身 → 放松 → 激活（推日附肩日可选激活） */

@@ -74,7 +74,28 @@ export interface WarmupViewItem {
   text: string;
   dose: string;
   source?: { title: string; url: string };
+  steps?: string[];
+  cues?: string[];
+  /** 仅主包内图片；null/分包路径 → ''（隐藏图片区） */
+  image?: string;
+  video?: WarmupVideo | null;
 }
+export interface WarmupVideo { url: string; time: string; note: string; copyText: string }
+export const VIDEO_TOAST = '已复制，可在抖音打开';
+
+/** video {url,time} → 可点按复制的一行；复制内容为「<url> <time>」，不内嵌 */
+export function videoLine(v: any): WarmupVideo | null {
+  if (!v || typeof v.url !== 'string' || !/^https:\/\//.test(v.url)) return null;
+  const time = v.time ? String(v.time) : '';
+  return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
+}
+
+/** 主包页面只显示主包图片；分包路径/空值一律隐藏 */
+export function mainPkgImage(img: unknown): string {
+  return typeof img === 'string' && img.charAt(0) === '/' && img.indexOf('/subpkg/') !== 0 ? img : '';
+}
+
+const strList = (a: any): string[] => (Array.isArray(a) ? a.filter((x) => typeof x === 'string' && x.trim()) : []);
 export interface WarmupViewSection {
   key: string;
   title: string;
@@ -101,6 +122,10 @@ function mapItems(prefix: string, list: any[]): WarmupViewItem[] {
     text: it.name,
     dose: it.dose ? String(it.dose) : '',
     source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
+    steps: strList(it.steps),
+    cues: strList(it.cues),
+    image: mainPkgImage(it.image),
+    video: videoLine(it.video),
   }));
 }
 

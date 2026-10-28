@@ -1,14 +1,14 @@
 /** node tests/exerciseCards.test.js — 图文卡配置合法性 */
 const assert = require('assert');
 const fs = require('fs');
-const { buildExerciseCard, PLACEHOLDER_IMAGE, subpkgImage, DETAIL_PAGE } = require('./lib/exerciseCards');
+const { buildExerciseCard, subpkgImage, DETAIL_PAGE } = require('./lib/exerciseCards');
 const product = require('path').join(__dirname, '../../lixun-pm/exercises.json'); const productJson = fs.existsSync(product) ? require(product) : null; // 产品源文件不在仓库内，缺失时跳过逐条比对
 const cfg = require('../miniprogram/config/exercise-cards.js');
 
 const src = fs.readFileSync(__dirname + '/../miniprogram/constants/exercises.ts', 'utf8');
 const ids = [...src.matchAll(/id: '([^']+)'/g)].map((m) => m[1]);
 assert.ok(ids.length >= 15);
-assert.ok(fs.existsSync(__dirname + '/../miniprogram' + PLACEHOLDER_IMAGE));
+assert.ok(!fs.existsSync(__dirname + '/../miniprogram/assets/exercise-placeholder.png')); // D2：去掉占位图
 ids.forEach((id) => {
   const e = cfg.exercises[id];
   assert.ok(e, `missing card ${id}`);
@@ -16,10 +16,13 @@ ids.forEach((id) => {
     assert.ok(Array.isArray(e[k]) && e[k].length === 3, `${id}.${k}`);
     e[k].forEach((t) => assert.ok(typeof t === 'string' && t.trim()));
   });
-  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.png`); // 分包配图路径（图未入库时详情页回退占位图）
+  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.png`); // 分包配图路径
   const v = buildExerciseCard(cfg, id);
-  assert.strictEqual(v.image, PLACEHOLDER_IMAGE); // 主包卡片只用主包占位图
+  assert.strictEqual(v.hasImage, true); // 15 张图均已入库
   assert.strictEqual(v.detailImage, e.image);
+  assert.ok(Array.isArray(e.contraindications) && e.contraindications.length >= 1 && e.contraindications.length <= 2, `${id} 注意`);
+  assert.deepStrictEqual(v.contraindications, e.contraindications);
+  assert.strictEqual(v.medicalNote, '出现明显疼痛、麻木或放射痛时停止，并就医确认');
   assert.strictEqual(v.detailUrl, `${DETAIL_PAGE}?id=${id}`);
   assert.strictEqual(v.dose, e.dose.text);
   assert.ok(/^\d(–\d)? 组 × \d+–\d+ 次，/.test(v.dose), `${id} dose ${v.dose}`); // 剂量存在
@@ -42,7 +45,26 @@ if (productJson) assert.strictEqual(productJson.exercises.length, 15);
 });
 assert.strictEqual(subpkgImage('subpkg/exercises/a.png'), '/subpkg/exercises/a.png');
 assert.strictEqual(subpkgImage('/assets/x.png'), '');
-assert.strictEqual(buildExerciseCard({ exercises: { a: { steps: [] } } }, 'a').detailImage, PLACEHOLDER_IMAGE);
+{ const n = buildExerciseCard({ exercises: { a: { steps: [], contentId: 'a', image: 'subpkg/exercises/a.png' } } }, 'a');
+  assert.deepStrictEqual([n.hasImage, n.detailImage], [false, '']); } // 不在 images 列表 → 无图，整块隐藏
+assert.strictEqual(buildExerciseCard({ _meta: { images: ['a'] }, exercises: { a: { contentId: 'a', image: 'subpkg/exercises/a.png' } } }, 'a').hasImage, true);
+// D2：_meta.images 必须与 subpkg/exercises 下的 png 完全一致
+{ const files = fs.readdirSync(require('path').join(__dirname, '../miniprogram/subpkg/exercises')).filter((f) => f.endsWith('.png')).map((f) => f.slice(0, -4)).sort();
+  assert.deepStrictEqual(cfg._meta.images.slice().sort(), files);
+  assert.strictEqual(files.length, 15); }
+if (productJson) productJson.exercises.forEach((p) => {
+  const id = Object.keys(cfg.exercises).find((k) => cfg.exercises[k].contentId === p.id);
+  assert.deepStrictEqual(cfg.exercises[id].contraindications, p.contraindications);
+});
+// 页面不再引用占位图 / 旧常量要点
+['pages/session/session.wxml', 'components/exercise-card/exercise-card.wxml', 'subpkg/exercises/detail/detail.wxml', 'pages/today/today.wxml'].forEach((f) => {
+  const t = fs.readFileSync(require('path').join(__dirname, '../miniprogram', f), 'utf8');
+  assert.ok(!/exercise-placeholder|\.tips\b|tips=|contraindications="|禁忌：/.test(t), f);
+});
+['pages/session/session.wxml', 'components/exercise-card/exercise-card.wxml'].forEach((f) => {
+  const t = fs.readFileSync(require('path').join(__dirname, '../miniprogram', f), 'utf8');
+  assert.ok(/wx:if="\{\{[^}]*hasImage\}\}"[^>]*>查看动作图解/.test(t) && t.includes('medicalNote') && t.includes('注意'), f);
+});
 // 不放假图：分包目录下只有详情页代码；存在的配图必须是配置里引用的
 const sub = require('path').join(__dirname, '../miniprogram/subpkg/exercises');
 fs.readdirSync(sub).filter((f) => /\.(png|jpe?g|webp)$/.test(f)).forEach((f) =>

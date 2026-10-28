@@ -1,4 +1,7 @@
 import { EXERCISE_MAP } from '../../constants/exercises';
+import { buildExerciseCard } from '../../utils/exerciseCards';
+
+const CARDS: any = require('../../config/exercise-cards.js');
 import { DAY_TYPE_LABEL } from '../../constants/templates';
 import {
   startOrResumeSession,
@@ -47,8 +50,7 @@ Page({
       return {
         exerciseId: ex.exerciseId,
         name: def?.name || ex.exerciseId,
-        tips: def?.tips || [],
-        contraindications: def?.contraindications || '',
+        card: buildExerciseCard(CARDS, ex.exerciseId),
         sets,
         allDone: sets.length > 0 && sets.every((s) => s.done),
       };
@@ -140,5 +142,9 @@ Page({
     setTimeout(() => {
       wx.switchTab({ url: '/pages/today/today' });
     }, 400);
+  },
+  onOpenDetail(e: any) {
+    const url = e && e.currentTarget && e.currentTarget.dataset.url;
+    if (url) wx.navigateTo({ url });
   },
 });

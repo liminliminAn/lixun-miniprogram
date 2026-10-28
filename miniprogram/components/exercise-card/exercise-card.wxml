@@ -5,24 +5,21 @@
       <text class="chev">{{expanded ? '收起' : '要点'}}</text>
     </view>
   </view>
-  <view wx:if="{{expanded}}" class="body">
-    <image class="img" src="{{card ? card.image : '/assets/exercise-placeholder.png'}}" mode="aspectFill" />
-    <view class="tip" wx:for="{{tips}}" wx:key="*this">
-      <text class="bullet">●</text>
-      <text>{{item}}</text>
-    </view>
-    <view class="focus" wx:if="{{tips[0]}}">今日只盯：{{tips[0]}}</view>
-    <block wx:if="{{card}}">
-      <view class="sec" wx:if="{{card.steps.length}}">步骤</view>
-      <view class="tip" wx:for="{{card.steps}}" wx:key="*this"><text class="bullet">{{index + 1}}</text><text>{{item}}</text></view>
-      <view class="sec" wx:if="{{card.cues.length}}">要点提示</view>
-      <view class="tip" wx:for="{{card.cues}}" wx:key="*this"><text class="bullet">●</text><text>{{item}}</text></view>
-      <view class="sec" wx:if="{{card.mistakes.length}}">常见错误</view>
-      <view class="tip" wx:for="{{card.mistakes}}" wx:key="*this"><text class="bad">✕</text><text>{{item}}</text></view>
-      <view class="dose" wx:if="{{card.dose}}">正式组：{{card.dose}}</view>
-      <view class="dose-note" wx:if="{{card.doseNote}}">{{card.doseNote}}</view>
-      <view class="detail-link" catchtap="onOpenDetail">查看动作图解 ›</view>
+  <view wx:if="{{expanded && card}}" class="body">
+    <view class="focus" wx:if="{{card.cues[0]}}">今日只盯：{{card.cues[0]}}</view>
+    <view class="sec" wx:if="{{card.steps.length}}">步骤</view>
+    <view class="tip" wx:for="{{card.steps}}" wx:key="*this"><text class="bullet">{{index + 1}}</text><text>{{item}}</text></view>
+    <view class="sec" wx:if="{{card.cues.length}}">要点提示</view>
+    <view class="tip" wx:for="{{card.cues}}" wx:key="*this"><text class="bullet">●</text><text>{{item}}</text></view>
+    <view class="sec" wx:if="{{card.mistakes.length}}">常见错误</view>
+    <view class="tip" wx:for="{{card.mistakes}}" wx:key="*this"><text class="bad">✕</text><text>{{item}}</text></view>
+    <view class="dose" wx:if="{{card.dose}}">正式组：{{card.dose}}</view>
+    <view class="dose-note" wx:if="{{card.doseNote}}">{{card.doseNote}}</view>
+    <block wx:if="{{card.contraindications.length}}">
+      <view class="sec">注意</view>
+      <view class="tip warn" wx:for="{{card.contraindications}}" wx:key="*this"><text class="bullet">!</text><text>{{item}}</text></view>
     </block>
-    <view class="warn">禁忌：{{contraindications}}</view>
+    <view class="detail-link" wx:if="{{card.hasImage}}" catchtap="onOpenDetail">查看动作图解 ›</view>
+    <view class="medical">{{card.medicalNote}}</view>
   </view>
 </view>

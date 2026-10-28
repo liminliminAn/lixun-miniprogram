@@ -34,6 +34,7 @@ export interface PostureIssueView {
   author: string;
   sourceText: string;
   sourceUrl: string;
+  medicalNote: string;
 }
 
 export interface PostureView {
@@ -92,6 +93,7 @@ export function placementDays(placement: unknown): string[] {
 
 export function buildPostureView(json: any): PostureView {
   const issues = ((json && json.issues) || [])
+    .filter((it: any) => it && it.visible !== false) // D3：visible=false 完全隐藏
     .slice()
     .sort((a: any, b: any) => (a.priority || 99) - (b.priority || 99))
     .map((it: any): PostureIssueView => {
@@ -111,6 +113,7 @@ export function buildPostureView(json: any): PostureView {
         author: '',
         sourceText: src ? `${SOURCE_LABEL} · ${src.title}` : '',
         sourceUrl: src ? String(src.url) : '',
+        medicalNote: it.medicalNote ? String(it.medicalNote) : '',
       };
     });
   const rawDisclaimer = (json && json._meta && json._meta.disclaimer) || `${SHORT_DISCLAIMER}${DEFAULT_MEDICAL}`;

@@ -6,7 +6,8 @@ const NOTE = '剂量为通用建议，因人而异';
 const root = path.join(__dirname, '../miniprogram');
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
   e.isDirectory() ? (e.name === 'assets' ? [] : walk(path.join(d, e.name))) : [path.join(d, e.name)]);
-const VARIANT = /通用(康复)?建议|因人而异/;
+// 只检剂量说明变体（sourceNote 等内部注记里的「通用康复建议」不是剂量说明）
+const VARIANT = /通用(康复)?建议，因人而异|剂量为通用(康复)?建议|因人而异/;
 let hits = 0;
 walk(root).filter((f) => /\.(wxml|ts|js|json)$/.test(f)).forEach((f) => {
   const raw = fs.readFileSync(f, 'utf8');
@@ -25,3 +26,17 @@ assert.deepStrictEqual([DOSE_NOTE, DOSE_LABEL, CARD_DOSE_NOTE, buildPostureView(
 // 反例自检
 assert.ok(VARIANT.test('通用康复建议，因人而异') && VARIANT.test('剂量为通用康复建议') && VARIANT.test('通用建议，因人而异'.slice(0)));
 console.log('doseNote tests passed');
+// D1：页面所用 constants/config 的任何可渲染字符串都不得含「占位」/「内容待补」
+{
+  const strings = [];
+  const collect = (v, k) => {
+    if (typeof v === 'string') { if (!/^(sourceNote|displayRules|image|imageRule|note|idMap)$/.test(k || '')) strings.push([k, v]); }
+    else if (Array.isArray(v)) v.forEach((x) => collect(x, k));
+    else if (v && typeof v === 'object') Object.keys(v).forEach((kk) => collect(v[kk], kk));
+  };
+  ['config/warmup.js', 'config/posture.js', 'config/exercise-cards.js'].forEach((f) => collect(require(path.join(root, f))));
+  strings.forEach(([k, s]) => assert.ok(!/占位|内容待补|待核实|参考量待定/.test(s), `placeholder text in ${k}: ${s}`));
+  walk(root).filter((f) => /constants\/.*\.ts$|\.wxml$/.test(f)).forEach((f) =>
+    assert.ok(!/占位|内容待补/.test(fs.readFileSync(f, 'utf8')), `placeholder text in ${path.relative(root, f)}`));
+}
+console.log('placeholder scan passed');
