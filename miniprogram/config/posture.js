@@ -35,7 +35,7 @@ module.exports = {
       "drills": [
         {
           "name": "跪姿死虫",
-          "cue": "肩胛下肌离心控制",
+          "cue": "四点跪姿，一手掌下压地面稳住肩胛，另一臂缓慢前伸再收回；双膝着地不动，骨盆不晃，肩胛下肌离心控制",
           "dose": "2–3 组 × 10–15 次，不疲劳为度",
           "image": "/subpkg/exercises/posture_shoulder_impingement_02.webp"
         },

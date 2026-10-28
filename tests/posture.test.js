@@ -125,3 +125,14 @@ v.issues.filter((i) => i.id !== 'shoulder_impingement').forEach((i) => { assert.
 assert.deepStrictEqual(buildPostureView({ issues: [{ id: 'a', visible: false }, { id: 'b' }] }).issues.map((i) => i.id), ['b']);
 { const w = fs.readFileSync(path.join(root, 'pages/posture/posture.wxml'), 'utf8'); assert.ok(w.includes('it.medicalNote') && !w.includes('内容待补')); }
 console.log('posture tests passed');
+// 每个 pre/drill 的 cue 与产品 posture.json 一致（含跪姿死虫新 cue）
+{
+  const fs = require('fs'), path = require('path');
+  const src = '/workspace/lixun-pm/posture.json';
+  const cfgP = require(path.join(__dirname, '../miniprogram/config/posture.js'));
+  const cueOf = (j) => { const m = {}; j.issues.forEach((it) => ['pre', 'drills'].forEach((k) => (it[k] || []).forEach((d) => { m[it.id + '/' + d.name] = d.cue; }))); return m; };
+  if (fs.existsSync(src)) assert.deepStrictEqual(cueOf(cfgP), cueOf(JSON.parse(fs.readFileSync(src, 'utf8'))));
+  const dead = cfgP.issues.flatMap((it) => it.drills || []).find((d) => d.name === '跪姿死虫');
+  assert.strictEqual(dead.cue, '四点跪姿，一手掌下压地面稳住肩胛，另一臂缓慢前伸再收回；双膝着地不动，骨盆不晃，肩胛下肌离心控制');
+  console.log('posture cue sync passed');
+}
