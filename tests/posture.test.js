@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   buildPostureView, TAN_AUTHOR, shoulderWarmupAddon, SOURCE_LABEL, COPY_TOAST,
-  MEDICAL_TIP_TITLE, SHORT_DISCLAIMER, splitDisclaimer,
+  MEDICAL_TIP_TITLE, SHORT_DISCLAIMER, splitDisclaimer, placementDays,
 } = require('./lib/posture');
 const cfg = require('../miniprogram/config/posture.js');
 
@@ -21,10 +21,12 @@ assert.ok(v.medicalTip.includes('就医'));
 assert.strictEqual(v.issues[0].id, 'shoulder_impingement'); // priority 排序
 v.issues.forEach((it) => {
   assert.ok(it.precheck.length > 0); // precheck 总显示
-  assert.strictEqual(it.showSelfCheck, false); // selfCheck=null 隐藏
-  assert.strictEqual(it.frequency, '参考量待定');
-  [...it.pre, ...it.drills].forEach((d) => assert.strictEqual(d.dose, '参考量待定'));
+  [...it.pre, ...it.drills].forEach((d) => assert.ok(d.dose && /\d/.test(d.dose) && !/待定|待核实/.test(d.dose))); // dose 存在
 });
+assert.ok(!JSON.stringify(v).match(/参考量待定|待核实/));
+assert.strictEqual(v.doseNote, '通用康复建议，因人而异');
+assert.strictEqual(v.pickNote, '热身动作按需挑选，不必全做');
+v.issues.filter((i) => i.placeholder).forEach((i) => assert.strictEqual(i.showSelfCheck, false)); // selfCheck=null 隐藏
 const tan = v.issues.find((i) => i.id === 'shoulder_impingement');
 // 永不署名；有来源一律「参考来源 · title」
 assert.strictEqual(tan.author, '');
@@ -37,7 +39,12 @@ assert.deepStrictEqual([ver.issues[0].author, ver.issues[0].sourceText], ['', `$
 // generic 即使 verified 也不署名
 assert.strictEqual(buildPostureView({ issues: [{ id: 'g', attribution: 'generic', verified: true, source: { title: 'a', url: 'https://x' } }] }).issues[0].author, '');
 assert.strictEqual(COPY_TOAST, '链接已复制，请到浏览器打开');
-assert.strictEqual(tan.drills[1].cue, ''); // 「待核实」cue 不显示
+assert.strictEqual(tan.showSelfCheck, true);
+assert.ok(tan.selfCheck.startsWith('招财猫外旋测试：') && tan.selfCheck.includes('弹响') && tan.selfCheck.includes('就医'));
+assert.strictEqual(tan.frequency, '放在上肢训练日热身中，每周 3–5 次');
+assert.deepStrictEqual(tan.drills.map((d) => d.dose), ['2–3 组 × 10–15 次，不疲劳为度', '2–3 组 × 10–15 次，不疲劳为度']);
+assert.strictEqual(tan.pre[0].dose, '30–60 秒');
+assert.deepStrictEqual(placementDays('warmup.push,warmup.pull'), ['push', 'pull']);
 v.issues.filter((i) => i.id !== 'shoulder_impingement').forEach((i) => {
   assert.strictEqual(i.author, '');
   assert.strictEqual(i.sourceText, '');
@@ -47,15 +54,18 @@ v.issues.filter((i) => i.id !== 'shoulder_impingement').forEach((i) => {
 const g = buildPostureView({ issues: [{ id: 'x', title: 't', attribution: 'generic', source: { title: 'a', url: 'https://x' }, selfCheck: '站墙' }] });
 assert.deepStrictEqual([g.issues[0].sourceUrl, g.issues[0].author, g.issues[0].showSelfCheck], ['', '', true]);
 
-// 热身附加：仅推/拉日，仅 tan 肩部条目，可选，dose 占位；来源标签永不为作者名
+// 热身附加：按 placement（推/拉），仅 tan 条目，可选，带真实 dose 与频率；来源标签永不为作者名
 ['push', 'pull'].forEach((d) => {
   const a = shoulderWarmupAddon(cfg, d);
   assert.strictEqual(a.optional, true);
   assert.deepStrictEqual(a.items.map((i) => i.text), ['训练前放松小圆肌', '跪姿死虫', '弹力带肩胛后倾']);
-  a.items.forEach((i) => { assert.strictEqual(i.dose, '参考量待定'); assert.ok(i.source.title.startsWith(SOURCE_LABEL) && !i.source.title.includes(TAN_AUTHOR)); });
+  assert.ok(a.frequency.includes('每周 3–5 次'));
+  a.items.forEach((i) => { assert.ok(/\d/.test(i.dose)); assert.ok(i.source.title.startsWith(SOURCE_LABEL) && !i.source.title.includes(TAN_AUTHOR)); });
 });
 assert.strictEqual(shoulderWarmupAddon(cfg, 'legs'), null);
-assert.strictEqual(shoulderWarmupAddon({ issues: [{ id: 'shoulder_x', attribution: 'generic', drills: [{ name: 'a' }] }] }, 'push'), null);
+assert.strictEqual(shoulderWarmupAddon({ issues: [{ id: 'shoulder_x', attribution: 'generic', placement: 'warmup.push', drills: [{ name: 'a' }] }] }, 'push'), null);
+assert.strictEqual(shoulderWarmupAddon({ issues: [{ id: 'x', attribution: 'tan', placement: 'warmup.legs', drills: [{ name: 'a', dose: '1' }] }] }, 'push'), null);
+assert.ok(shoulderWarmupAddon({ issues: [{ id: 'x', attribution: 'tan', placement: 'warmup.legs', drills: [{ name: 'a', dose: '1' }] }] }, 'legs'));
 
 // splitDisclaimer
 const sp = splitDisclaimer('非医疗建议。出现麻木、放射痛，请就医。');

@@ -1,6 +1,6 @@
 /** node tests/warmup.test.js — tests/lib/warmup.js 由 miniprogram/utils/warmup.ts 经 tsc 生成 */
 const assert = require('assert');
-const { rampSets, firstCompound, withWarmup, completedTrainDates, rampConfigFromJson, buildWarmupSections, DOSE_PLACEHOLDER } = require('./lib/warmup');
+const { rampSets, firstCompound, withWarmup, completedTrainDates, rampConfigFromJson, buildWarmupSections, contentNotes } = require('./lib/warmup');
 const cfg = require('../miniprogram/config/warmup.js');
 
 const w = (a) => a.map((s) => `${s.weight}x${s.reps}`);
@@ -28,11 +28,11 @@ assert.deepStrictEqual(completedTrainDates(store), ['2026-10-26']);
 const skippedCompleted = { ...skipped, completedAt: 'z' };
 assert.deepStrictEqual(completedTrainDates({ a: skippedCompleted }), ['a']); // 跳过热身仍可计连练
 
-// 新 schema：一般热身 → 放松 → 激活；推日附肩日可选；dose 一律占位
+// it2-v2：一般热身 → 放松 → 激活；推日附肩日可选；dose 为真实值
 ['push', 'pull', 'legs'].forEach((d) => {
   const secs = buildWarmupSections(cfg, d);
   assert.deepStrictEqual(secs.slice(0, 3).map((x) => x.key), ['general', 'release', 'activate']);
-  secs.forEach((x) => x.items.forEach((it) => assert.strictEqual(it.dose, DOSE_PLACEHOLDER)));
+  secs.forEach((x) => x.items.forEach((it) => { assert.ok(it.dose.length > 0, it.text); assert.ok(!/待定|待核实/.test(it.dose)); }));
   const ids = secs.flatMap((x) => x.items.map((i) => i.id));
   assert.strictEqual(new Set(ids).size, ids.length);
 });
@@ -40,7 +40,13 @@ assert.strictEqual(buildWarmupSections(cfg, 'push').pop().optional, true);
 assert.strictEqual(buildWarmupSections(cfg, 'legs').length, 3);
 const pushAct = buildWarmupSections(cfg, 'push').find((x) => x.key === 'activate').items;
 assert.ok(pushAct.some((i) => i.source && i.source.url.startsWith('https://') && i.source.title.startsWith('参考来源')));
-assert.ok(!JSON.stringify(buildWarmupSections(cfg, 'pull')).match(/\d+\s*(次|组|分钟|秒)/)); // 不显示 dose 数字
+// dose 存在且带数字；一般热身文案不再去数字
+assert.ok(/\d/.test(buildWarmupSections(cfg, 'pull')[2].items[0].dose));
+assert.deepStrictEqual(buildWarmupSections(cfg, 'push')[0].items[0], { id: 'general_0', text: '低强度有氧 2–3 分钟', dose: '2–3 分钟' });
+assert.strictEqual(buildWarmupSections(cfg, 'push')[1].items[0].dose, '每部位 30–60 秒');
+assert.deepStrictEqual(contentNotes(cfg), { doseNote: '通用康复建议，因人而异', pickNote: '热身动作按需挑选，不必全做' });
+assert.strictEqual(cfg._meta.version, 'it2-v2');
+assert.ok(!JSON.stringify(cfg).includes('待核实'));
 console.log('warmup tests passed');
 // 兼容 2.32：源码不允许 require .json
 {

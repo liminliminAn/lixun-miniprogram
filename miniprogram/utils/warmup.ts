@@ -57,8 +57,14 @@ export function completedTrainDates(sessions: SessionsStore): string[] {
     .sort();
 }
 
-/** 未核实的剂量统一展示文案（不展示 dose 原值） */
-export const DOSE_PLACEHOLDER = '参考量待定';
+export const DOSE_NOTE = '通用康复建议，因人而异';
+export const PICK_NOTE = '热身动作按需挑选，不必全做';
+
+/** 配置 _meta 的剂量说明 / 挑选说明（缺省回退常量） */
+export function contentNotes(cfg: any): { doseNote: string; pickNote: string } {
+  const m = (cfg && cfg._meta) || {};
+  return { doseNote: m.doseNote || DOSE_NOTE, pickNote: m.pickNote || PICK_NOTE };
+}
 
 export interface WarmupViewItem {
   id: string;
@@ -86,16 +92,11 @@ export function rampConfigFromJson(json: any, base: RampConfig = DEFAULT_RAMP): 
   };
 }
 
-/** 去掉文案里夹带的未核实剂量（如「2–3 分钟」） */
-export function stripDose(text: string): string {
-  return String(text || '').replace(/\s*\d[\d.–~\-]*\s*(分钟|秒|次|组)\s*/g, '').trim();
-}
-
 function mapItems(prefix: string, list: any[]): WarmupViewItem[] {
   return (list || []).map((it, i) => ({
     id: `${prefix}_${i}`,
     text: it.name,
-    dose: DOSE_PLACEHOLDER,
+    dose: it.dose ? String(it.dose) : '',
     source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
   }));
 }
@@ -107,7 +108,7 @@ export function buildWarmupSections(cfg: any, dayType: string): WarmupViewSectio
     sections.push({
       key: 'general',
       title: cfg.general.name || '一般热身',
-      items: [{ id: 'general_0', text: stripDose(cfg.general.detail || cfg.general.name), dose: DOSE_PLACEHOLDER }],
+      items: [{ id: 'general_0', text: String(cfg.general.detail || cfg.general.name), dose: cfg.general.dose ? String(cfg.general.dose) : '' }],
     });
   }
   const day = (cfg.days && cfg.days[dayType]) || {};

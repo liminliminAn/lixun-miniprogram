@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DOSE_PLACEHOLDER = exports.DEFAULT_RAMP = void 0;
+exports.PICK_NOTE = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
 exports.completedTrainDates = completedTrainDates;
+exports.contentNotes = contentNotes;
 exports.rampConfigFromJson = rampConfigFromJson;
-exports.stripDose = stripDose;
 exports.buildWarmupSections = buildWarmupSections;
 /**
  * IT2-06 热身：坡道组计算与热身状态（纯函数）。单测：tests/warmup.test.js
@@ -49,8 +49,13 @@ function completedTrainDates(sessions) {
         .filter((d) => sessions[d] && !!sessions[d].completedAt)
         .sort();
 }
-/** 未核实的剂量统一展示文案（不展示 dose 原值） */
-exports.DOSE_PLACEHOLDER = '参考量待定';
+exports.DOSE_NOTE = '通用康复建议，因人而异';
+exports.PICK_NOTE = '热身动作按需挑选，不必全做';
+/** 配置 _meta 的剂量说明 / 挑选说明（缺省回退常量） */
+function contentNotes(cfg) {
+    const m = (cfg && cfg._meta) || {};
+    return { doseNote: m.doseNote || exports.DOSE_NOTE, pickNote: m.pickNote || exports.PICK_NOTE };
+}
 /** JSON rampSets → RampConfig；未提供时用 DEFAULT_RAMP */
 function rampConfigFromJson(json, base = exports.DEFAULT_RAMP) {
     const steps = json && Array.isArray(json.steps) ? json.steps : null;
@@ -61,15 +66,11 @@ function rampConfigFromJson(json, base = exports.DEFAULT_RAMP) {
             reps: s.reps,
         })) });
 }
-/** 去掉文案里夹带的未核实剂量（如「2–3 分钟」） */
-function stripDose(text) {
-    return String(text || '').replace(/\s*\d[\d.–~\-]*\s*(分钟|秒|次|组)\s*/g, '').trim();
-}
 function mapItems(prefix, list) {
     return (list || []).map((it, i) => ({
         id: `${prefix}_${i}`,
         text: it.name,
-        dose: exports.DOSE_PLACEHOLDER,
+        dose: it.dose ? String(it.dose) : '',
         source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
     }));
 }
@@ -80,7 +81,7 @@ function buildWarmupSections(cfg, dayType) {
         sections.push({
             key: 'general',
             title: cfg.general.name || '一般热身',
-            items: [{ id: 'general_0', text: stripDose(cfg.general.detail || cfg.general.name), dose: exports.DOSE_PLACEHOLDER }],
+            items: [{ id: 'general_0', text: String(cfg.general.detail || cfg.general.name), dose: cfg.general.dose ? String(cfg.general.dose) : '' }],
         });
     }
     const day = (cfg.days && cfg.days[dayType]) || {};

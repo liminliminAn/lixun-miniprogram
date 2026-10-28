@@ -2,11 +2,11 @@ import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { EXERCISE_MAP } from '../../constants/exercises';
 import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
-import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, DOSE_PLACEHOLDER, WarmupViewItem } from '../../utils/warmup';
+import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, WarmupViewItem } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
 import { shoulderWarmupAddon, COPY_TOAST } from '../../utils/posture';
 
-// 本地 JSON 配置（占位内容）
+// 本地内容配置 it2-v2
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CONFIG: any = require('../../config/warmup.js');
 const POSTURE: any = require('../../config/posture.js');
@@ -14,10 +14,11 @@ const POSTURE: any = require('../../config/posture.js');
 Page({
   data: {
     dayLabel: '',
-    sections: [] as { key: string; title: string; optional?: boolean; items: (WarmupViewItem & { checked: boolean })[] }[],
+    sections: [] as { key: string; title: string; optional?: boolean; frequency?: string; items: (WarmupViewItem & { checked: boolean })[] }[],
     ramp: [] as { id: string; text: string; checked: boolean }[],
     daySource: null as { title: string; url: string } | null,
-    doseText: DOSE_PLACEHOLDER,
+    doseNote: contentNotes(CONFIG).doseNote,
+    pickNote: contentNotes(CONFIG).pickNote,
     rampName: '',
     elapsedSec: 0,
     timeText: '00:00',

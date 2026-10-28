@@ -1,5 +1,6 @@
 /** IT2-04 动作图文卡：本地 JSON → 展示模型（纯函数）。单测：tests/exerciseCards.test.js */
-import { DOSE_PLACEHOLDER } from './warmup';
+/** IT2-04 动作卡剂量尚未定稿，保持占位 */
+export const DOSE_PLACEHOLDER = '参考量待定';
 
 export const PLACEHOLDER_IMAGE = '/assets/exercise-placeholder.png';
 

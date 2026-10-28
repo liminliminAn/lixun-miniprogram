@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="card notice">{{view.shortDisclaimer}}</view>
+  <view class="card notice">{{view.shortDisclaimer}}{{view.doseNote}}；{{view.pickNote}}。</view>
 
   <view class="card medical" bindtap="onToggleMedical">
     <view class="medical-head">
@@ -18,16 +18,16 @@
     <block wx:if="{{it.pre.length}}">
       <view class="label">训练前</view>
       <view class="item" wx:for="{{it.pre}}" wx:for-item="d" wx:key="name">
-        <text>{{d.name}}</text><text class="dose">{{d.dose}}</text>
+        <text>{{d.name}}</text><text class="dose" wx:if="{{d.dose}}">{{d.dose}}</text>
       </view>
     </block>
     <block wx:if="{{it.drills.length}}">
       <view class="label">练习</view>
       <view class="item" wx:for="{{it.drills}}" wx:for-item="d" wx:key="name">
         <view class="txt"><text>{{d.name}}</text><text class="cue" wx:if="{{d.cue}}">{{d.cue}}</text></view>
-        <text class="dose">{{d.dose}}</text>
+        <text class="dose" wx:if="{{d.dose}}">{{d.dose}}</text>
       </view>
-      <view class="sub">频率：{{it.frequency}}</view>
+      <view class="sub" wx:if="{{it.frequency}}">频率：{{it.frequency}}</view>
     </block>
 
     <view class="link" wx:if="{{it.sourceUrl}}" data-url="{{it.sourceUrl}}" bindtap="onCopyLink" user-select>{{it.sourceText}} {{it.sourceUrl}}（点按复制）</view>

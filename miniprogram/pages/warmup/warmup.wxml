@@ -2,18 +2,20 @@
   <view class="card head">
     <view>
       <view class="title">{{dayLabel}}日热身</view>
-      <view class="sub">可逐项勾选，也可整段跳过</view>
+      <view class="sub">{{pickNote}}；可逐项勾选，也可整段跳过</view>
+      <view class="sub">剂量为{{doseNote}}</view>
     </view>
     <view class="timer {{running ? 'on' : ''}}" bindtap="onToggleTimer">{{timeText}} {{running ? '暂停' : '计时'}}</view>
   </view>
 
   <view class="card" wx:for="{{sections}}" wx:for-item="sec" wx:key="key">
     <view class="title">{{sec.title}}<text class="opt" wx:if="{{sec.optional}}">可选</text></view>
+    <view class="sub" wx:if="{{sec.frequency}}">频率：{{sec.frequency}}</view>
     <view class="item" wx:for="{{sec.items}}" wx:key="id" data-sec="{{sec.key}}" data-idx="{{index}}" bindtap="onToggleItem">
       <text class="box {{item.checked ? 'on' : ''}}">{{item.checked ? '✓' : ''}}</text>
       <view class="txt">
         <text>{{item.text}}</text>
-        <text class="dose">{{item.dose}}</text>
+        <text class="dose" wx:if="{{item.dose}}">{{item.dose}}</text>
         <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>{{item.source.title}} {{item.source.url}}（点按复制）</text>
       </view>
     </view>

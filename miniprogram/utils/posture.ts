@@ -1,12 +1,13 @@
 /**
  * IT2-05 体态矫正：把本地 posture 配置组装成展示模型（纯函数）。单测：tests/posture.test.js
  * - precheck 与 disclaimer 总是展示；selfCheck 为 null 时隐藏自查
- * - 所有 dose / frequency 显示「参考量待定」
+ * - it2-v2：展示配置里的真实 dose / frequency；_meta.doseNote 与 pickNote 一并展示
+ * - placement（如 "warmup.push,warmup.pull"）决定加入哪些热身日
  * - 仅 attribution === 'tan' 的条目可展示来源；永不显示作者名，sourceText 一律「参考来源 · {title}」；generic 不显示作者与来源
  * - 来源链接仅作可复制的纯文本
  * - 就医提示从 disclaimer 拆出，页面默认展开
  */
-import { DOSE_PLACEHOLDER } from './warmup';
+import { DOSE_NOTE, PICK_NOTE } from './warmup';
 
 export const TAN_AUTHOR = '谭成义'; // 仅供单测断言「不得出现」；展示层永不输出
 export const SOURCE_LABEL = '参考来源';
@@ -40,6 +41,8 @@ export interface PostureView {
   shortDisclaimer: string;
   medicalTipTitle: string;
   medicalTip: string;
+  doseNote: string;
+  pickNote: string;
   issues: PostureIssueView[];
 }
 
@@ -48,8 +51,7 @@ const DEFAULT_MEDICAL =
   '出现麻木、放射痛、夜间痛、外伤后疼痛，或持续 2 周不缓解，请就医。';
 
 function drill(d: any): PostureDrillView {
-  const cue = d.cue && !String(d.cue).includes('待核实') ? String(d.cue) : '';
-  return { name: String(d.name || ''), cue, dose: DOSE_PLACEHOLDER };
+  return { name: String(d.name || ''), cue: d.cue ? String(d.cue) : '', dose: d.dose ? String(d.dose) : '' };
 }
 
 /** 从完整 disclaimer 拆出短免责声明与就医触发条件 */
@@ -70,6 +72,24 @@ export function splitDisclaimer(raw: string): { shortDisclaimer: string; medical
   return { shortDisclaimer: SHORT_DISCLAIMER, medicalTip: text.includes('就医') ? text : DEFAULT_MEDICAL };
 }
 
+/** selfCheck 可为字符串或 { name, how, flag } */
+export function formatSelfCheck(sc: any): string {
+  if (!sc) return '';
+  if (typeof sc === 'string') return sc;
+  const head = sc.name ? `${sc.name}：` : '';
+  return `${head}${[sc.how, sc.flag].filter(Boolean).join('。')}`;
+}
+
+/** placement "warmup.push,warmup.pull" → ['push','pull'] */
+export function placementDays(placement: unknown): string[] {
+  return String(placement || '')
+    .split(',')
+    .map((x) => x.trim())
+    .filter((x) => x.indexOf('warmup.') === 0)
+    .map((x) => x.slice('warmup.'.length))
+    .filter(Boolean);
+}
+
 export function buildPostureView(json: any): PostureView {
   const issues = ((json && json.issues) || [])
     .slice()
@@ -82,10 +102,10 @@ export function buildPostureView(json: any): PostureView {
         title: it.title,
         precheck: it.precheck || DEFAULT_PRECHECK,
         showSelfCheck: it.selfCheck !== null && it.selfCheck !== undefined,
-        selfCheck: it.selfCheck ? String(it.selfCheck) : '',
+        selfCheck: formatSelfCheck(it.selfCheck),
         pre: (it.pre || []).map(drill),
         drills: (it.drills || []).map(drill),
-        frequency: DOSE_PLACEHOLDER,
+        frequency: it.placeholder ? '' : String(it.frequency || ''),
         placeholder: !!it.placeholder,
         // 永不署名；有来源时一律「参考来源 · title」
         author: '',
@@ -100,27 +120,28 @@ export function buildPostureView(json: any): PostureView {
     shortDisclaimer,
     medicalTipTitle: MEDICAL_TIP_TITLE,
     medicalTip,
+    doseNote: (json && json._meta && json._meta.doseNote) || DOSE_NOTE,
+    pickNote: (json && json._meta && json._meta.pickNote) || PICK_NOTE,
     issues,
   };
 }
 
-/** 热身附加：推/拉日激活段可选加做 attribution=tan 的肩部条目（不影响热身完成判定） */
-export const SHOULDER_ADDON_DAYS = ['push', 'pull'];
-
+/** 热身附加：按条目 placement 加入对应日（推/拉）激活段之后，可选，不影响热身完成判定 */
 export function shoulderWarmupAddon(json: any, dayType: string): {
-  key: string; title: string; optional: true;
+  key: string; title: string; optional: true; frequency: string;
   items: { id: string; text: string; dose: string; source?: { title: string; url: string } }[];
 } | null {
-  if (SHOULDER_ADDON_DAYS.indexOf(dayType) < 0) return null;
   const issues = ((json && json.issues) || []).filter(
-    (it: any) => it.attribution === 'tan' && String(it.id).indexOf('shoulder') === 0,
+    (it: any) => it.attribution === 'tan' && !it.placeholder && placementDays(it.placement).indexOf(dayType) >= 0,
   );
   const items: { id: string; text: string; dose: string; source?: { title: string; url: string } }[] = [];
+  let frequency = '';
   issues.forEach((it: any) => {
+    if (!frequency && it.frequency) frequency = String(it.frequency);
     const src = it.source ? { title: `${SOURCE_LABEL} · ${it.source.title}`, url: String(it.source.url) } : undefined;
     [...(it.pre || []), ...(it.drills || [])].forEach((d: any, i: number) => {
-      items.push({ id: `posture_${it.id}_${i}`, text: String(d.name), dose: DOSE_PLACEHOLDER, source: src });
+      items.push({ id: `posture_${it.id}_${i}`, text: String(d.name), dose: d.dose ? String(d.dose) : '', source: src });
     });
   });
-  return items.length ? { key: 'posture_shoulder', title: '肩部加做（可选）', optional: true, items } : null;
+  return items.length ? { key: 'posture_shoulder', title: '肩部矫正加做（可选）', optional: true, frequency, items } : null;
 }
