@@ -21,6 +21,7 @@
       <view class="tip" wx:for="{{card.mistakes}}" wx:key="*this"><text class="bad">✕</text><text>{{item}}</text></view>
       <view class="dose" wx:if="{{card.dose}}">正式组：{{card.dose}}</view>
       <view class="dose-note" wx:if="{{card.doseNote}}">{{card.doseNote}}</view>
+      <view class="detail-link" catchtap="onOpenDetail">查看动作图解 ›</view>
     </block>
     <view class="warn">禁忌：{{contraindications}}</view>
   </view>

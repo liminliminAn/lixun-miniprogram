@@ -3,7 +3,7 @@
     <view>
       <view class="title">{{dayLabel}}日热身</view>
       <view class="sub">{{pickNote}}；可逐项勾选，也可整段跳过</view>
-      <view class="sub">剂量为{{doseNote}}</view>
+      <view class="sub">{{doseNote}}</view>
     </view>
     <view class="timer {{running ? 'on' : ''}}" bindtap="onToggleTimer">{{timeText}} {{running ? '暂停' : '计时'}}</view>
   </view>

@@ -1,0 +1,13 @@
+<view class="container" wx:if="{{card}}">
+  <image class="img" src="{{img}}" mode="aspectFit" binderror="onImgError" />
+  <view class="card">
+    <view class="sec">步骤</view>
+    <view class="tip" wx:for="{{card.steps}}" wx:key="*this"><text class="bullet">{{index + 1}}</text><text>{{item}}</text></view>
+    <view class="sec">要点提示</view>
+    <view class="tip" wx:for="{{card.cues}}" wx:key="*this"><text class="bullet">●</text><text>{{item}}</text></view>
+    <view class="sec">常见错误</view>
+    <view class="tip" wx:for="{{card.mistakes}}" wx:key="*this"><text class="bad">✕</text><text>{{item}}</text></view>
+    <view class="dose" wx:if="{{card.dose}}">正式组：{{card.dose}}</view>
+    <view class="dose-note" wx:if="{{card.doseNote}}">{{card.doseNote}}</view>
+  </view>
+</view>

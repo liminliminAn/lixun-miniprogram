@@ -1,10 +1,10 @@
-/* 本地内容配置（由产品 JSON it2-v3 转为 CommonJS，兼容基础库 2.32 require） */
+/* 本地内容配置（由产品 posture.json 转为 CommonJS，兼容基础库 2.32 require） */
 module.exports = {
   "_meta": {
     "version": "it2-v3",
     "sourceNote": "仅肩部条目来自谭成义视频的自动章节与配文（未观看视频）；其余为通用占位，不标注作者",
     "disclaimer": "非医疗建议。出现麻木、放射痛、夜间痛、外伤后疼痛，或持续 2 周不缓解，请就医。",
-    "doseNote": "通用康复建议，因人而异"
+    "doseNote": "剂量为通用建议，因人而异"
   },
   "issues": [
     {

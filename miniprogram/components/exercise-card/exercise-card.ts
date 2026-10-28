@@ -19,6 +19,10 @@ Component({
     },
   },
   methods: {
+    onOpenDetail() {
+      const c = (this as any).data.card;
+      if (c) wx.navigateTo({ url: c.detailUrl });
+    },
     toggle() {
       this.setData({ expanded: !this.data.expanded });
     },

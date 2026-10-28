@@ -18,6 +18,7 @@ declare const wx: {
   redirectTo(opts: { url: string }): void;
   reLaunch(opts: { url: string }): void;
   navigateBack(opts?: { delta?: number }): void;
+  setNavigationBarTitle(opts: { title: string }): void;
   getStorageInfoSync(): { keys: string[]; [k: string]: any };
   getFileSystemManager(): {
     saveFile(opts: { tempFilePath: string; success?: (r: { savedFilePath: string }) => void; fail?: (e: any) => void }): void;

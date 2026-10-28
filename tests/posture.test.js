@@ -24,7 +24,7 @@ v.issues.forEach((it) => {
   [...it.pre, ...it.drills].forEach((d) => assert.ok(d.dose && /\d/.test(d.dose) && !/待定|待核实/.test(d.dose))); // dose 存在
 });
 assert.ok(!JSON.stringify(v).match(/参考量待定|待核实/));
-assert.strictEqual(v.doseNote, '通用康复建议，因人而异');
+assert.strictEqual(v.doseNote, '剂量为通用建议，因人而异');
 assert.strictEqual(v.pickNote, '热身动作按需挑选，不必全做');
 v.issues.filter((i) => i.placeholder).forEach((i) => assert.strictEqual(i.showSelfCheck, false)); // selfCheck=null 隐藏
 const tan = v.issues.find((i) => i.id === 'shoulder_impingement');
@@ -46,7 +46,7 @@ assert.deepStrictEqual(tan.drills.map((d) => d.dose), ['2–3 组 × 10–15 次
 assert.strictEqual(tan.pre[0].dose, '30–60 秒');
 assert.ok(tan.pre[0].cue.startsWith('泡沫轴或按摩球')); // it2-v3：pre 带 cue
 assert.strictEqual(cfg._meta.version, 'it2-v3');
-assert.strictEqual(v.doseNote, '通用康复建议，因人而异');
+assert.strictEqual(v.doseNote, '剂量为通用建议，因人而异');
 { const w = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/posture/posture.wxml'), 'utf8');
   assert.ok(/it\.pre[\s\S]*?d\.cue[\s\S]*?it\.drills/.test(w), 'pre cue rendered'); }
 assert.deepStrictEqual(placementDays('warmup.push,warmup.pull'), ['push', 'pull']);
@@ -105,9 +105,9 @@ walk(root).filter((f) => /\.(wxml|ts|json|wxss|js)$/.test(f)).forEach((f) => {
 });
 walk(root).filter((f) => f.endsWith('.wxss') && !f.endsWith('app.wxss')).forEach((f) =>
   assert.ok(!/#fff(fff)?\b|\bwhite\b/i.test(fs.readFileSync(f, 'utf8')), `hardcoded white in ${path.relative(root, f)}`));
-// BUG-A：剂量旁标注「剂量为通用康复建议」，来源链接不与剂量同行
+// BUG-A：剂量旁标注「剂量为通用建议，因人而异」，来源链接不与剂量同行
 { const { DOSE_LABEL } = require('./lib/warmup');
-  assert.strictEqual(DOSE_LABEL, '剂量为通用康复建议');
+  assert.strictEqual(DOSE_LABEL, '剂量为通用建议，因人而异');
   ['pages/posture/posture.wxml', 'pages/warmup/warmup.wxml'].forEach((f) => {
     const t = fs.readFileSync(path.join(root, f), 'utf8');
     assert.ok(t.includes('{{doseLabel}}'), f);

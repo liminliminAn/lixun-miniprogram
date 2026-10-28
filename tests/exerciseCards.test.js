@@ -1,7 +1,8 @@
 /** node tests/exerciseCards.test.js — 图文卡配置合法性 */
 const assert = require('assert');
 const fs = require('fs');
-const { buildExerciseCard, PLACEHOLDER_IMAGE } = require('./lib/exerciseCards');
+const { buildExerciseCard, PLACEHOLDER_IMAGE, subpkgImage, DETAIL_PAGE } = require('./lib/exerciseCards');
+const product = require('path').join(__dirname, '../../lixun-pm/exercises.json'); const productJson = fs.existsSync(product) ? require(product) : null; // 产品源文件不在仓库内，缺失时跳过逐条比对
 const cfg = require('../miniprogram/config/exercise-cards.js');
 
 const src = fs.readFileSync(__dirname + '/../miniprogram/constants/exercises.ts', 'utf8');
@@ -12,14 +13,18 @@ ids.forEach((id) => {
   const e = cfg.exercises[id];
   assert.ok(e, `missing card ${id}`);
   ['steps', 'cues', 'mistakes'].forEach((k) => {
-    assert.ok(Array.isArray(e[k]) && e[k].length > 0, `${id}.${k}`);
+    assert.ok(Array.isArray(e[k]) && e[k].length === 3, `${id}.${k}`);
     e[k].forEach((t) => assert.ok(typeof t === 'string' && t.trim()));
   });
-  if (e.image) assert.ok(fs.existsSync(__dirname + '/../miniprogram' + e.image), `${id} image`);
+  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.png`); // 分包配图路径（图未入库时详情页回退占位图）
   const v = buildExerciseCard(cfg, id);
-  assert.strictEqual(v.image, PLACEHOLDER_IMAGE);
-  assert.ok(/^\d(–\d)? 组 × \d+–\d+ 次 · /.test(v.dose), `${id} dose ${v.dose}`); // 剂量存在
-  assert.strictEqual(v.doseNote, '通用建议，因人而异');
+  assert.strictEqual(v.image, PLACEHOLDER_IMAGE); // 主包卡片只用主包占位图
+  assert.strictEqual(v.detailImage, e.image);
+  assert.strictEqual(v.detailUrl, `${DETAIL_PAGE}?id=${id}`);
+  assert.strictEqual(v.dose, e.dose.text);
+  assert.ok(/^\d(–\d)? 组 × \d+–\d+ 次，/.test(v.dose), `${id} dose ${v.dose}`); // 剂量存在
+  assert.ok(e.dose.text.includes(`${e.dose.repMin}–${e.dose.repMax} 次`)); // rep 区间与 dose 文案一致
+  assert.strictEqual(v.doseNote, '剂量为通用建议，因人而异');
 });
 Object.keys(cfg.exercises).forEach((k) => assert.ok(ids.includes(k), `unknown id ${k}`));
 const s = JSON.stringify(cfg);
@@ -27,11 +32,29 @@ const s = JSON.stringify(cfg);
 assert.strictEqual(buildExerciseCard(cfg, 'nope'), null);
 assert.strictEqual(buildExerciseCard({ exercises: { a: { steps: ['x', ''], image: '/i.png' } } }, 'a').steps.length, 1);
 assert.ok(!/待核实|参考量待定/.test(s));
+// 与产品 exercises.json 逐条一致（按顺序映射 id）
+if (productJson) assert.strictEqual(productJson.exercises.length, 15);
+(productJson ? productJson.exercises : []).forEach((p) => {
+  const id = Object.keys(cfg.exercises).find((k) => cfg.exercises[k].contentId === p.id);
+  assert.ok(id, p.id);
+  const e = cfg.exercises[id];
+  assert.deepStrictEqual([e.name, e.steps, e.cues, e.mistakes, e.dose.text], [p.name, p.steps, p.cues, p.mistakes, p.dose]);
+});
+assert.strictEqual(subpkgImage('subpkg/exercises/a.png'), '/subpkg/exercises/a.png');
+assert.strictEqual(subpkgImage('/assets/x.png'), '');
+assert.strictEqual(buildExerciseCard({ exercises: { a: { steps: [] } } }, 'a').detailImage, PLACEHOLDER_IMAGE);
+// 不放假图：分包目录下只有详情页代码；存在的配图必须是配置里引用的
+const sub = require('path').join(__dirname, '../miniprogram/subpkg/exercises');
+fs.readdirSync(sub).filter((f) => /\.(png|jpe?g|webp)$/.test(f)).forEach((f) =>
+  assert.ok(Object.values(cfg.exercises).some((e) => e.image === `/subpkg/exercises/${f}`), `stray image ${f}`));
+const app = JSON.parse(fs.readFileSync(__dirname + '/../miniprogram/app.json', 'utf8'));
+assert.deepStrictEqual(app.subPackages, [{ root: 'subpkg/exercises', name: 'exercises', pages: ['detail/detail'] }]);
+assert.ok(fs.existsSync(sub + '/detail/detail.wxml') && /binderror="onImgError"/.test(fs.readFileSync(sub + '/detail/detail.wxml', 'utf8')));
 const G = { A: ['barbell_bench', 'db_incline_press', 'dip', 'single_machine_row', 'flared_row', 'bulgarian_split_squat', 'goblet_squat', 'rdl', 'single_rdl'],
   B: ['single_cable_pulldown', 'neutral_lat_pulldown', 'back_extension'], C: ['skull_crusher', 'y_lateral_raise', 'cable_curl'] };
-G.A.forEach((id) => assert.strictEqual(buildExerciseCard(cfg, id).dose, '3–4 组 × 6–10 次 · 留 2 次余量（RPE≈8） · 组间休息 2–3 分钟'));
-G.B.forEach((id) => assert.strictEqual(buildExerciseCard(cfg, id).dose, '3 组 × 8–12 次 · RPE≈8 · 休息 90 秒'));
-G.C.forEach((id) => assert.strictEqual(buildExerciseCard(cfg, id).dose, '3 组 × 10–15 次 · 可以接近力竭 · 休息 60–90 秒'));
+G.A.forEach((id) => assert.strictEqual(buildExerciseCard(cfg, id).dose, '3–4 组 × 6–10 次，留 2 次余量（RPE≈8），组间 2–3 分钟'));
+G.B.forEach((id) => assert.strictEqual(buildExerciseCard(cfg, id).dose, '3 组 × 8–12 次，RPE≈8，组间 90 秒'));
+G.C.forEach((id) => assert.strictEqual(buildExerciseCard(cfg, id).dose, '3 组 × 10–15 次，可接近力竭，组间 60–90 秒'));
 assert.strictEqual([...G.A, ...G.B, ...G.C].length, Object.keys(cfg.exercises).length);
 const wx = fs.readFileSync(__dirname + '/../miniprogram/components/exercise-card/exercise-card.wxml', 'utf8');
 assert.ok(wx.includes('card.doseNote') && !wx.includes('参考量待定'));

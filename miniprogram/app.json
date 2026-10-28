@@ -62,5 +62,14 @@
   "lazyCodeLoading": "requiredComponents",
   "darkmode": true,
   "themeLocation": "theme.json",
-  "__usePrivacyCheck__": true
+  "__usePrivacyCheck__": true,
+  "subPackages": [
+    {
+      "root": "subpkg/exercises",
+      "name": "exercises",
+      "pages": [
+        "detail/detail"
+      ]
+    }
+  ]
 }
