@@ -1,0 +1,59 @@
+/** node tests/figure.test.js — 热身/体态图解：主包不渲染图片，只给「查看图解 ›」入口，分包图解页显示真图（binderror 隐藏、24rpx 圆角）；只依赖文件名 */
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const root = path.join(__dirname, '../miniprogram');
+const read = (f) => fs.readFileSync(path.join(root, f), 'utf8');
+const W = require('./lib/warmup');
+const { buildPostureView } = require('./lib/posture');
+const wcfg = require(path.join(root, 'config/warmup.js'));
+const pcfg = require(path.join(root, 'config/posture.js'));
+const exists = (p) => fs.existsSync(path.join(root, p));
+
+assert.strictEqual(W.subpkgFigure('/subpkg/exercises/a.webp'), '/subpkg/exercises/a.webp');
+['/assets/a.png', null, '', 'subpkg/a.webp', 3].forEach((x) => assert.strictEqual(W.subpkgFigure(x), ''));
+assert.strictEqual(W.figureUrl(W.WARMUP_FIGURE_PAGE, '/subpkg/exercises/a.webp', '标 题', 'c&d'),
+  '/subpkg/exercises/warmup-figure/warmup-figure?img=%2Fsubpkg%2Fexercises%2Fa.webp&title=%E6%A0%87%20%E9%A2%98&cue=c%26d');
+assert.strictEqual(W.mainPkgImage, undefined, 'mainPkgImage removed');
+
+// 热身：每个有 /subpkg/ 图的条目都有 figure，且文件存在；无图则无入口
+let wn = 0;
+['push', 'pull', 'legs'].forEach((d) => W.buildWarmupSections(wcfg, d).forEach((sec) => sec.items.forEach((i) => {
+  if (i.figure) { wn++; assert.ok(exists(i.figure), `missing ${i.figure}`); }
+})));
+assert.ok(wn > 0, 'warmup figures');
+// 体态：drills/pre 与 selfcheck_ 自查图
+const pv = buildPostureView(pcfg);
+let pn = 0, sn = 0;
+pv.issues.forEach((it) => {
+  [...it.pre, ...it.drills].forEach((d) => { if (d.figure) { pn++; assert.ok(exists(d.figure), d.figure); } });
+  if (it.selfCheckFigure) { sn++; assert.ok(/\/selfcheck_[a-z_]+\.webp$/.test(it.selfCheckFigure) && exists(it.selfCheckFigure)); }
+});
+assert.ok(pn > 0 && sn > 0, `posture figures ${pn}/${sn}`);
+// 配置里的每个 image 都在分包且文件存在
+const imgs = [];
+const walk = (v) => { if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === 'object') Object.keys(v).forEach((k) => (k === 'image' && typeof v[k] === 'string' ? imgs.push(v[k]) : walk(v[k]))); };
+walk(wcfg); walk(pcfg);
+imgs.forEach((p) => assert.ok(p.indexOf('/subpkg/exercises/') === 0 && exists(p), p));
+
+// 主包页面：无 <image>，入口条件为 figure，文案「查看图解 ›」
+[['pages/warmup/warmup', 'item.figure'], ['pages/posture/posture', 'd.figure']].forEach(([pg, cond]) => {
+  const wx = read(pg + '.wxml');
+  assert.ok(!/<image/.test(wx) && !/\/subpkg\//.test(wx), pg);
+  assert.ok(wx.includes(`wx:if="{{${cond}}}"`) && wx.includes('查看图解 ›') && wx.includes('onOpenFigure'), pg);
+  assert.ok(/onOpenFigure[\s\S]*navigateTo[\s\S]*figureUrl/.test(read(pg + '.ts')), pg);
+});
+assert.ok(read('pages/posture/posture.wxml').includes('it.selfCheckFigure'));
+
+// 分包图解页：真图 + binderror 隐藏 + 24rpx
+const app = JSON.parse(read('app.json'));
+['warmup-figure/warmup-figure', 'posture-figure/posture-figure'].forEach((pg) => {
+  assert.ok(app.subPackages[0].pages.includes(pg), pg);
+  const b = 'subpkg/exercises/' + pg;
+  ['.ts', '.wxml', '.wxss', '.json'].forEach((e) => assert.ok(exists(b + e), b + e));
+  assert.ok(/<image[^>]*wx:if="\{\{showImg\}\}"[^>]*binderror="onImgError"/.test(read(b + '.wxml')));
+  assert.ok(/onImgError\(\)\s*\{\s*\(this as any\)\.setData\(\{ showImg: false \}\)/.test(read(b + '.ts')));
+  assert.ok(/subpkgFigure/.test(read(b + '.ts')));
+  assert.ok(/\.img\s*\{[^}]*border-radius:\s*24rpx/.test(read(b + '.wxss')));
+});
+console.log(`figure tests passed (warmup ${wn}, posture ${pn}, selfcheck ${sn})`);

@@ -1,0 +1,3 @@
+.img { width: 100%; height: 480rpx; border-radius: 24rpx; background: var(--color-surface); margin-bottom: var(--space-3); }
+.sec { font-size: var(--font-section); font-weight: 600; color: var(--color-ink); margin-bottom: var(--space-1); }
+.tip { font-size: var(--font-meta); color: var(--color-ink); line-height: 1.6; }

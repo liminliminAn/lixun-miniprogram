@@ -24,7 +24,7 @@ exports.SHORT_DISCLAIMER = '非医疗建议。';
 const DEFAULT_PRECHECK = '先排除外伤、急性疼痛与神经症状，再做矫正练习';
 const DEFAULT_MEDICAL = '出现麻木、放射痛、夜间痛、外伤后疼痛，或持续 2 周不缓解，请就医。';
 function drill(d) {
-    return { name: String(d.name || ''), cue: d.cue ? String(d.cue) : '', dose: d.dose ? String(d.dose) : '' };
+    return { name: String(d.name || ''), cue: d.cue ? String(d.cue) : '', dose: d.dose ? String(d.dose) : '', figure: (0, warmup_1.subpkgFigure)(d.image) };
 }
 /** 从完整 disclaimer 拆出短免责声明与就医触发条件 */
 function splitDisclaimer(raw) {
@@ -76,6 +76,7 @@ function buildPostureView(json) {
             precheck: it.precheck || DEFAULT_PRECHECK,
             showSelfCheck: it.selfCheck !== null && it.selfCheck !== undefined,
             selfCheck: formatSelfCheck(it.selfCheck),
+            selfCheckFigure: it.selfCheck && typeof it.selfCheck === 'object' ? (0, warmup_1.subpkgFigure)(it.selfCheck.image) : '',
             pre: (it.pre || []).map(drill),
             drills: (it.drills || []).map(drill),
             frequency: it.placeholder ? '' : String(it.frequency || ''),

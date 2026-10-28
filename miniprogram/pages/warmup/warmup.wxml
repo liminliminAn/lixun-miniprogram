@@ -18,7 +18,7 @@
           <text>{{item.text}}</text>
           <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>动作{{item.source.title}} {{item.source.url}}（点按复制）</text>
         </view>
-        <image class="wu-img" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFit" />
+        <text class="link fig" wx:if="{{item.figure}}" data-img="{{item.figure}}" data-title="{{item.text}}" catchtap="onOpenFigure">查看图解 ›</text>
         <view class="sub-tip" wx:for="{{item.steps}}" wx:for-item="st" wx:for-index="si" wx:key="*this">{{si + 1}}. {{st}}</view>
         <view class="sub-tip" wx:for="{{item.cues}}" wx:for-item="cu" wx:key="*this">● {{cu}}</view>
         <text class="link" wx:if="{{item.video}}" data-copy="{{item.video.copyText}}" catchtap="onCopyVideo">▶ 视频参考 {{item.video.time}}（点按复制，在抖音打开）</text>

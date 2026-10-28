@@ -68,12 +68,26 @@
       "root": "subpkg/exercises",
       "name": "exercises",
       "pages": [
-        "detail/detail"
+        "detail/detail",
+        "warmup-figure/warmup-figure",
+        "posture-figure/posture-figure"
       ]
     }
   ],
   "preloadRule": {
     "pages/session/session": {
+      "network": "all",
+      "packages": [
+        "subpkg/exercises"
+      ]
+    },
+    "pages/warmup/warmup": {
+      "network": "all",
+      "packages": [
+        "subpkg/exercises"
+      ]
+    },
+    "pages/posture/posture": {
       "network": "all",
       "packages": [
         "subpkg/exercises"

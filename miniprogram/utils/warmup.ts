@@ -76,8 +76,8 @@ export interface WarmupViewItem {
   source?: { title: string; url: string };
   steps?: string[];
   cues?: string[];
-  /** 仅主包内图片；null/分包路径 → ''（隐藏图片区） */
-  image?: string;
+  /** 分包图解路径（/subpkg/exercises/*.webp）；为空时不显示「查看图解 ›」入口 */
+  figure?: string;
   video?: WarmupVideo | null;
 }
 export interface WarmupVideo { url: string; time: string; note: string; copyText: string }
@@ -90,9 +90,17 @@ export function videoLine(v: any): WarmupVideo | null {
   return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
 }
 
-/** 主包页面只显示主包图片；分包路径/空值一律隐藏 */
-export function mainPkgImage(img: unknown): string {
-  return typeof img === 'string' && img.charAt(0) === '/' && img.indexOf('/subpkg/') !== 0 ? img : '';
+/** 分包图解：仅接受 /subpkg/ 下的路径，主包页面只用它拼跳转参数，不直接渲染 */
+export function subpkgFigure(img: unknown): string {
+  return typeof img === 'string' && img.indexOf('/subpkg/') === 0 ? img : '';
+}
+export const WARMUP_FIGURE_PAGE = '/subpkg/exercises/warmup-figure/warmup-figure';
+export const POSTURE_FIGURE_PAGE = '/subpkg/exercises/posture-figure/posture-figure';
+/** 跳转分包图解页的 url（img/title/cue 均 encode） */
+export function figureUrl(page: string, img: string, title: string, cue?: string): string {
+  const q = [`img=${encodeURIComponent(img)}`, `title=${encodeURIComponent(title || '')}`];
+  if (cue) q.push(`cue=${encodeURIComponent(cue)}`);
+  return `${page}?${q.join('&')}`;
 }
 
 const strList = (a: any): string[] => (Array.isArray(a) ? a.filter((x) => typeof x === 'string' && x.trim()) : []);
@@ -124,7 +132,7 @@ function mapItems(prefix: string, list: any[]): WarmupViewItem[] {
     source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
     steps: strList(it.steps),
     cues: strList(it.cues),
-    image: mainPkgImage(it.image),
+    figure: subpkgFigure(it.image),
     video: videoLine(it.video),
   }));
 }

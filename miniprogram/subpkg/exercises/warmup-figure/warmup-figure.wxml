@@ -1,0 +1,7 @@
+<view class="container">
+  <image class="img" wx:if="{{showImg}}" src="{{img}}" mode="aspectFit" binderror="onImgError" />
+  <view class="card" wx:if="{{title || cue}}">
+    <view class="sec" wx:if="{{title}}">{{title}}</view>
+    <view class="tip" wx:if="{{cue}}">{{cue}}</view>
+  </view>
+</view>

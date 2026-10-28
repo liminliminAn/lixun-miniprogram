@@ -2,7 +2,7 @@ import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { EXERCISE_MAP } from '../../constants/exercises';
 import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
-import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, videoLine, VIDEO_TOAST, WarmupViewItem } from '../../utils/warmup';
+import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, videoLine, VIDEO_TOAST, WarmupViewItem, figureUrl, WARMUP_FIGURE_PAGE } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
 import { shoulderWarmupAddon, COPY_TOAST } from '../../utils/posture';
 
@@ -101,6 +101,11 @@ Page({
       data: e.currentTarget.dataset.copy,
       success: () => wx.showToast({ title: VIDEO_TOAST, icon: 'none' }),
     });
+  },
+  /** 分包图解页（主包不渲染分包图片） */
+  onOpenFigure(e: any) {
+    const d = e.currentTarget.dataset;
+    if (d.img) wx.navigateTo({ url: figureUrl(WARMUP_FIGURE_PAGE, d.img, d.title, d.cue) });
   },
   onCopyLink(e: any) {
     wx.setClipboardData({

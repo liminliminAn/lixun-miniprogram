@@ -14,18 +14,19 @@
     <view class="link" wx:if="{{it.sourceUrl}}" data-url="{{it.sourceUrl}}" bindtap="onCopyLink" user-select>动作{{it.sourceText}} {{it.sourceUrl}}（点按复制）</view>
     <view class="pre">先排查：{{it.precheck}}</view>
     <view class="sub" wx:if="{{it.showSelfCheck}}">自查：{{it.selfCheck}}</view>
+    <view class="link fig" wx:if="{{it.showSelfCheck && it.selfCheckFigure}}" data-img="{{it.selfCheckFigure}}" data-title="自查 · {{it.title}}" data-cue="{{it.selfCheck}}" bindtap="onOpenFigure">查看图解 ›</view>
 
     <block wx:if="{{it.pre.length}}">
       <view class="label">训练前</view>
       <view class="item" wx:for="{{it.pre}}" wx:for-item="d" wx:key="name">
-        <view class="txt"><text>{{d.name}}</text><text class="cue" wx:if="{{d.cue}}">{{d.cue}}</text></view>
+        <view class="txt"><text>{{d.name}}</text><text class="cue" wx:if="{{d.cue}}">{{d.cue}}</text><text class="link fig" wx:if="{{d.figure}}" data-img="{{d.figure}}" data-title="{{d.name}}" data-cue="{{d.cue}}" bindtap="onOpenFigure">查看图解 ›</text></view>
         <view class="dose-row" wx:if="{{d.dose}}"><text class="dose">{{d.dose}}</text><text class="dose-label">{{doseLabel}}</text></view>
       </view>
     </block>
     <block wx:if="{{it.drills.length}}">
       <view class="label">练习</view>
       <view class="item" wx:for="{{it.drills}}" wx:for-item="d" wx:key="name">
-        <view class="txt"><text>{{d.name}}</text><text class="cue" wx:if="{{d.cue}}">{{d.cue}}</text></view>
+        <view class="txt"><text>{{d.name}}</text><text class="cue" wx:if="{{d.cue}}">{{d.cue}}</text><text class="link fig" wx:if="{{d.figure}}" data-img="{{d.figure}}" data-title="{{d.name}}" data-cue="{{d.cue}}" bindtap="onOpenFigure">查看图解 ›</text></view>
         <view class="dose-row" wx:if="{{d.dose}}"><text class="dose">{{d.dose}}</text><text class="dose-label">{{doseLabel}}</text></view>
       </view>
       <view class="sub" wx:if="{{it.frequency}}">频率：{{it.frequency}}</view>

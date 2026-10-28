@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VIDEO_TOAST = exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
+exports.POSTURE_FIGURE_PAGE = exports.WARMUP_FIGURE_PAGE = exports.VIDEO_TOAST = exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
 exports.completedTrainDates = completedTrainDates;
 exports.contentNotes = contentNotes;
 exports.videoLine = videoLine;
-exports.mainPkgImage = mainPkgImage;
+exports.subpkgFigure = subpkgFigure;
+exports.figureUrl = figureUrl;
 exports.rampConfigFromJson = rampConfigFromJson;
 exports.buildWarmupSections = buildWarmupSections;
 /**
@@ -69,9 +70,18 @@ function videoLine(v) {
     const time = v.time ? String(v.time) : '';
     return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
 }
-/** 主包页面只显示主包图片；分包路径/空值一律隐藏 */
-function mainPkgImage(img) {
-    return typeof img === 'string' && img.charAt(0) === '/' && img.indexOf('/subpkg/') !== 0 ? img : '';
+/** 分包图解：仅接受 /subpkg/ 下的路径，主包页面只用它拼跳转参数，不直接渲染 */
+function subpkgFigure(img) {
+    return typeof img === 'string' && img.indexOf('/subpkg/') === 0 ? img : '';
+}
+exports.WARMUP_FIGURE_PAGE = '/subpkg/exercises/warmup-figure/warmup-figure';
+exports.POSTURE_FIGURE_PAGE = '/subpkg/exercises/posture-figure/posture-figure';
+/** 跳转分包图解页的 url（img/title/cue 均 encode） */
+function figureUrl(page, img, title, cue) {
+    const q = [`img=${encodeURIComponent(img)}`, `title=${encodeURIComponent(title || '')}`];
+    if (cue)
+        q.push(`cue=${encodeURIComponent(cue)}`);
+    return `${page}?${q.join('&')}`;
 }
 const strList = (a) => (Array.isArray(a) ? a.filter((x) => typeof x === 'string' && x.trim()) : []);
 /** JSON rampSets → RampConfig；未提供时用 DEFAULT_RAMP */
@@ -92,7 +102,7 @@ function mapItems(prefix, list) {
         source: it.source ? { title: `参考来源 · ${it.source.title}`, url: it.source.url } : undefined,
         steps: strList(it.steps),
         cues: strList(it.cues),
-        image: mainPkgImage(it.image),
+        figure: subpkgFigure(it.image),
         video: videoLine(it.video),
     }));
 }

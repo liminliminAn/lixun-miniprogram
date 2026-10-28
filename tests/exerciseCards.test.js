@@ -74,7 +74,7 @@ fs.readdirSync(sub).filter((f) => /\.(png|jpe?g|webp)$/.test(f) && !/^(warmup|po
 const app = JSON.parse(fs.readFileSync(__dirname + '/../miniprogram/app.json', 'utf8'));
 assert.ok(!['warmup_pull_07.webp', 'warmup_pull_11.webp'].some((f) => fs.existsSync(sub + '/' + f)), 'duplicate warmup art should be removed');
 assert.ok(/border-radius:\s*24rpx/.test(fs.readFileSync(sub + '/detail/detail.wxss', 'utf8')));
-assert.deepStrictEqual(app.subPackages, [{ root: 'subpkg/exercises', name: 'exercises', pages: ['detail/detail'] }]);
+assert.deepStrictEqual(app.subPackages, [{ root: 'subpkg/exercises', name: 'exercises', pages: ['detail/detail', 'warmup-figure/warmup-figure', 'posture-figure/posture-figure'] }]);
 assert.ok(fs.existsSync(sub + '/detail/detail.wxml') && /binderror="onImgError"/.test(fs.readFileSync(sub + '/detail/detail.wxml', 'utf8')));
 const G = { A: ['barbell_bench', 'db_incline_press', 'dip', 'single_machine_row', 'flared_row', 'bulgarian_split_squat', 'goblet_squat', 'rdl', 'single_rdl'],
   B: ['single_cable_pulldown', 'neutral_lat_pulldown', 'back_extension'], C: ['skull_crusher', 'y_lateral_raise', 'cable_curl'] };

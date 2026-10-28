@@ -7,7 +7,7 @@
  * - 来源链接仅作可复制的纯文本
  * - 就医提示从 disclaimer 拆出，页面默认展开
  */
-import { DOSE_NOTE, PICK_NOTE } from './warmup';
+import { DOSE_NOTE, PICK_NOTE, subpkgFigure } from './warmup';
 
 export const TAN_AUTHOR = '谭成义'; // 仅供单测断言「不得出现」；展示层永不输出
 export const SOURCE_LABEL = '参考来源';
@@ -19,9 +19,12 @@ export interface PostureDrillView {
   name: string;
   cue: string;
   dose: string;
+  /** 分包图解路径；为空时不显示入口 */
+  figure: string;
 }
 
 export interface PostureIssueView {
+  selfCheckFigure: string;
   id: string;
   title: string;
   precheck: string;
@@ -52,7 +55,7 @@ const DEFAULT_MEDICAL =
   '出现麻木、放射痛、夜间痛、外伤后疼痛，或持续 2 周不缓解，请就医。';
 
 function drill(d: any): PostureDrillView {
-  return { name: String(d.name || ''), cue: d.cue ? String(d.cue) : '', dose: d.dose ? String(d.dose) : '' };
+  return { name: String(d.name || ''), cue: d.cue ? String(d.cue) : '', dose: d.dose ? String(d.dose) : '', figure: subpkgFigure(d.image) };
 }
 
 /** 从完整 disclaimer 拆出短免责声明与就医触发条件 */
@@ -105,6 +108,7 @@ export function buildPostureView(json: any): PostureView {
         precheck: it.precheck || DEFAULT_PRECHECK,
         showSelfCheck: it.selfCheck !== null && it.selfCheck !== undefined,
         selfCheck: formatSelfCheck(it.selfCheck),
+        selfCheckFigure: it.selfCheck && typeof it.selfCheck === 'object' ? subpkgFigure(it.selfCheck.image) : '',
         pre: (it.pre || []).map(drill),
         drills: (it.drills || []).map(drill),
         frequency: it.placeholder ? '' : String(it.frequency || ''),

@@ -49,28 +49,29 @@ assert.strictEqual(cfg._meta.version, 'it2-v5');
 assert.ok(!JSON.stringify(cfg).includes('待核实'));
 // it2-v4：steps/cues 各 3、image=null 隐藏图片区、video 复制「url time」
 {
-  const { videoLine, mainPkgImage, VIDEO_TOAST } = require('./lib/warmup');
+  const { videoLine, VIDEO_TOAST } = require('./lib/warmup');
   const push = buildWarmupSections(cfg, 'push');
   const act = push.find((x) => x.key === 'activate').items;
   const vids = act.filter((i) => i.video).map((i) => i.text);
   assert.deepStrictEqual(vids.sort(), ['下斜方肌激活', '前锯肌激活', '手腕激活'].sort());
   act.filter((i) => i.video).forEach((i) => assert.strictEqual(i.video.copyText, `${i.video.url} ${i.video.time}`));
   ['push', 'pull', 'legs'].forEach((d) => buildWarmupSections(cfg, d).filter((x) => x.key !== 'general').forEach((sec) => sec.items.forEach((i) => {
-    assert.strictEqual(i.steps.length, 3, i.text); assert.strictEqual(i.cues.length, 3, i.text); assert.strictEqual(i.image, '');
+    assert.strictEqual(i.steps.length, 3, i.text); assert.strictEqual(i.cues.length, 3, i.text); assert.ok(!('image' in i), 'main pkg must not render images');
   })));
   assert.strictEqual(videoLine(cfg.days.pull.video).copyText, 'https://www.douyin.com/video/7638569547629063665 7:38');
   assert.strictEqual(videoLine(cfg.days.legs.video).time, '13:30');
   assert.strictEqual(videoLine(null), null);
   assert.strictEqual(videoLine({ url: 'javascript:x' }), null);
-  assert.strictEqual(mainPkgImage('/subpkg/x.png'), '');
   assert.strictEqual(VIDEO_TOAST, '已复制，可在抖音打开');
   const fs3 = require('fs'), p3 = require('path');
   const wx = fs3.readFileSync(p3.join(__dirname, '../miniprogram/pages/warmup/warmup.wxml'), 'utf8');
   const ts = fs3.readFileSync(p3.join(__dirname, '../miniprogram/pages/warmup/warmup.ts'), 'utf8');
-  assert.ok(wx.includes('onCopyVideo') && wx.includes('dayVideo') && wx.includes('wx:if="{{item.image}}"') && !/<video/.test(wx));
+  assert.ok(wx.includes('onCopyVideo') && wx.includes('dayVideo') && !/<image/.test(wx) && wx.includes('wx:if="{{item.figure}}"') && !/<video/.test(wx));
   assert.ok(ts.includes('VIDEO_TOAST') && ts.includes('dataset.copy'));
   const app = JSON.parse(fs3.readFileSync(p3.join(__dirname, '../miniprogram/app.json'), 'utf8'));
-  assert.deepStrictEqual(app.preloadRule, { 'pages/session/session': { network: 'all', packages: ['subpkg/exercises'] } });
+  const PR = { network: 'all', packages: ['subpkg/exercises'] };
+  assert.deepStrictEqual(app.preloadRule, { 'pages/session/session': PR, 'pages/warmup/warmup': PR, 'pages/posture/posture': PR });
+  Object.keys(app.preloadRule).forEach((pg) => assert.ok(app.pages.includes(pg), pg));
   // 会话页只从定稿配置读要点
   const ss = fs3.readFileSync(p3.join(__dirname, '../miniprogram/pages/session/session.ts'), 'utf8');
   assert.ok(ss.includes("require('../../config/exercise-cards.js')") && !/def\?\.(tips|contraindications)/.test(ss));
