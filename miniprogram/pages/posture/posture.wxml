@@ -18,7 +18,8 @@
     <block wx:if="{{it.pre.length}}">
       <view class="label">训练前</view>
       <view class="item" wx:for="{{it.pre}}" wx:for-item="d" wx:key="name">
-        <text>{{d.name}}</text><text class="dose" wx:if="{{d.dose}}">{{d.dose}}</text>
+        <view class="txt"><text>{{d.name}}</text><text class="cue" wx:if="{{d.cue}}">{{d.cue}}</text></view>
+        <text class="dose" wx:if="{{d.dose}}">{{d.dose}}</text>
       </view>
     </block>
     <block wx:if="{{it.drills.length}}">
