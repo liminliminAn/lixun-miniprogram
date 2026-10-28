@@ -1,7 +1,7 @@
 /* 本地内容配置（由产品 warmup.json 转为 CommonJS，兼容基础库 2.32 require） */
 module.exports = {
   "_meta": {
-    "version": "it2-v4",
+    "version": "it2-v5",
     "sourceNote": "动作来自抖音章节与配文；作者未给剂量，剂量按常规康复逻辑设定（用户已同意）",
     "disclaimer": "非医疗建议。如有麻木、放射痛、夜间痛或持续 2 周不缓解，请就医。",
     "doseNote": "剂量为通用建议，因人而异",
@@ -59,7 +59,7 @@ module.exports = {
             "避开锁骨和腋下的神经血管区",
             "出现麻木时立即停止"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_01.webp"
         },
         {
           "name": "泡沫轴放松胸大肌",
@@ -74,7 +74,7 @@ module.exports = {
             "不要压到肩关节",
             "呼气时放松胸部"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_02.webp"
         },
         {
           "name": "泡沫轴放松二头肌",
@@ -89,7 +89,7 @@ module.exports = {
             "速度慢",
             "手臂放松"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_03.webp"
         }
       ],
       "activate": [
@@ -106,7 +106,7 @@ module.exports = {
             "配合深呼吸",
             "转到最大幅度停 1–2 秒"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_04.webp"
         },
         {
           "name": "前锯肌激活",
@@ -121,7 +121,7 @@ module.exports = {
             "不要塌腰或耸肩",
             "感受腋下肋骨侧发力"
           ],
-          "image": null,
+          "image": "/subpkg/exercises/warmup_push_05.webp",
           "video": {
             "url": "https://www.douyin.com/video/7638569547629063665",
             "time": "5:17"
@@ -140,7 +140,7 @@ module.exports = {
             "重量用徒手或极轻",
             "感受肩胛下角附近发力"
           ],
-          "image": null,
+          "image": "/subpkg/exercises/warmup_push_06.webp",
           "video": {
             "url": "https://www.douyin.com/video/7638569547629063665",
             "time": "4:30"
@@ -159,7 +159,7 @@ module.exports = {
             "不要压到疼痛",
             "卧推、推肩前必做"
           ],
-          "image": null,
+          "image": "/subpkg/exercises/warmup_push_07.webp",
           "video": {
             "url": "https://www.douyin.com/video/7638569547629063665",
             "time": "6:42"
@@ -182,7 +182,7 @@ module.exports = {
             "慢速控制，不甩",
             "弹力带阻力轻"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_08.webp"
         }
       ]
     },
@@ -206,7 +206,7 @@ module.exports = {
             "双臂交叉抱胸可加大压力",
             "力度可以忍受"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_01.webp"
         },
         {
           "name": "放松菱形肌",
@@ -221,7 +221,7 @@ module.exports = {
             "呼气时放松",
             "不要压到疼痛"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_02.webp"
         },
         {
           "name": "放松大圆肌",
@@ -236,7 +236,7 @@ module.exports = {
             "速度慢",
             "避开腋窝正中"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_03.webp"
         },
         {
           "name": "放松冈下肌",
@@ -251,7 +251,7 @@ module.exports = {
             "不压肩峰",
             "出现麻木时停止"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_04.webp"
         },
         {
           "name": "放松三头肌",
@@ -266,7 +266,7 @@ module.exports = {
             "手臂放松",
             "速度慢"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_05.webp"
         }
       ],
       "activate": [
@@ -283,7 +283,7 @@ module.exports = {
             "不耸肩",
             "控制回程"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_06.webp"
         },
         {
           "name": "前锯肌激活",
@@ -298,7 +298,7 @@ module.exports = {
             "不要塌腰或耸肩",
             "感受腋下肋骨侧发力"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_05.webp"
         },
         {
           "name": "肩胛下肌训练",
@@ -313,7 +313,7 @@ module.exports = {
             "动作缓慢",
             "阻力轻"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_08.webp"
         },
         {
           "name": "蜘蛛式",
@@ -328,7 +328,7 @@ module.exports = {
             "核心收紧",
             "左右交替"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_09.webp"
         },
         {
           "name": "手肘搭平板凳",
@@ -343,7 +343,7 @@ module.exports = {
             "可以手持木棒",
             "不要塌腰"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_pull_10.webp"
         },
         {
           "name": "肩袖激活（上肢训练前必做）",
@@ -362,7 +362,7 @@ module.exports = {
             "慢速控制，不甩",
             "弹力带阻力轻"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_push_08.webp"
         }
       ],
       "video": {
@@ -391,7 +391,7 @@ module.exports = {
             "速度慢",
             "停在紧张点"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_01.webp"
         },
         {
           "name": "放松腘绳肌",
@@ -406,7 +406,7 @@ module.exports = {
             "可单腿进行",
             "速度慢"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_02.webp"
         },
         {
           "name": "放松臀部",
@@ -421,7 +421,7 @@ module.exports = {
             "出现腿麻立即停止",
             "呼气时放松"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_03.webp"
         },
         {
           "name": "放松大腿内外侧",
@@ -436,7 +436,7 @@ module.exports = {
             "不压膝关节",
             "速度慢"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_04.webp"
         }
       ],
       "activate": [
@@ -453,7 +453,7 @@ module.exports = {
             "膝部疼痛时缩小幅度",
             "深呼吸放松"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_05.webp"
         },
         {
           "name": "单腿站立（踝）",
@@ -468,7 +468,7 @@ module.exports = {
             "骨盆水平",
             "可扶墙开始"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_06.webp"
         },
         {
           "name": "飞机转圈",
@@ -483,7 +483,7 @@ module.exports = {
             "动作慢",
             "可扶物"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_legs_07.webp"
         }
       ],
       "video": {
@@ -512,7 +512,7 @@ module.exports = {
             "肩胛下沉",
             "不要耸肩"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_shoulder_01.webp"
         },
         {
           "name": "头枕地对抗地面",
@@ -527,7 +527,7 @@ module.exports = {
             "颈部疼痛时停止",
             "不憋气"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_shoulder_02.webp"
         },
         {
           "name": "泡沫轴支撑",
@@ -542,7 +542,7 @@ module.exports = {
             "不塌腰",
             "幅度从小开始"
           ],
-          "image": null
+          "image": "/subpkg/exercises/warmup_shoulder_03.webp"
         }
       ]
     }

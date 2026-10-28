@@ -35,8 +35,23 @@ console.log('doseNote tests passed');
     else if (v && typeof v === 'object') Object.keys(v).forEach((kk) => collect(v[kk], kk));
   };
   ['config/warmup.js', 'config/posture.js', 'config/exercise-cards.js'].forEach((f) => collect(require(path.join(root, f))));
+  // P3：热身 rampSets.note / video.note 会上屏，也要扫
+  const wu = require(path.join(root, 'config/warmup.js'));
+  const notes = [];
+  const findNotes = (v, parent) => { if (Array.isArray(v)) v.forEach((x) => findNotes(x, parent)); else if (v && typeof v === 'object') Object.keys(v).forEach((k) => {
+    if (k === 'note' && typeof v[k] === 'string' && /^(rampSets|video)$/.test(parent || '')) notes.push([parent + '.note', v[k]]);
+    findNotes(v[k], k); }); };
+  findNotes(wu);
+  notes.forEach(([k, s]) => strings.push([k, s]));
   strings.forEach(([k, s]) => assert.ok(!/占位|内容待补|待核实|参考量待定/.test(s), `placeholder text in ${k}: ${s}`));
   walk(root).filter((f) => /constants\/.*\.ts$|\.wxml$/.test(f)).forEach((f) =>
     assert.ok(!/占位|内容待补/.test(fs.readFileSync(f, 'utf8')), `placeholder text in ${path.relative(root, f)}`));
+  // P3：utils 里的字符串字面量（去掉注释后）也不得含占位文案
+  walk(path.join(root, 'utils')).filter((f) => /\.ts$/.test(f)).forEach((f) => {
+    const code = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+    (code.match(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g) || []).forEach((lit) =>
+      assert.ok(!/占位|内容待补|待核实|参考量待定/.test(lit), `placeholder string in ${path.relative(root, f)}: ${lit}`));
+  });
+  assert.ok(/占位/.test("'占位'") && !/占位/.test('x'.replace(/x/, '')));
 }
 console.log('placeholder scan passed');

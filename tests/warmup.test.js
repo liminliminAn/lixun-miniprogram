@@ -45,7 +45,7 @@ assert.ok(/\d/.test(buildWarmupSections(cfg, 'pull')[2].items[0].dose));
 assert.deepStrictEqual(buildWarmupSections(cfg, 'push')[0].items[0], { id: 'general_0', text: '低强度有氧 2–3 分钟', dose: '2–3 分钟' });
 assert.strictEqual(buildWarmupSections(cfg, 'push')[1].items[0].dose, '每部位 30–60 秒');
 assert.deepStrictEqual(contentNotes(cfg), { doseNote: '剂量为通用建议，因人而异', pickNote: '热身动作按需挑选，不必全做' });
-assert.strictEqual(cfg._meta.version, 'it2-v4');
+assert.strictEqual(cfg._meta.version, 'it2-v5');
 assert.ok(!JSON.stringify(cfg).includes('待核实'));
 // it2-v4：steps/cues 各 3、image=null 隐藏图片区、video 复制「url time」
 {

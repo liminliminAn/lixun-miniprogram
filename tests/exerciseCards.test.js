@@ -16,7 +16,7 @@ ids.forEach((id) => {
     assert.ok(Array.isArray(e[k]) && e[k].length === 3, `${id}.${k}`);
     e[k].forEach((t) => assert.ok(typeof t === 'string' && t.trim()));
   });
-  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.png`); // 分包配图路径
+  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.webp`); // 分包写实配图路径
   const v = buildExerciseCard(cfg, id);
   assert.strictEqual(v.hasImage, true); // 15 张图均已入库
   assert.strictEqual(v.detailImage, e.image);
@@ -48,8 +48,10 @@ assert.strictEqual(subpkgImage('/assets/x.png'), '');
 { const n = buildExerciseCard({ exercises: { a: { steps: [], contentId: 'a', image: 'subpkg/exercises/a.png' } } }, 'a');
   assert.deepStrictEqual([n.hasImage, n.detailImage], [false, '']); } // 不在 images 列表 → 无图，整块隐藏
 assert.strictEqual(buildExerciseCard({ _meta: { images: ['a'] }, exercises: { a: { contentId: 'a', image: 'subpkg/exercises/a.png' } } }, 'a').hasImage, true);
-// D2：_meta.images 必须与 subpkg/exercises 下的 png 完全一致
-{ const files = fs.readdirSync(require('path').join(__dirname, '../miniprogram/subpkg/exercises')).filter((f) => f.endsWith('.png')).map((f) => f.slice(0, -4)).sort();
+// _meta.images 必须与 subpkg/exercises 下的动作 webp（非 warmup_/posture_/selfcheck_）完全一致；旧线稿 png 已删除
+{ const all = fs.readdirSync(require('path').join(__dirname, '../miniprogram/subpkg/exercises'));
+  assert.ok(!all.some((f) => f.endsWith('.png')), 'old line-art png left');
+  const files = all.filter((f) => f.endsWith('.webp') && !/^(warmup|posture|selfcheck)_/.test(f)).map((f) => f.slice(0, -5)).sort();
   assert.deepStrictEqual(cfg._meta.images.slice().sort(), files);
   assert.strictEqual(files.length, 15); }
 if (productJson) productJson.exercises.forEach((p) => {
@@ -67,9 +69,11 @@ if (productJson) productJson.exercises.forEach((p) => {
 });
 // 不放假图：分包目录下只有详情页代码；存在的配图必须是配置里引用的
 const sub = require('path').join(__dirname, '../miniprogram/subpkg/exercises');
-fs.readdirSync(sub).filter((f) => /\.(png|jpe?g|webp)$/.test(f)).forEach((f) =>
+fs.readdirSync(sub).filter((f) => /\.(png|jpe?g|webp)$/.test(f) && !/^(warmup|posture|selfcheck)_/.test(f)).forEach((f) =>
   assert.ok(Object.values(cfg.exercises).some((e) => e.image === `/subpkg/exercises/${f}`), `stray image ${f}`));
 const app = JSON.parse(fs.readFileSync(__dirname + '/../miniprogram/app.json', 'utf8'));
+assert.ok(!['warmup_pull_07.webp', 'warmup_pull_11.webp'].some((f) => fs.existsSync(sub + '/' + f)), 'duplicate warmup art should be removed');
+assert.ok(/border-radius:\s*24rpx/.test(fs.readFileSync(sub + '/detail/detail.wxss', 'utf8')));
 assert.deepStrictEqual(app.subPackages, [{ root: 'subpkg/exercises', name: 'exercises', pages: ['detail/detail'] }]);
 assert.ok(fs.existsSync(sub + '/detail/detail.wxml') && /binderror="onImgError"/.test(fs.readFileSync(sub + '/detail/detail.wxml', 'utf8')));
 const G = { A: ['barbell_bench', 'db_incline_press', 'dip', 'single_machine_row', 'flared_row', 'bulgarian_split_squat', 'goblet_squat', 'rdl', 'single_rdl'],

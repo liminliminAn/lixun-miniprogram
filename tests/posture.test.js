@@ -45,7 +45,7 @@ assert.strictEqual(tan.frequency, '放在上肢训练日热身中，每周 3–5
 assert.deepStrictEqual(tan.drills.map((d) => d.dose), ['2–3 组 × 10–15 次，不疲劳为度', '2–3 组 × 10–15 次，不疲劳为度']);
 assert.strictEqual(tan.pre[0].dose, '30–60 秒');
 assert.ok(tan.pre[0].cue.startsWith('泡沫轴或按摩球')); // it2-v3：pre 带 cue
-assert.strictEqual(cfg._meta.version, 'it2-v5');
+assert.strictEqual(cfg._meta.version, 'it2-v6');
 assert.strictEqual(v.doseNote, '剂量为通用建议，因人而异');
 { const w = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/posture/posture.wxml'), 'utf8');
   assert.ok(/it\.pre[\s\S]*?d\.cue[\s\S]*?it\.drills/.test(w), 'pre cue rendered'); }
