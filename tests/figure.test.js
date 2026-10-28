@@ -84,9 +84,20 @@ console.log('webp attr tests passed');
   ['detail/detail', 'warmup-figure/warmup-figure', 'posture-figure/posture-figure'].forEach((pg) => {
     const b = 'subpkg/exercises/' + pg, wx = read(b + '.wxml'), ts = read(b + '.ts');
     assert.ok(/wx:if="\{\{empty\}\}"[\s\S]*没有可显示的图解内容[\s\S]*bindtap="onBack"[^>]*>返回/.test(wx), pg);
-    assert.ok(/onBack\(\)\s*\{\s*wx\.navigateBack/.test(ts) && /empty: (true|!img && !title && !cue)/.test(ts), pg);
+    assert.ok(/onBack\(\)\s*\{\s*if \(getCurrentPages\(\)\.length > 1\) wx\.navigateBack\(\);\s*else wx\.switchTab\(\{ url: '\/pages\/today\/today' \}\);/.test(ts) && /empty: (true|!img && !title && !cue)/.test(ts), pg);
   });
   ['warmup-figure', 'posture-figure'].forEach((n) => assert.ok(/showImg: !!img/.test(read(`subpkg/exercises/${n}/${n}.ts`)) && /subpkgFigure\(/.test(read(`subpkg/exercises/${n}/${n}.ts`))));
   assert.ok(!/navigateBack\(\);\s*return/.test(read('subpkg/exercises/detail/detail.ts')));
   console.log('figure guard tests passed');
 }
+// P3-1：onBack 行为（模拟页面栈）
+['detail/detail', 'warmup-figure/warmup-figure', 'posture-figure/posture-figure'].forEach((pg) => {
+  const body = read('subpkg/exercises/' + pg + '.ts').match(/onBack\(\)\s*\{([\s\S]*?)\n  \},/)[1];
+  [[2, 'navigateBack'], [1, 'switchTab:/pages/today/today']].forEach(([n, want]) => {
+    const calls = [];
+    const wx = { navigateBack: () => calls.push('navigateBack'), switchTab: (o) => calls.push('switchTab:' + o.url) };
+    new Function('wx', 'getCurrentPages', body)(wx, () => new Array(n));
+    assert.deepStrictEqual(calls, [want], `${pg} stack=${n}`);
+  });
+});
+console.log('figure back tests passed');

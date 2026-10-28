@@ -19,8 +19,10 @@ Page({
     (this as any).setData({ card, showImg: card.hasImage });
     wx.setNavigationBarTitle({ title: card.name || '动作图解' });
   },
+  /** 有上一页才返回，否则回「今日」Tab */
   onBack() {
-    wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/today/today' }) });
+    if (getCurrentPages().length > 1) wx.navigateBack();
+    else wx.switchTab({ url: '/pages/today/today' });
   },
   /** 图片加载失败 → 整块隐藏（不用占位图） */
   onImgError() {

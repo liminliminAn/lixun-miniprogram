@@ -12,8 +12,10 @@ Page({
     (this as any).setData({ img, title, cue, showImg: !!img, empty: !img && !title && !cue });
     if (title) wx.setNavigationBarTitle({ title });
   },
+  /** 有上一页才返回，否则回「今日」Tab */
   onBack() {
-    wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/today/today' }) });
+    if (getCurrentPages().length > 1) wx.navigateBack();
+    else wx.switchTab({ url: '/pages/today/today' });
   },
   onImgError() {
     (this as any).setData({ showImg: false });
