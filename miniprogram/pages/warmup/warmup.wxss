@@ -17,3 +17,6 @@
 .link { font-size: var(--font-caption); color: var(--color-ink-secondary); margin-top: 4rpx; word-break: break-all; }
 .link.block { margin: 16rpx 8rpx 0; }
 .opt { font-size: var(--font-caption); color: var(--color-accent); margin-left: 12rpx; font-weight: 400; }
+.move { display: flex; flex-direction: column; }
+.dose-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1); }
+.dose-label { font-size: var(--font-caption); color: var(--color-ink-secondary); }

@@ -74,10 +74,10 @@ Page({
       this.setData({ error: v.error });
       return;
     }
-    this.finish(buildUser({ nickname: v.value, avatarPath: this.data.avatarPath }));
+    this.finish(buildUser({ nickname: v.value, avatarPath: this.data.avatarPath, agreed: true }));
   },
   /** 暂不登录，先试用：默认昵称，仍记录 user（guest），不阻塞主路径 */
   onGuest() {
-    this.finish(buildUser({ guest: true }));
+    this.finish(buildUser({ guest: true, agreed: this.data.agreed }));
   },
 });

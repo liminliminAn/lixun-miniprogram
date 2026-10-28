@@ -14,6 +14,20 @@ assert.strictEqual(L.validateNickname('💪'.repeat(20)).ok, true); // 按字符
 const now = new Date('2026-10-28T00:00:00Z');
 let u = L.buildUser({ nickname: ' 小明 ', avatarPath: 'wxfile://usr/a.png', now });
 assert.deepStrictEqual(u, { nickname: '小明', avatarPath: 'wxfile://usr/a.png', agreedAt: '2026-10-28T00:00:00.000Z', version: 1, guest: false, openid: null });
+// BUG-C：guest 未勾选 → agreedAt=null；勾选了才记录
+assert.strictEqual(L.buildUser({ guest: true, now }).agreedAt, null);
+assert.strictEqual(L.buildUser({ guest: true, agreed: false, now }).agreedAt, null);
+assert.strictEqual(L.buildUser({ guest: true, agreed: true, now }).agreedAt, '2026-10-28T00:00:00.000Z');
+assert.strictEqual(L.decideRoute(L.buildUser({ guest: true, now }), true), 'ok'); // guest 无 agreedAt 仍可用
+assert.strictEqual(L.decideRoute({ nickname: 'a', agreedAt: null, guest: false }, true), 'login');
+// BUG-D：onLaunch 首帧前路由
+assert.strictEqual(L.launchRedirect(null, false), '/pages/login/login');
+assert.strictEqual(L.launchRedirect(null, true), '/pages/login/login');
+assert.strictEqual(L.launchRedirect(u, false), '/pages/onboarding/onboarding');
+assert.strictEqual(L.launchRedirect(u, true), null);
+{ const appTs = fs.readFileSync(path.join(__dirname, '../miniprogram/app.ts'), 'utf8');
+  assert.ok(/launchRedirect/.test(appTs) && /reLaunch/.test(appTs));
+  assert.ok(/wx:if="\{\{ready\}\}"/.test(fs.readFileSync(path.join(__dirname, '../miniprogram/pages/today/today.wxml'), 'utf8'))); }
 u = L.buildUser({ now });
 assert.strictEqual(u.avatarPath, L.DEFAULT_AVATAR);
 const g = L.buildUser({ guest: true, nickname: 'x', now });

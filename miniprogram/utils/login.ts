@@ -19,13 +19,14 @@ export function validateNickname(raw: unknown): NicknameResult {
   return { ok: true, value };
 }
 
-export function buildUser(input: { nickname?: string; avatarPath?: string; guest?: boolean; now?: Date }): LocalUser {
+/** guest 未勾选协议时 agreedAt=null（BUG-C）；agreed 缺省：非 guest 视为已勾选（登录按钮已校验勾选） */
+export function buildUser(input: { nickname?: string; avatarPath?: string; guest?: boolean; agreed?: boolean; now?: Date }): LocalUser {
   const guest = !!input.guest;
   const v = validateNickname(input.nickname);
   return {
     nickname: guest || !v.ok ? DEFAULT_NICKNAME : v.value,
     avatarPath: input.avatarPath || DEFAULT_AVATAR,
-    agreedAt: (input.now || new Date()).toISOString(),
+    agreedAt: (input.agreed !== undefined ? input.agreed : !guest) ? (input.now || new Date()).toISOString() : null,
     version: USER_VERSION,
     guest,
     openid: null,
@@ -33,7 +34,8 @@ export function buildUser(input: { nickname?: string; avatarPath?: string; guest
 }
 
 export function isValidUser(u: unknown): u is LocalUser {
-  return !!u && typeof u === 'object' && typeof (u as LocalUser).nickname === 'string' && !!(u as LocalUser).agreedAt;
+  return !!u && typeof u === 'object' && typeof (u as LocalUser).nickname === 'string' &&
+    (!!(u as LocalUser).agreedAt || (u as LocalUser).guest === true);
 }
 
 export type EntryRoute = 'login' | 'onboarding' | 'ok';
@@ -42,6 +44,14 @@ export type EntryRoute = 'login' | 'onboarding' | 'ok';
 export function decideRoute(user: unknown, onboardingDone: boolean): EntryRoute {
   if (!isValidUser(user)) return 'login';
   return onboardingDone ? 'ok' : 'onboarding';
+}
+
+/** BUG-D：app.onLaunch 首帧前判定，需跳转时返回 reLaunch 目标，否则 null（今日直接渲染） */
+export function launchRedirect(user: unknown, onboardingDone: boolean): string | null {
+  const r = decideRoute(user, onboardingDone);
+  if (r === 'login') return '/pages/login/login';
+  if (r === 'onboarding') return '/pages/onboarding/onboarding';
+  return null;
 }
 
 /** 登录完成后的去向 */

@@ -111,7 +111,7 @@ interface DietLogStore {
 interface LocalUser {
   nickname: string;
   avatarPath: string;
-  agreedAt: string;
+  agreedAt: string | null;
   version: number;
   guest: boolean;
   openid: string | null;

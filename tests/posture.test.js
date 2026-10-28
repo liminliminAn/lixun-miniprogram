@@ -105,4 +105,12 @@ walk(root).filter((f) => /\.(wxml|ts|json|wxss|js)$/.test(f)).forEach((f) => {
 });
 walk(root).filter((f) => f.endsWith('.wxss') && !f.endsWith('app.wxss')).forEach((f) =>
   assert.ok(!/#fff(fff)?\b|\bwhite\b/i.test(fs.readFileSync(f, 'utf8')), `hardcoded white in ${path.relative(root, f)}`));
+// BUG-A：剂量旁标注「剂量为通用康复建议」，来源链接不与剂量同行
+{ const { DOSE_LABEL } = require('./lib/warmup');
+  assert.strictEqual(DOSE_LABEL, '剂量为通用康复建议');
+  ['pages/posture/posture.wxml', 'pages/warmup/warmup.wxml'].forEach((f) => {
+    const t = fs.readFileSync(path.join(root, f), 'utf8');
+    assert.ok(t.includes('{{doseLabel}}'), f);
+    (t.match(/<view class="dose-row"[^\n]*/g) || []).forEach((row) => assert.ok(!/link|source|参考来源/.test(row), `${f}: ${row}`));
+  }); }
 console.log('posture tests passed');

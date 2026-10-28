@@ -58,6 +58,8 @@ export function completedTrainDates(sessions: SessionsStore): string[] {
 }
 
 export const DOSE_NOTE = '通用康复建议，因人而异';
+/** BUG-A：剂量旁标注，来源链接只挂动作本身 */
+export const DOSE_LABEL = '剂量为通用康复建议';
 export const PICK_NOTE = '热身动作按需挑选，不必全做';
 
 /** 配置 _meta 的剂量说明 / 挑选说明（缺省回退常量） */

@@ -8,6 +8,8 @@ import { formatDate } from '../../utils/date';
 
 Page({
   data: {
+    /** BUG-D：路由校验通过前不渲染 */
+    ready: false,
     date: '',
     dayType: 'rest' as DayType,
     dayLabel: '休',
@@ -20,6 +22,7 @@ Page({
   },
   onShow() {
     if (!guardEntry()) return;
+    if (!this.data.ready) this.setData({ ready: true });
     this.refresh();
   },
   refresh() {

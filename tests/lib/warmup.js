@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PICK_NOTE = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
+exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
@@ -50,6 +50,8 @@ function completedTrainDates(sessions) {
         .sort();
 }
 exports.DOSE_NOTE = '通用康复建议，因人而异';
+/** BUG-A：剂量旁标注，来源链接只挂动作本身 */
+exports.DOSE_LABEL = '剂量为通用康复建议';
 exports.PICK_NOTE = '热身动作按需挑选，不必全做';
 /** 配置 _meta 的剂量说明 / 挑选说明（缺省回退常量） */
 function contentNotes(cfg) {

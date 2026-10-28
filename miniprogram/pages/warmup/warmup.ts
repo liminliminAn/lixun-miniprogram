@@ -2,7 +2,7 @@ import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { EXERCISE_MAP } from '../../constants/exercises';
 import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
-import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, WarmupViewItem } from '../../utils/warmup';
+import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, WarmupViewItem } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
 import { shoulderWarmupAddon, COPY_TOAST } from '../../utils/posture';
 
@@ -19,6 +19,7 @@ Page({
     daySource: null as { title: string; url: string } | null,
     doseNote: contentNotes(CONFIG).doseNote,
     pickNote: contentNotes(CONFIG).pickNote,
+    doseLabel: DOSE_LABEL,
     rampName: '',
     elapsedSec: 0,
     timeText: '00:00',

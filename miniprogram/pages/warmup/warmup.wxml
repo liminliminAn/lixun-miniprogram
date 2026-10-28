@@ -14,9 +14,11 @@
     <view class="item" wx:for="{{sec.items}}" wx:key="id" data-sec="{{sec.key}}" data-idx="{{index}}" bindtap="onToggleItem">
       <text class="box {{item.checked ? 'on' : ''}}">{{item.checked ? '✓' : ''}}</text>
       <view class="txt">
-        <text>{{item.text}}</text>
-        <text class="dose" wx:if="{{item.dose}}">{{item.dose}}</text>
-        <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>{{item.source.title}} {{item.source.url}}（点按复制）</text>
+        <view class="move">
+          <text>{{item.text}}</text>
+          <text class="link" wx:if="{{item.source}}" data-url="{{item.source.url}}" catchtap="onCopyLink" user-select>动作{{item.source.title}} {{item.source.url}}（点按复制）</text>
+        </view>
+        <view class="dose-row" wx:if="{{item.dose}}"><text class="dose">{{item.dose}}</text><text class="dose-label">{{doseLabel}}</text></view>
       </view>
     </view>
   </view>
@@ -30,7 +32,7 @@
     </view>
   </view>
 
-  <view class="link block" wx:if="{{daySource}}" data-url="{{daySource.url}}" bindtap="onCopyLink" user-select>参考来源 · {{daySource.title}} {{daySource.url}}（点按复制）</view>
+  <view class="link block" wx:if="{{daySource}}" data-url="{{daySource.url}}" bindtap="onCopyLink" user-select>动作参考来源 · {{daySource.title}} {{daySource.url}}（点按复制）</view>
 
   <view class="actions">
     <view class="btn ghost" bindtap="onSkip">跳过热身</view>

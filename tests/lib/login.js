@@ -5,6 +5,7 @@ exports.validateNickname = validateNickname;
 exports.buildUser = buildUser;
 exports.isValidUser = isValidUser;
 exports.decideRoute = decideRoute;
+exports.launchRedirect = launchRedirect;
 exports.afterLoginUrl = afterLoginUrl;
 exports.keysToClear = keysToClear;
 exports.isSavedAvatar = isSavedAvatar;
@@ -27,26 +28,37 @@ function validateNickname(raw) {
         return { ok: false, error: `昵称最多 ${exports.NICKNAME_MAX} 个字` };
     return { ok: true, value };
 }
+/** guest 未勾选协议时 agreedAt=null（BUG-C）；agreed 缺省：非 guest 视为已勾选（登录按钮已校验勾选） */
 function buildUser(input) {
     const guest = !!input.guest;
     const v = validateNickname(input.nickname);
     return {
         nickname: guest || !v.ok ? exports.DEFAULT_NICKNAME : v.value,
         avatarPath: input.avatarPath || exports.DEFAULT_AVATAR,
-        agreedAt: (input.now || new Date()).toISOString(),
+        agreedAt: (input.agreed !== undefined ? input.agreed : !guest) ? (input.now || new Date()).toISOString() : null,
         version: exports.USER_VERSION,
         guest,
         openid: null,
     };
 }
 function isValidUser(u) {
-    return !!u && typeof u === 'object' && typeof u.nickname === 'string' && !!u.agreedAt;
+    return !!u && typeof u === 'object' && typeof u.nickname === 'string' &&
+        (!!u.agreedAt || u.guest === true);
 }
 /** 启动/进 Tab 时的路由判定：无 user → 登录；无画像 → 问卷；否则留在当前 Tab */
 function decideRoute(user, onboardingDone) {
     if (!isValidUser(user))
         return 'login';
     return onboardingDone ? 'ok' : 'onboarding';
+}
+/** BUG-D：app.onLaunch 首帧前判定，需跳转时返回 reLaunch 目标，否则 null（今日直接渲染） */
+function launchRedirect(user, onboardingDone) {
+    const r = decideRoute(user, onboardingDone);
+    if (r === 'login')
+        return '/pages/login/login';
+    if (r === 'onboarding')
+        return '/pages/onboarding/onboarding';
+    return null;
 }
 /** 登录完成后的去向 */
 function afterLoginUrl(onboardingDone) {
