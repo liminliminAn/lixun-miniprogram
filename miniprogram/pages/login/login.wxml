@@ -1,5 +1,4 @@
 <view class="container login">
-  <view class="brand">力训</view>
   <view class="sub">推拉腿 · 本地训练记录</view>
 
   <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
