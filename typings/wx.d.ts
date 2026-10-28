@@ -18,6 +18,13 @@ declare const wx: {
   redirectTo(opts: { url: string }): void;
   reLaunch(opts: { url: string }): void;
   navigateBack(opts?: { delta?: number }): void;
+  getStorageInfoSync(): { keys: string[]; [k: string]: any };
+  getFileSystemManager(): {
+    saveFile(opts: { tempFilePath: string; success?: (r: { savedFilePath: string }) => void; fail?: (e: any) => void }): void;
+    removeSavedFile(opts: { filePath: string; success?: () => void; fail?: (e: any) => void }): void;
+  };
+  openPrivacyContract?: (opts?: { success?: () => void; fail?: (e: any) => void }) => void;
+  onNeedPrivacyAuthorization?: (cb: (resolve: (r: { event: 'agree' | 'disagree'; buttonId?: string }) => void, ev: { referrer: string }) => void) => void;
 };
 
 declare function App<T>(options: T): void;

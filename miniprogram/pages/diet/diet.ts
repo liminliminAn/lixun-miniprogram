@@ -1,5 +1,6 @@
+import { guardEntry } from '../../services/user';
 import { CROWDS } from '../../constants/crowds';
-import { getProfile, isOnboardingDone } from '../../services/profile';
+import { getProfile } from '../../services/profile';
 import { listBodyWeights } from '../../services/body';
 import { todayDayType } from '../../services/workout';
 import { getDietLog, setProteinHit } from '../../services/diet';
@@ -16,10 +17,7 @@ Page({
     disclaimer: DIET_DISCLAIMER,
   },
   onShow() {
-    if (!isOnboardingDone()) {
-      wx.redirectTo({ url: '/pages/onboarding/onboarding' });
-      return;
-    }
+    if (!guardEntry()) return;
     this.refresh();
   },
   /** 每次进入页面重算：体重变化后同步更新 */

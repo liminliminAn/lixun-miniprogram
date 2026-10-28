@@ -3,6 +3,8 @@
 interface IAppOption {
   globalData: {
     version: string;
+    privacyResolve?: (r: { event: 'agree' | 'disagree'; buttonId?: string }) => void;
+    onPrivacyNeeded?: () => void;
   };
 }
 
@@ -103,4 +105,14 @@ interface DietLogEntry {
 
 interface DietLogStore {
   [date: string]: DietLogEntry;
+}
+
+/** IT2-07 本地登录 lixun:v1:user（openid 预留给云同步） */
+interface LocalUser {
+  nickname: string;
+  avatarPath: string;
+  agreedAt: string;
+  version: number;
+  guest: boolean;
+  openid: string | null;
 }

@@ -1,6 +1,8 @@
+import { guardEntry } from '../../services/user';
 import { CROWDS } from '../../constants/crowds';
-import { getProfile, getPrefs, setPrefs, isOnboardingDone } from '../../services/profile';
-import { KEYS, remove } from '../../services/storage';
+import { getProfile, getPrefs, setPrefs } from '../../services/profile';
+import { getUser, saveUser, persistAvatar, clearAllLocalData } from '../../services/user';
+import { validateNickname, DEFAULT_AVATAR, LOCAL_ONLY_COPY } from '../../utils/login';
 
 Page({
   data: {
@@ -8,15 +10,19 @@ Page({
     crowdName: '',
     restSoftWarnDays: 3,
     showWarmup: true,
+    user: null as LocalUser | null,
+    nickDraft: '',
+    localOnly: LOCAL_ONLY_COPY,
+    defaultAvatar: DEFAULT_AVATAR,
   },
   onShow() {
-    if (!isOnboardingDone()) {
-      wx.redirectTo({ url: '/pages/onboarding/onboarding' });
-      return;
-    }
+    if (!guardEntry()) return;
     const profile = getProfile();
     const prefs = getPrefs();
+    const user = getUser();
     this.setData({
+      user,
+      nickDraft: user ? user.nickname : '',
       profile,
       crowdName: profile ? CROWDS[profile.crowd].name : '',
       restSoftWarnDays: prefs.restSoftWarnDays,
@@ -31,14 +37,49 @@ Page({
   onPosture() {
     wx.navigateTo({ url: '/pages/posture/posture' });
   },
+  async onChooseAvatar(e: any) {
+    const u = getUser();
+    const tmp = e && e.detail && e.detail.avatarUrl;
+    if (!u || !tmp) return;
+    const saved = await persistAvatar(tmp, u.avatarPath);
+    if (!saved) return;
+    const next = { ...u, avatarPath: saved };
+    saveUser(next);
+    this.setData({ user: next });
+  },
+  onNickInput(e: any) {
+    this.setData({ nickDraft: e.detail.value });
+  },
+  onNickSave(e: any) {
+    const u = getUser();
+    if (!u) return;
+    const v = validateNickname(e && e.detail && e.detail.value !== undefined ? e.detail.value : this.data.nickDraft);
+    if (!v.ok) {
+      wx.showToast({ title: v.error, icon: 'none' });
+      this.setData({ nickDraft: u.nickname });
+      return;
+    }
+    if (v.value === u.nickname) return;
+    const next = { ...u, nickname: v.value, guest: false };
+    saveUser(next);
+    this.setData({ user: next, nickDraft: v.value });
+    wx.showToast({ title: '已保存', icon: 'success' });
+  },
   onReset() {
     wx.showModal({
-      title: '确认清除？',
-      content: '将删除本地档案、课表、训练与体重记录。',
+      title: '退出并清除本地数据？',
+      content: '将删除头像昵称、档案、课表、训练、体重与饮食记录，且无法恢复。',
       success: (res) => {
         if (!res.confirm) return;
-        Object.values(KEYS).forEach((k) => remove(k));
-        wx.reLaunch({ url: '/pages/onboarding/onboarding' });
+        wx.showModal({
+          title: '再次确认',
+          content: '确定清除全部本地数据并退出吗？',
+          success: (r2) => {
+            if (!r2.confirm) return;
+            clearAllLocalData();
+            wx.reLaunch({ url: '/pages/login/login' });
+          },
+        });
       },
     });
   },

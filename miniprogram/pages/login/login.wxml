@@ -1,0 +1,39 @@
+<view class="container login">
+  <view class="brand">力训</view>
+  <view class="sub">推拉腿 · 本地训练记录</view>
+
+  <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+    <image class="avatar" src="{{avatarPath}}" mode="aspectFill" />
+  </button>
+  <view class="hint">点击选择头像（可不选）</view>
+
+  <view class="card field">
+    <text class="label">昵称</text>
+    <input class="nick" type="nickname" placeholder="1–{{maxLen}} 个字" value="{{nickname}}" bindinput="onNickInput" bindblur="onNickBlur" maxlength="{{maxLen * 2}}" />
+  </view>
+
+  <checkbox-group bindchange="onAgreeChange" class="agree">
+    <label class="agree-row">
+      <checkbox value="agree" checked="{{agreed}}" />
+      <text>我已阅读并同意</text>
+    </label>
+    <text class="link" catchtap="onOpenPrivacy">《隐私保护指引》</text>
+    <text class="link" catchtap="onOpenAgreement">《用户协议》</text>
+  </checkbox-group>
+
+  <view class="error" wx:if="{{error}}">{{error}}</view>
+
+  <button class="btn-primary" bindtap="onSubmit">微信登录</button>
+  <view class="guest" bindtap="onGuest">暂不登录，先试用</view>
+
+  <view class="privacy-mask" wx:if="{{privacyPending}}">
+    <view class="card privacy-sheet">
+      <view class="label">使用头像/昵称前，请阅读并同意</view>
+      <text class="link" bindtap="onOpenPrivacy">《隐私保护指引》</text>
+      <button class="btn-primary" id="privacy-agree" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onPrivacyAgree">同意</button>
+      <view class="guest" bindtap="onPrivacyDisagree">拒绝</view>
+    </view>
+  </view>
+
+  <view class="foot">{{localOnly}}</view>
+</view>

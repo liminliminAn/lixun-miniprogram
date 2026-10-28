@@ -8,7 +8,9 @@
     "pages/onboarding/onboarding",
     "pages/session/session",
     "pages/warmup/warmup",
-    "pages/posture/posture"
+    "pages/posture/posture",
+    "pages/login/login",
+    "pages/agreement/agreement"
   ],
   "window": {
     "navigationBarBackgroundColor": "@navBg",
@@ -59,5 +61,6 @@
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",
   "darkmode": true,
-  "themeLocation": "theme.json"
+  "themeLocation": "theme.json",
+  "__usePrivacyCheck__": true
 }

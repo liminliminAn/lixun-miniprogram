@@ -1,0 +1,19 @@
+.login { display: flex; flex-direction: column; align-items: center; padding-top: var(--space-6); }
+.brand { font-size: var(--font-display); font-weight: 700; color: var(--color-accent); }
+.sub { font-size: var(--font-meta); color: var(--color-ink-secondary); margin: var(--space-1) 0 var(--space-5); }
+.avatar-btn { padding: 0; margin: 0; width: 160rpx; height: 160rpx; border-radius: 50%; overflow: hidden; background: var(--color-accent-soft); border: 2rpx solid var(--color-border); }
+.avatar-btn::after { border: none; }
+.avatar { width: 160rpx; height: 160rpx; display: block; }
+.hint { font-size: var(--font-caption); color: var(--color-ink-secondary); margin: var(--space-2) 0 var(--space-4); }
+.field { width: 100%; box-sizing: border-box; display: flex; align-items: center; min-height: var(--hit-min); }
+.label { font-size: var(--font-body); color: var(--color-ink); margin-right: var(--space-3); }
+.nick { flex: 1; font-size: var(--font-body); color: var(--color-ink); }
+.agree { width: 100%; display: flex; flex-wrap: wrap; align-items: center; font-size: var(--font-meta); color: var(--color-ink-secondary); margin: var(--space-3) 0; }
+.agree-row { display: flex; align-items: center; min-height: var(--hit-min); }
+.link { color: var(--color-accent); }
+.error { width: 100%; color: var(--color-danger); font-size: var(--font-meta); margin-bottom: var(--space-2); }
+.btn-primary { width: 100%; height: var(--btn-height); line-height: var(--btn-height); border-radius: var(--radius-btn); background: var(--color-accent); color: var(--color-accent-ink); font-weight: 600; font-size: var(--font-body); }
+.guest { margin-top: var(--space-4); min-height: var(--hit-min); line-height: var(--hit-min); color: var(--color-ink-secondary); font-size: var(--font-meta); }
+.foot { margin-top: var(--space-5); color: var(--color-ink-secondary); font-size: var(--font-caption); text-align: center; }
+.privacy-mask { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: flex-end; z-index: 10; }
+.privacy-sheet { width: 100%; box-sizing: border-box; margin: 0; padding: var(--space-5) var(--page-pad); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }

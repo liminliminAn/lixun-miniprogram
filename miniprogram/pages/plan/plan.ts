@@ -1,6 +1,7 @@
+import { guardEntry } from '../../services/user';
 import { DAY_TYPE_LABEL, WEEKDAY_LABELS } from '../../constants/templates';
 import { exercisesByDay } from '../../constants/exercises';
-import { getPlan, isOnboardingDone } from '../../services/profile';
+import { getPlan } from '../../services/profile';
 
 Page({
   data: {
@@ -9,10 +10,7 @@ Page({
     dayBlocks: [] as any[],
   },
   onShow() {
-    if (!isOnboardingDone()) {
-      wx.redirectTo({ url: '/pages/onboarding/onboarding' });
-      return;
-    }
+    if (!guardEntry()) return;
     const plan = getPlan();
     if (!plan) return;
     const weekCells = plan.week.map((dayType, idx) => ({

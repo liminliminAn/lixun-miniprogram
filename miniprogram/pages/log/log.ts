@@ -1,5 +1,6 @@
+import { guardEntry } from '../../services/user';
 import { listBodyWeights, addBodyWeight } from '../../services/body';
-import { getPrefs, getProfile, isOnboardingDone } from '../../services/profile';
+import { getPrefs, getProfile } from '../../services/profile';
 import { buildWeightTrend, WeightTrendView } from '../../utils/weightTrend';
 import { getSessions, consecutiveTrainDays } from '../../services/workout';
 import { DAY_TYPE_LABEL } from '../../constants/templates';
@@ -17,10 +18,7 @@ Page({
     weeklyText: '',
   },
   onShow() {
-    if (!isOnboardingDone()) {
-      wx.redirectTo({ url: '/pages/onboarding/onboarding' });
-      return;
-    }
+    if (!guardEntry()) return;
     this.refresh();
   },
   refresh() {

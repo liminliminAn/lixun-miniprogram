@@ -1,7 +1,8 @@
+import { guardEntry } from '../../services/user';
 import { CROWDS } from '../../constants/crowds';
 import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { exercisesByDay } from '../../constants/exercises';
-import { getProfile, getPlan, getPrefs, isOnboardingDone } from '../../services/profile';
+import { getProfile, getPlan, getPrefs } from '../../services/profile';
 import { todayDayType, consecutiveTrainDays, getSession } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 
@@ -18,10 +19,7 @@ Page({
     restSoftWarnDays: 3,
   },
   onShow() {
-    if (!isOnboardingDone()) {
-      wx.redirectTo({ url: '/pages/onboarding/onboarding' });
-      return;
-    }
+    if (!guardEntry()) return;
     this.refresh();
   },
   refresh() {

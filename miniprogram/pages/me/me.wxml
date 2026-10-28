@@ -1,4 +1,13 @@
 <view class="container">
+  <view class="card user" wx:if="{{user}}">
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{user.avatarPath || defaultAvatar}}" mode="aspectFill" />
+    </button>
+    <view class="user-main">
+      <input class="nick" type="nickname" value="{{nickDraft}}" bindinput="onNickInput" bindblur="onNickSave" bindconfirm="onNickSave" placeholder="1–20 个字" />
+      <view class="meta">{{user.guest ? '试用中 · ' : ''}}点头像或昵称可修改</view>
+    </view>
+  </view>
   <view class="card" wx:if="{{profile}}">
     <view class="title">档案</view>
     <view class="row"><text>人群</text><text>{{crowdName}}</text></view>
@@ -20,8 +29,9 @@
   </view>
 
   <view class="card danger" bindtap="onReset">
-    <text>清除本地数据并重新问卷</text>
+    <text>退出并清除本地数据</text>
   </view>
 
+  <view class="foot">{{localOnly}}</view>
   <view class="foot">力训 v0.1 · 仅本地存储 · 基础库 ≥ 2.32.0</view>
 </view>

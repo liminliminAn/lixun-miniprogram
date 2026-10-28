@@ -26,3 +26,10 @@
   font-size: var(--font-caption);
   margin: 40rpx 0;
 }
+.user { display: flex; align-items: center; }
+.avatar-btn { padding: 0; margin: 0 var(--space-3) 0 0; width: 120rpx; height: 120rpx; border-radius: 50%; overflow: hidden; background: var(--color-accent-soft); }
+.avatar-btn::after { border: none; }
+.avatar { width: 120rpx; height: 120rpx; display: block; }
+.user-main { flex: 1; }
+.nick { font-size: var(--font-section); color: var(--color-ink); min-height: var(--hit-min); }
+.meta { font-size: var(--font-caption); color: var(--color-ink-secondary); }
