@@ -6,3 +6,7 @@
 .dose { font-size: var(--font-meta); color: var(--color-ink); margin-top: var(--space-3); }
 .dose-note { font-size: var(--font-caption); color: var(--color-ink-secondary); }
 .medical { margin-top: var(--space-3); }
+
+.empty { padding: 160rpx var(--space-3); text-align: center; }
+.empty-tip { font-size: var(--font-meta); color: var(--color-ink-secondary); margin-bottom: var(--space-3); }
+.empty-btn { display: inline-block; padding: 16rpx 48rpx; border-radius: 24rpx; background: var(--color-accent); color: #fff; }

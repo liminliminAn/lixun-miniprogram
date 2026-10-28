@@ -22,12 +22,10 @@ function formatCardDose(d) {
     return `${d.sets} 组 × ${d.repMin}–${d.repMax} 次`;
 }
 /** 配置里的分包图片路径（/subpkg/exercises/<contentId>.png）；非分包路径返回 '' */
+/** 图片路径白名单：必须 /subpkg/ 开头、仅 .webp/.png/.jpg、不得含 '..'；否则 ''（隐藏图片） */
 function subpkgImage(path) {
     const p = typeof path === 'string' ? path.trim() : '';
-    if (!p)
-        return '';
-    const abs = p.charAt(0) === '/' ? p : `/${p}`;
-    return abs.indexOf(`/${exports.IMAGE_SUBPKG_ROOT}/`) === 0 && /\.(png|jpg|jpeg|webp)$/.test(abs) ? abs : '';
+    return p.indexOf(`/${exports.IMAGE_SUBPKG_ROOT}/`) === 0 && p.indexOf('..') < 0 && /\.(webp|png|jpg)$/.test(p) ? p : '';
 }
 function detailUrl(exerciseId) {
     return `${exports.DETAIL_PAGE}?id=${encodeURIComponent(exerciseId)}`;

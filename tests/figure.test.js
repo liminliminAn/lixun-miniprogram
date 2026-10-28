@@ -71,3 +71,22 @@ console.log(`figure tests passed (warmup ${wn}, posture ${pn}, selfcheck ${sn})`
   assert.ok(!/\bwebp="\{\{true\}\}"/.test('<image src="a.webp" />'));
 }
 console.log('webp attr tests passed');
+// P3：路径白名单 + 全空提示
+{
+  const { subpkgImage } = require('./lib/exerciseCards');
+  [W.subpkgFigure, subpkgImage].forEach((fn) => {
+    ['/subpkg/exercises/a.webp', '/subpkg/exercises/a.png', '/subpkg/exercises/a.jpg'].forEach((ok) => assert.strictEqual(fn(ok), ok));
+    ['subpkg/exercises/a.webp', '/assets/a.webp', '/subpkg/exercises/a.gif', '/subpkg/exercises/a.jpeg', '/subpkg/exercises/a.svg',
+      '/subpkg/../assets/a.webp', '/subpkg/exercises/..a.webp', 'https://x/subpkg/a.webp', '/subpkg/exercises/a.webp?x', '', null, 1]
+      .forEach((bad) => assert.strictEqual(fn(bad), '', String(bad)));
+  });
+  assert.strictEqual(W.FIGURE_EMPTY_HINT, '没有可显示的图解内容');
+  ['detail/detail', 'warmup-figure/warmup-figure', 'posture-figure/posture-figure'].forEach((pg) => {
+    const b = 'subpkg/exercises/' + pg, wx = read(b + '.wxml'), ts = read(b + '.ts');
+    assert.ok(/wx:if="\{\{empty\}\}"[\s\S]*没有可显示的图解内容[\s\S]*bindtap="onBack"[^>]*>返回/.test(wx), pg);
+    assert.ok(/onBack\(\)\s*\{\s*wx\.navigateBack/.test(ts) && /empty: (true|!img && !title && !cue)/.test(ts), pg);
+  });
+  ['warmup-figure', 'posture-figure'].forEach((n) => assert.ok(/showImg: !!img/.test(read(`subpkg/exercises/${n}/${n}.ts`)) && /subpkgFigure\(/.test(read(`subpkg/exercises/${n}/${n}.ts`))));
+  assert.ok(!/navigateBack\(\);\s*return/.test(read('subpkg/exercises/detail/detail.ts')));
+  console.log('figure guard tests passed');
+}

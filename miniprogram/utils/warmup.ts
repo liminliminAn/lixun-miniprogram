@@ -90,10 +90,12 @@ export function videoLine(v: any): WarmupVideo | null {
   return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
 }
 
-/** 分包图解：仅接受 /subpkg/ 下的路径，主包页面只用它拼跳转参数，不直接渲染 */
+/** 分包图解路径白名单：必须 /subpkg/ 开头、仅 .webp/.png/.jpg、不得含 '..'；否则 ''（隐藏图片） */
 export function subpkgFigure(img: unknown): string {
-  return typeof img === 'string' && img.indexOf('/subpkg/') === 0 ? img : '';
+  const p = typeof img === 'string' ? img.trim() : '';
+  return p.indexOf('/subpkg/') === 0 && p.indexOf('..') < 0 && /\.(webp|png|jpg)$/.test(p) ? p : '';
 }
+export const FIGURE_EMPTY_HINT = '没有可显示的图解内容';
 export const WARMUP_FIGURE_PAGE = '/subpkg/exercises/warmup-figure/warmup-figure';
 export const POSTURE_FIGURE_PAGE = '/subpkg/exercises/posture-figure/posture-figure';
 /** 跳转分包图解页的 url（img/title/cue 均 encode） */

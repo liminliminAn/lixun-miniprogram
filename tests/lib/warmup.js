@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.POSTURE_FIGURE_PAGE = exports.WARMUP_FIGURE_PAGE = exports.VIDEO_TOAST = exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
+exports.POSTURE_FIGURE_PAGE = exports.WARMUP_FIGURE_PAGE = exports.FIGURE_EMPTY_HINT = exports.VIDEO_TOAST = exports.PICK_NOTE = exports.DOSE_LABEL = exports.DOSE_NOTE = exports.DEFAULT_RAMP = void 0;
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
@@ -70,10 +70,12 @@ function videoLine(v) {
     const time = v.time ? String(v.time) : '';
     return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
 }
-/** 分包图解：仅接受 /subpkg/ 下的路径，主包页面只用它拼跳转参数，不直接渲染 */
+/** 分包图解路径白名单：必须 /subpkg/ 开头、仅 .webp/.png/.jpg、不得含 '..'；否则 ''（隐藏图片） */
 function subpkgFigure(img) {
-    return typeof img === 'string' && img.indexOf('/subpkg/') === 0 ? img : '';
+    const p = typeof img === 'string' ? img.trim() : '';
+    return p.indexOf('/subpkg/') === 0 && p.indexOf('..') < 0 && /\.(webp|png|jpg)$/.test(p) ? p : '';
 }
+exports.FIGURE_EMPTY_HINT = '没有可显示的图解内容';
 exports.WARMUP_FIGURE_PAGE = '/subpkg/exercises/warmup-figure/warmup-figure';
 exports.POSTURE_FIGURE_PAGE = '/subpkg/exercises/posture-figure/posture-figure';
 /** 跳转分包图解页的 url（img/title/cue 均 encode） */

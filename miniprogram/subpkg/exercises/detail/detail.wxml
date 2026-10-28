@@ -1,3 +1,7 @@
+<view class="empty" wx:if="{{empty}}">
+  <view class="empty-tip">没有可显示的图解内容</view>
+  <view class="empty-btn" bindtap="onBack">返回</view>
+</view>
 <view class="container" wx:if="{{card}}">
   <image class="img" webp="{{true}}" wx:if="{{showImg}}" src="{{card.detailImage}}" mode="aspectFit" binderror="onImgError" />
   <view class="card">

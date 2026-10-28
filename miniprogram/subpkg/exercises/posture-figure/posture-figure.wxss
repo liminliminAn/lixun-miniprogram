@@ -1,3 +1,7 @@
 .img { width: 100%; height: 480rpx; border-radius: 24rpx; background: var(--color-surface); margin-bottom: var(--space-3); }
 .sec { font-size: var(--font-section); font-weight: 600; color: var(--color-ink); margin-bottom: var(--space-1); }
 .tip { font-size: var(--font-meta); color: var(--color-ink); line-height: 1.6; }
+
+.empty { padding: 160rpx var(--space-3); text-align: center; }
+.empty-tip { font-size: var(--font-meta); color: var(--color-ink-secondary); margin-bottom: var(--space-3); }
+.empty-btn { display: inline-block; padding: 16rpx 48rpx; border-radius: 24rpx; background: var(--color-accent); color: #fff; }

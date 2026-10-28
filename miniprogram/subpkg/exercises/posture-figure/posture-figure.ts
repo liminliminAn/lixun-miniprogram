@@ -2,13 +2,18 @@ import { subpkgFigure } from '../../../utils/warmup';
 
 /** 图解页：只认 /subpkg/ 下的文件名路径；加载失败 → 整块隐藏 */
 Page({
-  data: { img: '', title: '', cue: '', showImg: false },
+  data: { img: '', title: '', cue: '', showImg: false, empty: false },
   onLoad(q: any) {
     const dec = (v: any) => (v ? decodeURIComponent(String(v)) : '');
     const img = subpkgFigure(dec(q && q.img));
     const title = dec(q && q.title);
-    (this as any).setData({ img, title, cue: dec(q && q.cue), showImg: !!img });
+    const cue = dec(q && q.cue);
+    // 图/标题/要点全空 → 一行提示 + 返回；非法路径只隐藏图片
+    (this as any).setData({ img, title, cue, showImg: !!img, empty: !img && !title && !cue });
     if (title) wx.setNavigationBarTitle({ title });
+  },
+  onBack() {
+    wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/today/today' }) });
   },
   onImgError() {
     (this as any).setData({ showImg: false });

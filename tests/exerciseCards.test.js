@@ -43,11 +43,12 @@ if (productJson) assert.strictEqual(productJson.exercises.length, 15);
   const e = cfg.exercises[id];
   assert.deepStrictEqual([e.name, e.steps, e.cues, e.mistakes, e.dose.text], [p.name, p.steps, p.cues, p.mistakes, p.dose]);
 });
-assert.strictEqual(subpkgImage('subpkg/exercises/a.png'), '/subpkg/exercises/a.png');
+assert.strictEqual(subpkgImage('/subpkg/exercises/a.png'), '/subpkg/exercises/a.png');
+assert.strictEqual(subpkgImage('subpkg/exercises/a.png'), ''); // 必须 /subpkg/ 开头
 assert.strictEqual(subpkgImage('/assets/x.png'), '');
-{ const n = buildExerciseCard({ exercises: { a: { steps: [], contentId: 'a', image: 'subpkg/exercises/a.png' } } }, 'a');
+{ const n = buildExerciseCard({ exercises: { a: { steps: [], contentId: 'a', image: '/subpkg/exercises/a.png' } } }, 'a');
   assert.deepStrictEqual([n.hasImage, n.detailImage], [false, '']); } // 不在 images 列表 → 无图，整块隐藏
-assert.strictEqual(buildExerciseCard({ _meta: { images: ['a'] }, exercises: { a: { contentId: 'a', image: 'subpkg/exercises/a.png' } } }, 'a').hasImage, true);
+assert.strictEqual(buildExerciseCard({ _meta: { images: ['a'] }, exercises: { a: { contentId: 'a', image: '/subpkg/exercises/a.png' } } }, 'a').hasImage, true);
 // _meta.images 必须与 subpkg/exercises 下的动作 webp（非 warmup_/posture_/selfcheck_）完全一致；旧线稿 png 已删除
 { const all = fs.readdirSync(require('path').join(__dirname, '../miniprogram/subpkg/exercises'));
   assert.ok(!all.some((f) => f.endsWith('.png')), 'old line-art png left');

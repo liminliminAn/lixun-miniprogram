@@ -19,11 +19,10 @@ export function formatCardDose(d: any): string {
 }
 
 /** 配置里的分包图片路径（/subpkg/exercises/<contentId>.png）；非分包路径返回 '' */
+/** 图片路径白名单：必须 /subpkg/ 开头、仅 .webp/.png/.jpg、不得含 '..'；否则 ''（隐藏图片） */
 export function subpkgImage(path: unknown): string {
   const p = typeof path === 'string' ? path.trim() : '';
-  if (!p) return '';
-  const abs = p.charAt(0) === '/' ? p : `/${p}`;
-  return abs.indexOf(`/${IMAGE_SUBPKG_ROOT}/`) === 0 && /\.(png|jpg|jpeg|webp)$/.test(abs) ? abs : '';
+  return p.indexOf(`/${IMAGE_SUBPKG_ROOT}/`) === 0 && p.indexOf('..') < 0 && /\.(webp|png|jpg)$/.test(p) ? p : '';
 }
 
 export function detailUrl(exerciseId: string): string {
