@@ -1,6 +1,14 @@
 /** IT2-04 动作图文卡：本地 JSON → 展示模型（纯函数）。单测：tests/exerciseCards.test.js */
-/** IT2-04 动作卡剂量尚未定稿，保持占位 */
-export const DOSE_PLACEHOLDER = '参考量待定';
+/** IT2-04 动作卡剂量说明（仅正式组） */
+export const CARD_DOSE_NOTE = '通用建议，因人而异';
+
+export interface CardDose { sets: string; repMin: number; repMax: number; effort?: string; rest?: string }
+
+/** dose 对象 → 展示文案，如「3–4 组 × 6–10 次 · 留 2 次余量（RPE≈8） · 组间休息 2–3 分钟」 */
+export function formatCardDose(d: any): string {
+  if (!d || typeof d !== 'object' || !(d.repMin > 0) || !(d.repMax >= d.repMin)) return '';
+  return [`${d.sets} 组 × ${d.repMin}–${d.repMax} 次`, d.effort, d.rest].filter(Boolean).join(' · ');
+}
 
 export const PLACEHOLDER_IMAGE = '/assets/exercise-placeholder.png';
 
@@ -10,6 +18,7 @@ export interface ExerciseCardView {
   cues: string[];
   mistakes: string[];
   dose: string;
+  doseNote: string;
 }
 
 const strs = (a: any): string[] => (Array.isArray(a) ? a.filter((x) => typeof x === 'string' && x.trim()) : []);
@@ -22,6 +31,7 @@ export function buildExerciseCard(cfg: any, exerciseId: string): ExerciseCardVie
     steps: strs(e.steps),
     cues: strs(e.cues),
     mistakes: strs(e.mistakes),
-    dose: e.dose !== undefined && e.dose !== null ? DOSE_PLACEHOLDER : '',
+    dose: formatCardDose(e.dose),
+    doseNote: formatCardDose(e.dose) ? (cfg._meta && cfg._meta.doseNote) || CARD_DOSE_NOTE : '',
   };
 }

@@ -30,6 +30,8 @@ export interface ProgressionConfig {
   /** 连续几次有未完成组触发减量 */
   deloadAfterMisses: number;
   exercises: Record<string, ExerciseRule>;
+  /** IT2-04：按动作覆盖次数区间（来自 config/exercise-cards.js 的 dose.repMin/repMax） */
+  exerciseRepRange?: Record<string, { min: number; max: number }>;
 }
 
 export interface ProgressionSuggestion {
@@ -102,7 +104,7 @@ export function suggestNext(
   const sessions = history.filter((s) => s && s.length > 0);
   if (sessions.length === 0) return null;
   const rule = config.exercises[exerciseId] || { kind: 'isolation', equipment: 'machine' };
-  const { min, max } = config.repRange[rule.kind];
+  const { min, max } = (config.exerciseRepRange && config.exerciseRepRange[exerciseId]) || config.repRange[rule.kind];
   const step = config.stepKg[rule.equipment];
   const last = sessions[0];
   const w = workingWeight(last);
@@ -141,4 +143,19 @@ export function suggestNext(
     return { action: 'add_reps', weight: w, reps: r, reason: '先加次数，到上限再加重' };
   }
   return { action: 'maintain', weight: w, reps: workingReps(last), reason: '未全部达到次数上限，维持' };
+}
+
+/** 动作卡配置 → 每个动作的次数区间（正式组目标区间） */
+export function repRangeFromCards(cards: any): Record<string, { min: number; max: number }> {
+  const out: Record<string, { min: number; max: number }> = {};
+  const ex = (cards && cards.exercises) || {};
+  Object.keys(ex).forEach((id) => {
+    const d = ex[id] && ex[id].dose;
+    if (d && d.repMin > 0 && d.repMax >= d.repMin) out[id] = { min: d.repMin, max: d.repMax };
+  });
+  return out;
+}
+
+export function withCardRepRanges(base: ProgressionConfig, cards: any): ProgressionConfig {
+  return { ...base, exerciseRepRange: { ...(base.exerciseRepRange || {}), ...repRangeFromCards(cards) } };
 }

@@ -15,6 +15,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEFAULT_PROGRESSION = void 0;
 exports.suggestNext = suggestNext;
+exports.repRangeFromCards = repRangeFromCards;
+exports.withCardRepRanges = withCardRepRanges;
 exports.DEFAULT_PROGRESSION = {
     stepKg: { barbell: 2.5, dumbbell: 2, machine: 5, cable: 2.5, bodyweight: 0 },
     repRange: { compound: { min: 6, max: 10 }, isolation: { min: 10, max: 15 } },
@@ -63,7 +65,7 @@ function suggestNext(exerciseId, history, config = exports.DEFAULT_PROGRESSION) 
     if (sessions.length === 0)
         return null;
     const rule = config.exercises[exerciseId] || { kind: 'isolation', equipment: 'machine' };
-    const { min, max } = config.repRange[rule.kind];
+    const { min, max } = (config.exerciseRepRange && config.exerciseRepRange[exerciseId]) || config.repRange[rule.kind];
     const step = config.stepKg[rule.equipment];
     const last = sessions[0];
     const w = workingWeight(last);
@@ -99,4 +101,18 @@ function suggestNext(exerciseId, history, config = exports.DEFAULT_PROGRESSION) 
         return { action: 'add_reps', weight: w, reps: r, reason: '先加次数，到上限再加重' };
     }
     return { action: 'maintain', weight: w, reps: workingReps(last), reason: '未全部达到次数上限，维持' };
+}
+/** 动作卡配置 → 每个动作的次数区间（正式组目标区间） */
+function repRangeFromCards(cards) {
+    const out = {};
+    const ex = (cards && cards.exercises) || {};
+    Object.keys(ex).forEach((id) => {
+        const d = ex[id] && ex[id].dose;
+        if (d && d.repMin > 0 && d.repMax >= d.repMin)
+            out[id] = { min: d.repMin, max: d.repMax };
+    });
+    return out;
+}
+function withCardRepRanges(base, cards) {
+    return Object.assign(Object.assign({}, base), { exerciseRepRange: Object.assign(Object.assign({}, (base.exerciseRepRange || {})), repRangeFromCards(cards)) });
 }

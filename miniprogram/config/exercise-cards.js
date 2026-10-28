@@ -1,9 +1,11 @@
-/* 本地内容配置（由产品 JSON 转为 CommonJS，兼容基础库 2.32 require） */
+/* 本地内容配置（由产品 JSON 转为 CommonJS，兼容基础库 2.32 require）；IT2-04 剂量为产品定稿值 */
 module.exports = {
   "_meta": {
-    "version": "it2-v1",
+    "version": "it2-v2",
     "note": "图文卡占位文案，待产品/教练替换；通用内容，不署名",
-    "image": "/assets/exercise-placeholder.png"
+    "image": "/assets/exercise-placeholder.png",
+    "doseNote": "通用建议，因人而异",
+    "doseScope": "仅指正式组（working sets），不含热身/坡道组"
   },
   "exercises": {
     "barbell_bench": {
@@ -22,7 +24,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "db_incline_press": {
       "name": "哑铃上斜卧推",
@@ -40,7 +48,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "dip": {
       "name": "双杠臂屈伸",
@@ -58,7 +72,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "skull_crusher": {
       "name": "仰卧臂屈伸",
@@ -76,7 +96,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3",
+        "repMin": 10,
+        "repMax": 15,
+        "effort": "可以接近力竭",
+        "rest": "休息 60–90 秒"
+      }
     },
     "y_lateral_raise": {
       "name": "Y字侧平举",
@@ -94,7 +120,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3",
+        "repMin": 10,
+        "repMax": 15,
+        "effort": "可以接近力竭",
+        "rest": "休息 60–90 秒"
+      }
     },
     "single_cable_pulldown": {
       "name": "单手钢线下拉",
@@ -112,7 +144,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3",
+        "repMin": 8,
+        "repMax": 12,
+        "effort": "RPE≈8",
+        "rest": "休息 90 秒"
+      }
     },
     "neutral_lat_pulldown": {
       "name": "对握高位下拉",
@@ -130,7 +168,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3",
+        "repMin": 8,
+        "repMax": 12,
+        "effort": "RPE≈8",
+        "rest": "休息 90 秒"
+      }
     },
     "single_machine_row": {
       "name": "单手器械划船",
@@ -148,7 +192,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "flared_row": {
       "name": "开肘划船",
@@ -166,7 +216,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "cable_curl": {
       "name": "钢线弯举",
@@ -184,7 +240,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3",
+        "repMin": 10,
+        "repMax": 15,
+        "effort": "可以接近力竭",
+        "rest": "休息 60–90 秒"
+      }
     },
     "single_rdl": {
       "name": "单腿硬拉",
@@ -202,7 +264,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "bulgarian_split_squat": {
       "name": "保加利亚蹲",
@@ -220,7 +288,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "goblet_squat": {
       "name": "高脚杯深蹲",
@@ -238,7 +312,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "rdl": {
       "name": "RDL",
@@ -256,7 +336,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3–4",
+        "repMin": 6,
+        "repMax": 10,
+        "effort": "留 2 次余量（RPE≈8）",
+        "rest": "组间休息 2–3 分钟"
+      }
     },
     "back_extension": {
       "name": "山羊挺身",
@@ -274,7 +360,13 @@ module.exports = {
         "借力甩动（占位）",
         "动作幅度不完整（占位）"
       ],
-      "dose": "待核实"
+      "dose": {
+        "sets": "3",
+        "repMin": 8,
+        "repMax": 12,
+        "effort": "RPE≈8",
+        "rest": "休息 90 秒"
+      }
     }
   }
 };

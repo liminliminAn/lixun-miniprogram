@@ -1,7 +1,11 @@
 import { storage, KEYS } from './storage';
 import { exercisesByDay } from '../constants/exercises';
 import { getPlan } from './profile';
-import { suggestNext } from '../utils/progression';
+import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/progression';
+
+// IT2-04：次数区间以动作卡正式组剂量为准
+const CARDS: any = require('../config/exercise-cards.js');
+const PROGRESSION = withCardRepRanges(DEFAULT_PROGRESSION, CARDS);
 import { completedTrainDates } from '../utils/warmup';
 import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
 
@@ -53,7 +57,7 @@ export function startOrResumeSession(
   const exercises = exercisesByDay(dayType).map((ex) => {
     const last = lastSets[ex.id];
     // IT2-01：有已完成历史则按渐进超负荷规则预填（可改）；否则沿用上次/默认
-    const sug = suggestNext(ex.id, exerciseHistory(ex.id));
+    const sug = suggestNext(ex.id, exerciseHistory(ex.id), PROGRESSION);
     const seed = {
       reps: sug ? sug.reps : last?.reps ?? 8,
       weight: sug ? sug.weight : last?.weight ?? 0,

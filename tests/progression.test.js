@@ -1,6 +1,6 @@
 /** node tests/progression.test.js — tests/lib/progression.js 由 miniprogram/utils/progression.ts 经 tsc 生成 */
 const assert = require('assert');
-const { suggestNext, DEFAULT_PROGRESSION: C } = require('./lib/progression');
+const { suggestNext, DEFAULT_PROGRESSION: C, repRangeFromCards, withCardRepRanges } = require('./lib/progression');
 const S = (n, reps, weight, done = true) => Array.from({ length: n }, () => ({ reps, weight, done }));
 
 assert.strictEqual(suggestNext('barbell_bench', []), null); // 无历史
@@ -35,3 +35,31 @@ assert.deepStrictEqual([r.action, r.weight], ['maintain', 0]);
 r = suggestNext('unknown_x', [S(3, 15, 10)]);
 assert.strictEqual(r.action, 'increase'); // 未配置按孤立/器械
 console.log('progression tests passed');
+
+// IT2-04：次数区间来自动作卡配置
+{
+  const cards = require('../miniprogram/config/exercise-cards.js');
+  const R = repRangeFromCards(cards);
+  assert.strictEqual(Object.keys(R).length, 15);
+  ['single_cable_pulldown', 'neutral_lat_pulldown', 'back_extension'].forEach((id) => assert.deepStrictEqual(R[id], { min: 8, max: 12 }));
+  assert.deepStrictEqual(R.barbell_bench, { min: 6, max: 10 });
+  assert.deepStrictEqual(R.cable_curl, { min: 10, max: 15 });
+  const P = withCardRepRanges(C, cards);
+  let q = suggestNext('neutral_lat_pulldown', [S(3, 12, 50)], P);
+  assert.deepStrictEqual([q.action, q.weight, q.reps], ['increase', 55, 8]); // 上限 12 达成 → 加重回 8
+  q = suggestNext('neutral_lat_pulldown', [S(3, 10, 50)], P);
+  assert.deepStrictEqual([q.action, q.reps], ['maintain', 10]); // 原 6–10 会加重，现 8–12 维持
+  q = suggestNext('single_cable_pulldown', [S(3, 11, 20)], P);
+  assert.deepStrictEqual([q.action, q.reps], ['add_reps', 12]); // 孤立加次数，封顶 12
+  q = suggestNext('single_cable_pulldown', [S(3, 12, 20)], P);
+  assert.deepStrictEqual([q.action, q.weight, q.reps], ['increase', 22.5, 8]);
+  q = suggestNext('back_extension', [S(3, 12, 0)], P);
+  assert.deepStrictEqual([q.action, q.reps], ['maintain', 12]); // 自重到 12 上限
+  q = suggestNext('back_extension', [S(3, 11, 0)], P);
+  assert.deepStrictEqual([q.action, q.reps], ['add_reps', 12]);
+  q = suggestNext('barbell_bench', [S(4, 10, 60)], P);
+  assert.deepStrictEqual([q.action, q.weight, q.reps], ['increase', 62.5, 6]);
+  const ws = require('fs').readFileSync(__dirname + '/../miniprogram/services/workout.ts', 'utf8');
+  assert.ok(/withCardRepRanges/.test(ws) && /suggestNext\(.*PROGRESSION\)/.test(ws));
+  console.log('progression card-range tests passed');
+}
