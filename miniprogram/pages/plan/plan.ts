@@ -5,7 +5,7 @@ import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSc
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedWeek, hasOverrideIn, overrideSheetTitle,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedWeek, overrideSheetTitle,
 } from '../../utils/schedule';
 import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
@@ -56,11 +56,12 @@ Page({
       label: DAY_TYPE_LABEL[t],
       exercises: exercisesByDay(t),
     }));
+    // 「自定义」标签与「恢复默认」同一口径：有周模板，或今天及以后有覆盖
+    const restorable = hasCustomSchedule() || hasActiveOverrides(today);
     this.setData({
       daysPerWeek: plan.daysPerWeek,
-      // 自定义：有自定义周模板，或本周有日期覆盖；恢复默认在还有未来覆盖时也显示
-      customized: hasCustomSchedule() || hasOverrideIn(getDateOverrides(), weekDates(today, 0)),
-      restorable: hasCustomSchedule() || hasActiveOverrides(today),
+      customized: restorable,
+      restorable,
       streakTip: streakSoftTip(pinnedWeek()),
       weekOffset: offset,
       weekRange: `${shortDate(dates[0])} – ${shortDate(dates[6])}`,

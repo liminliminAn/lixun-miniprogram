@@ -46,5 +46,5 @@ console.log('schedule.test §3.4-3 ok');
 { const wxml = read('pages/plan/plan.wxml');
   assert.ok(/本周课表（\{\{daysPerWeek\}\} 练）<text class="tag-custom" wx:if="\{\{customized\}\}">自定义<\/text>/.test(wxml));
   assert.ok(/\.tag-custom\s*\{/.test(read('pages/plan/plan.wxss')));
-  assert.ok(/customized: hasCustomSchedule\(\)/.test(read('pages/plan/plan.ts'))); }
+  assert.ok(/const restorable = hasCustomSchedule\(\)[\s\S]*customized: restorable/.test(read('pages/plan/plan.ts'))); }
 console.log('schedule.test tag ok');

@@ -51,6 +51,6 @@ assert.ok(!/clearDateOverrides/.test(read('pages/onboarding/onboarding.ts')) && 
 assert.ok(/pinType\(resolveDay\(d\), getSession\(d\)\)/.test(read('services/workout.ts'))); // 今日页 / 开练
 const plan = read('pages/plan/plan.ts');
 assert.ok(/onRestoreDefault\(\) \{[\s\S]*?clearCustomSchedule\(\);\s*clearDateOverrides\(\);/.test(plan));
-assert.ok(/customized: hasCustomSchedule\(\) \|\| hasOverrideIn\(getDateOverrides\(\), weekDates\(today, 0\)\)/.test(plan));
+assert.ok(/const restorable = hasCustomSchedule\(\) \|\| hasActiveOverrides\(today\);[\s\S]*customized: restorable,\s*restorable,/.test(plan), '自定义标签与恢复默认同口径');
 assert.ok(/buildWeekCells\(getEffectiveWeek\(\), today, offset, getSessions\(\) as any, getDateOverrides\(\)\)/.test(plan));
 console.log('dateOverrides.test ok');
