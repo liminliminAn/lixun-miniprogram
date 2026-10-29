@@ -48,7 +48,12 @@ export function setPrefs(patch: Partial<Prefs>): void {
 
 /** 迁移：周模板层已移除，删除遗留的 lixun:v1:customSchedule（首次启动执行，幂等） */
 export function migrateRemoveCustomSchedule(): void {
-  storage.remove(LEGACY_CUSTOM_SCHEDULE_KEY);
+  // 存储异常不能阻断启动（登录跳转、隐私授权注册在其后）
+  try {
+    storage.remove(LEGACY_CUSTOM_SCHEDULE_KEY);
+  } catch (e) {
+    console.warn('migrateRemoveCustomSchedule failed', e);
+  }
 }
 
 export function getDateOverrides(): DateOverrides {

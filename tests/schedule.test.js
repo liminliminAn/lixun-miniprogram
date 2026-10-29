@@ -25,7 +25,7 @@ const st = read('services/storage.ts');
 assert.ok(!/^\s*customSchedule:/m.test(st));
 assert.ok(/LEGACY_CUSTOM_SCHEDULE_KEY = 'lixun:v1:customSchedule'/.test(st));
 const prof = read('services/profile.ts');
-assert.ok(/export function migrateRemoveCustomSchedule\(\): void \{\s*storage\.remove\(LEGACY_CUSTOM_SCHEDULE_KEY\);\s*\}/.test(prof));
+assert.ok(/export function migrateRemoveCustomSchedule\(\): void \{[\s\S]*?try \{\s*storage\.remove\(LEGACY_CUSTOM_SCHEDULE_KEY\);\s*\} catch/.test(prof));
 assert.ok(/export function getPlanWeek\(\)[\s\S]*?planWeek\(plan \? plan\.week : null\)/.test(prof));
 assert.ok(/resolveDayType\(date, getPlanWeek\(\), getDateOverrides\(\)\)/.test(prof));
 const app = read('app.ts');
