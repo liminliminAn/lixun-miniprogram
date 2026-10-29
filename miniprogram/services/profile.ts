@@ -7,6 +7,9 @@ import { formatDate } from '../utils/date';
 
 export { classify };
 
+/** 小程序运行时提供 console；tsconfig lib 为 ES2017 不含其声明 */
+declare const console: { warn: (...args: unknown[]) => void };
+
 export function getProfile(): UserProfile | null {
   return storage.get<UserProfile | null>(KEYS.profile, null);
 }
