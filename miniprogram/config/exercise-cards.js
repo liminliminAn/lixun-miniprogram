@@ -3,7 +3,7 @@ module.exports = {
   "_meta": {
     "version": "it2-v3",
     "doseNote": "剂量为通用建议，因人而异",
-    "imageNote": "配图为 UI 写实 WebP，放分包",
+    "imageNote": "配图为 UI 写实 JPEG（原 WebP 转换），放分包",
     "displayRules": {
       "image": "有图才显示图片区，无图时整块隐藏，不用占位图",
       "medicalNote": "出现明显疼痛、麻木或放射痛时停止，并就医确认"
@@ -35,7 +35,7 @@ module.exports = {
       "name": "杠铃卧推",
       "day": "push",
       "type": "compound",
-      "image": "/subpkg/exercises/bench_press.webp",
+      "image": "/subpkg/exercises/bench_press.jpg",
       "steps": [
         "躺稳后肩胛后缩下沉，双脚踩实",
         "握距略宽于肩，杠铃下放到胸骨中下部",
@@ -66,7 +66,7 @@ module.exports = {
       "name": "哑铃上斜卧推",
       "day": "push",
       "type": "compound",
-      "image": "/subpkg/exercises/incline_db_press.webp",
+      "image": "/subpkg/exercises/incline_db_press.jpg",
       "steps": [
         "凳面调 30°左右，哑铃放到大腿上借力躺下",
         "肩胛收紧，哑铃推至胸上方",
@@ -97,7 +97,7 @@ module.exports = {
       "name": "双杠臂屈伸",
       "day": "push",
       "type": "compound",
-      "image": "/subpkg/exercises/dips.webp",
+      "image": "/subpkg/exercises/dips.jpg",
       "steps": [
         "撑起后肩下沉，身体略前倾",
         "屈肘下放到肩略低于肘",
@@ -128,7 +128,7 @@ module.exports = {
       "name": "仰卧臂屈伸",
       "day": "push",
       "type": "iso",
-      "image": "/subpkg/exercises/skull_crusher.webp",
+      "image": "/subpkg/exercises/skull_crusher.jpg",
       "steps": [
         "仰卧，双手持杠或哑铃于胸上方",
         "只屈肘，把重量下放到额头后方",
@@ -159,7 +159,7 @@ module.exports = {
       "name": "Y 字侧平举",
       "day": "push",
       "type": "iso",
-      "image": "/subpkg/exercises/y_raise.webp",
+      "image": "/subpkg/exercises/y_raise.jpg",
       "steps": [
         "站姿或俯身，手持轻哑铃",
         "手臂沿身体斜前方举成 Y 字",
@@ -190,7 +190,7 @@ module.exports = {
       "name": "单手钢线下拉",
       "day": "pull",
       "type": "lat",
-      "image": "/subpkg/exercises/single_arm_pulldown.webp",
+      "image": "/subpkg/exercises/single_arm_pulldown.jpg",
       "steps": [
         "坐或跪于钢线前，单手握把",
         "先沉肩胛，再屈肘下拉到肋旁",
@@ -221,7 +221,7 @@ module.exports = {
       "name": "对握高位下拉",
       "day": "pull",
       "type": "lat",
-      "image": "/subpkg/exercises/neutral_pulldown.webp",
+      "image": "/subpkg/exercises/neutral_pulldown.jpg",
       "steps": [
         "用对握把手，膝盖固定",
         "挺胸，肩胛下沉",
@@ -252,7 +252,7 @@ module.exports = {
       "name": "单手器械划船",
       "day": "pull",
       "type": "compound",
-      "image": "/subpkg/exercises/machine_row.webp",
+      "image": "/subpkg/exercises/machine_row.jpg",
       "steps": [
         "胸贴靠垫，单手握把",
         "肩胛先后缩，再屈肘拉向髋部",
@@ -283,7 +283,7 @@ module.exports = {
       "name": "开肘划船",
       "day": "pull",
       "type": "compound",
-      "image": "/subpkg/exercises/wide_row.webp",
+      "image": "/subpkg/exercises/wide_row.jpg",
       "steps": [
         "胸贴靠垫或俯身，宽握",
         "手肘向外张约 60–90°",
@@ -314,7 +314,7 @@ module.exports = {
       "name": "钢线弯举",
       "day": "pull",
       "type": "iso",
-      "image": "/subpkg/exercises/cable_curl.webp",
+      "image": "/subpkg/exercises/cable_curl.jpg",
       "steps": [
         "面向钢线站立，反握把手",
         "大臂贴身，只屈肘",
@@ -345,7 +345,7 @@ module.exports = {
       "name": "单腿硬拉",
       "day": "legs",
       "type": "compound",
-      "image": "/subpkg/exercises/single_leg_rdl.webp",
+      "image": "/subpkg/exercises/single_leg_rdl.jpg",
       "steps": [
         "单腿站立，膝盖微屈",
         "以髋为轴前倾，后腿向后伸",
@@ -376,7 +376,7 @@ module.exports = {
       "name": "保加利亚蹲",
       "day": "legs",
       "type": "compound",
-      "image": "/subpkg/exercises/bulgarian_split_squat.webp",
+      "image": "/subpkg/exercises/bulgarian_split_squat.jpg",
       "steps": [
         "后脚放凳上，前脚踩实",
         "垂直下蹲到前腿大腿接近水平",
@@ -407,7 +407,7 @@ module.exports = {
       "name": "颈前/高脚杯深蹲",
       "day": "legs",
       "type": "compound",
-      "image": "/subpkg/exercises/front_goblet_squat.webp",
+      "image": "/subpkg/exercises/front_goblet_squat.jpg",
       "steps": [
         "重量放在胸前，双脚与肩同宽",
         "吸气收紧核心后下蹲",
@@ -438,7 +438,7 @@ module.exports = {
       "name": "罗马尼亚硬拉 RDL",
       "day": "legs",
       "type": "compound",
-      "image": "/subpkg/exercises/rdl.webp",
+      "image": "/subpkg/exercises/rdl.jpg",
       "steps": [
         "双脚与髋同宽，膝盖微屈",
         "以髋为轴推臀向后，杠贴腿下滑",
@@ -469,7 +469,7 @@ module.exports = {
       "name": "山羊挺身",
       "day": "legs",
       "type": "lat",
-      "image": "/subpkg/exercises/back_extension.webp",
+      "image": "/subpkg/exercises/back_extension.jpg",
       "steps": [
         "髋部卡在垫子边缘，双脚固定",
         "以髋为轴前倾下放",

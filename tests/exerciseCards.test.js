@@ -16,7 +16,7 @@ ids.forEach((id) => {
     assert.ok(Array.isArray(e[k]) && e[k].length === 3, `${id}.${k}`);
     e[k].forEach((t) => assert.ok(typeof t === 'string' && t.trim()));
   });
-  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.webp`); // 分包写实配图路径
+  assert.strictEqual(e.image, `/subpkg/exercises/${e.contentId}.jpg`); // 分包写实配图路径
   const v = buildExerciseCard(cfg, id);
   assert.strictEqual(v.hasImage, true); // 15 张图均已入库
   assert.strictEqual(v.detailImage, e.image);
@@ -49,10 +49,10 @@ assert.strictEqual(subpkgImage('/assets/x.png'), '');
 { const n = buildExerciseCard({ exercises: { a: { steps: [], contentId: 'a', image: '/subpkg/exercises/a.png' } } }, 'a');
   assert.deepStrictEqual([n.hasImage, n.detailImage], [false, '']); } // 不在 images 列表 → 无图，整块隐藏
 assert.strictEqual(buildExerciseCard({ _meta: { images: ['a'] }, exercises: { a: { contentId: 'a', image: '/subpkg/exercises/a.png' } } }, 'a').hasImage, true);
-// _meta.images 必须与 subpkg/exercises 下的动作 webp（非 warmup_/posture_/selfcheck_）完全一致；旧线稿 png 已删除
+// _meta.images 必须与 subpkg/exercises 下的动作 jpg（非 warmup_/posture_/selfcheck_）完全一致；旧线稿 png 已删除
 { const all = fs.readdirSync(require('path').join(__dirname, '../miniprogram/subpkg/exercises'));
   assert.ok(!all.some((f) => f.endsWith('.png')), 'old line-art png left');
-  const files = all.filter((f) => f.endsWith('.webp') && !/^(warmup|posture|selfcheck)_/.test(f)).map((f) => f.slice(0, -5)).sort();
+  const files = all.filter((f) => f.endsWith('.jpg') && !/^(warmup|posture|selfcheck)_/.test(f)).map((f) => f.slice(0, -4)).sort();
   assert.deepStrictEqual(cfg._meta.images.slice().sort(), files);
   assert.strictEqual(files.length, 15); }
 if (productJson) productJson.exercises.forEach((p) => {

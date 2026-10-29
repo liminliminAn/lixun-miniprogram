@@ -27,7 +27,7 @@ const pv = buildPostureView(pcfg);
 let pn = 0, sn = 0;
 pv.issues.forEach((it) => {
   [...it.pre, ...it.drills].forEach((d) => { if (d.figure) { pn++; assert.ok(exists(d.figure), d.figure); } });
-  if (it.selfCheckFigure) { sn++; assert.ok(/\/selfcheck_[a-z_]+\.webp$/.test(it.selfCheckFigure) && exists(it.selfCheckFigure)); }
+  if (it.selfCheckFigure) { sn++; assert.ok(/\/selfcheck_[a-z_]+\.jpg$/.test(it.selfCheckFigure) && exists(it.selfCheckFigure)); }
 });
 assert.ok(pn > 0 && sn > 0, `posture figures ${pn}/${sn}`);
 // 配置里的每个 image 都在分包且文件存在

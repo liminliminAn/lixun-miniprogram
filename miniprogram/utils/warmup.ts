@@ -93,7 +93,7 @@ export interface WarmupViewItem {
   source?: { title: string; url: string };
   steps?: string[];
   cues?: string[];
-  /** 分包图解路径（/subpkg/exercises/*.webp）；为空时不显示「查看图解 ›」入口 */
+  /** 分包图解路径（/subpkg/exercises/*.jpg）；为空时不显示「查看图解 ›」入口 */
   figure?: string;
   video?: WarmupVideo | null;
 }
