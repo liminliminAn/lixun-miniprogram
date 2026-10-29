@@ -10,6 +10,9 @@ page {
   --color-accent-ink: #0E1116;
   --color-success: #3DDC97;
   --color-warning: #F0B429;
+  --color-success-soft: #163A2C;
+  --color-warning-soft: #3A2E12;
+  --color-done: #7AB8FF;
   --color-info: #2EE6C5;
   --color-border: #2A303C;
   --color-danger: #FF6B6B;
@@ -58,6 +61,9 @@ page {
     --color-accent-ink: #FFFFFF;
     --color-success: #1B7F5A;
     --color-warning: #C47F17;
+    --color-success-soft: #E5F3EC;
+    --color-warning-soft: #FBF1E1;
+    --color-done: #2F6FD1;
     --color-info: #0D9B86;
     --color-border: #E6E8EC;
     --color-danger: #D14343;

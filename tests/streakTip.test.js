@@ -15,5 +15,5 @@ assert.ok(S.streakSoftTip(wrap));
 assert.strictEqual(S.maxConsecutiveTraining(['push', 'pull', 'legs', 'push', 'pull', 'legs', 'push']), 7);
 assert.strictEqual(S.maxConsecutiveTraining([R, R, R, R, R, R, R]), 0);
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');
-assert.ok(/saveCustomSchedule\(next\);[\s\S]*streakSoftTip\(next\.week\)/.test(ts), '先保存再软提示');
+assert.ok(/saveCustomSchedule\(next\);[\s\S]*streakSoftTip\(weekWithTodayPinned\(next\.week,/.test(ts), '先保存再软提示');
 console.log('streakTip.test ok');

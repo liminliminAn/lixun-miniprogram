@@ -41,8 +41,8 @@ assert.strictEqual(at('2026-10-26').label, '✓已练');
 assert.strictEqual(at('2026-10-27').label, '未完成'); // §3.5-5 开练未完成
 assert.strictEqual(at('2026-10-27').dayType, 'legs'); // 保留实际记录类型（弹窗用），不是课表的拉
 assert.strictEqual(at('2026-10-27').tappable, true);
-assert.strictEqual(at('2026-10-28').label, '未训练/休息'); // §3.4-9 空草稿
-assert.strictEqual(at('2026-10-21').label, '未训练/休息');
+assert.strictEqual(at('2026-10-28').label, '未练'); // §3.4-9 空草稿
+assert.strictEqual(at('2026-10-21').label, '未练');
 assert.strictEqual(at('2026-10-28').hasRecord, false);
 // 今天及以后：生效课表
 assert.strictEqual(at(today).label, '休');

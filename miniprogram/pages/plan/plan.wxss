@@ -31,11 +31,11 @@
   color: var(--color-accent);
 }
 .dt.pull {
-  background: rgba(27, 127, 90, 0.12);
+  background: var(--color-success-soft);
   color: var(--color-success);
 }
 .dt.legs {
-  background: rgba(196, 127, 23, 0.12);
+  background: var(--color-warning-soft);
   color: var(--color-warning);
 }
 .dt.rest {
@@ -85,7 +85,8 @@
 .m-day.today { background: var(--color-accent); color: var(--color-accent-ink); font-weight: 600; }
 .m-type { font-size: 20rpx; line-height: 1.2; color: var(--color-ink-secondary); }
 .m-type.push { color: var(--color-accent); }
-.m-type.pull, .m-type.done { color: var(--color-success); }
+.m-type.pull { color: var(--color-success); }
+.m-type.done { color: var(--color-done); }
 .m-type.legs { color: var(--color-warning); }
-.m-cell.out { opacity: 0.35; }
+.m-cell.out { opacity: 0.5; }
 .m-type.unfinished { color: var(--color-warning); }

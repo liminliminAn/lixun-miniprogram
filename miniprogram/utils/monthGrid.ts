@@ -1,7 +1,9 @@
 /** 计划页整月日历（纯函数，便于单测）：6 行 × 7 列，周一起 */
-import { DayKind, DAY_KINDS, SessionLite, dayTense, DayTense, isStarted, isTrained, pinnedTodayType, PAST_NO_RECORD_LABEL } from './schedule';
+import { DayKind, DAY_KINDS, SessionLite, dayTense, DayTense, isStarted, isTrained, pinnedTodayType } from './schedule';
 
 export const MONTH_WEEKDAY_HEADER = ['一', '二', '三', '四', '五', '六', '日'];
+/** 月历格子窄，「未训练/休息」缩成「未练」；周视图和记录弹窗保留全称 */
+export const MONTH_NO_RECORD_LABEL = '未练';
 export const PAST_UNFINISHED_LABEL = '未完成';
 const KIND_LABEL: Record<DayKind, string> = { push: '推', pull: '拉', legs: '腿', rest: '休' };
 const pad = (n: number) => `${n}`.padStart(2, '0');
@@ -90,7 +92,7 @@ export function buildMonthCells(
     if (tense === 'past') {
       // §3.4-7：过去日只显示实际记录
       dayType = s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : null;
-      label = trained ? '✓已练' : dayType ? PAST_UNFINISHED_LABEL : PAST_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
+      label = trained ? '✓已练' : dayType ? PAST_UNFINISHED_LABEL : MONTH_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
     } else {
       dayType = pinnedTodayType(week, weekdayIdx, tense === 'today' ? s : null);
       label = KIND_LABEL[dayType];

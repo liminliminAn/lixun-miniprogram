@@ -19,7 +19,7 @@ assert.strictEqual(pre.noRecord, false);
 assert.strictEqual(pre.tappable, false);
 assert.strictEqual(pre.editable, false);
 // 首次使用当天及之后正常
-assert.strictEqual(at('2026-10-10').label, '未训练/休息');
+assert.strictEqual(at('2026-10-10').label, '未练');
 assert.strictEqual(at('2026-10-10').tappable, true);
 assert.strictEqual(at('2026-10-30').tappable, true);
 assert.strictEqual(at('2026-10-30').editable, true); // 月历编辑暂保留

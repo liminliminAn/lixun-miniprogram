@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PAST_UNFINISHED_LABEL = exports.MONTH_WEEKDAY_HEADER = void 0;
+exports.PAST_UNFINISHED_LABEL = exports.MONTH_NO_RECORD_LABEL = exports.MONTH_WEEKDAY_HEADER = void 0;
 exports.shiftMonth = shiftMonth;
 exports.firstUseDate = firstUseDate;
 exports.monthOffsetRange = monthOffsetRange;
@@ -12,6 +12,8 @@ exports.editSheetTitle = editSheetTitle;
 /** 计划页整月日历（纯函数，便于单测）：6 行 × 7 列，周一起 */
 const schedule_1 = require("./schedule");
 exports.MONTH_WEEKDAY_HEADER = ['一', '二', '三', '四', '五', '六', '日'];
+/** 月历格子窄，「未训练/休息」缩成「未练」；周视图和记录弹窗保留全称 */
+exports.MONTH_NO_RECORD_LABEL = '未练';
 exports.PAST_UNFINISHED_LABEL = '未完成';
 const KIND_LABEL = { push: '推', pull: '拉', legs: '腿', rest: '休' };
 const pad = (n) => `${n}`.padStart(2, '0');
@@ -67,7 +69,7 @@ function buildMonthCells(year, month, today, week, sessions, firstUse = '') {
         if (tense === 'past') {
             // §3.4-7：过去日只显示实际记录
             dayType = s && s.dayType && schedule_1.DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : null;
-            label = trained ? '✓已练' : dayType ? exports.PAST_UNFINISHED_LABEL : schedule_1.PAST_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
+            label = trained ? '✓已练' : dayType ? exports.PAST_UNFINISHED_LABEL : exports.MONTH_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
         }
         else {
             dayType = (0, schedule_1.pinnedTodayType)(week, weekdayIdx, tense === 'today' ? s : null);

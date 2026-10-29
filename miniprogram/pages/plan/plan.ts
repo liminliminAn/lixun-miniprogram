@@ -144,7 +144,7 @@ Page({
         const next = setDay(getEffectiveWeek(), idx, kind);
         saveCustomSchedule(next); // 软提示，不拦截保存
         this.refresh();
-        const tip = streakSoftTip(next.week);
+        const tip = streakSoftTip(weekWithTodayPinned(next.week, mondayBasedIndex(new Date()), (getSessions() as any)[formatDate()]));
         if (tip) wx.showToast({ title: tip, icon: 'none' });
       },
     });
