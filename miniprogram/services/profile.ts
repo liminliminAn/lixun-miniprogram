@@ -1,4 +1,5 @@
 import { storage, KEYS } from './storage';
+import { keepCreatedAt } from '../utils/persist';
 import { classify } from '../utils/classify';
 import { buildWeekPlan, isDaysPerWeek } from '../constants/templates';
 import { effectiveWeek, isCustomized, CustomSchedule } from '../utils/schedule';
@@ -21,7 +22,8 @@ export function saveOnboarding(input: ClassifyInput): UserProfile {
     ...input,
     crowd,
     onboardingDone: true,
-    createdAt: now,
+    // 重做问卷不改 createdAt（首次使用日以此为准）
+    createdAt: keepCreatedAt(getProfile(), now),
     updatedAt: now,
   };
   storage.set(KEYS.profile, profile);
