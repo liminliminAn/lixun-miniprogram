@@ -17,12 +17,10 @@ assert.strictEqual(pre.beforeFirstUse, true);
 assert.strictEqual(pre.label, '');
 assert.strictEqual(pre.noRecord, false);
 assert.strictEqual(pre.tappable, false);
-assert.strictEqual(pre.editable, false);
 // 首次使用当天及之后正常
 assert.strictEqual(at('2026-10-10').label, '未练');
 assert.strictEqual(at('2026-10-10').tappable, true);
 assert.strictEqual(at('2026-10-30').tappable, true);
-assert.strictEqual(at('2026-10-30').editable, true); // 月历编辑暂保留
 // 不传 firstUse 时兼容
 assert.ok(M.buildMonthCells(2026, 10, today, week, {}).every((c) => !c.beforeFirstUse));
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');

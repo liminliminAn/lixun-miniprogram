@@ -7,7 +7,7 @@ import { formatDate, mondayBasedIndex } from '../../utils/date';
 import {
   DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, weekWithTodayPinned,
 } from '../../utils/schedule';
-import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, editSheetTitle, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
+import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, editSheetTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
 /** 生效课表 + 今天按已开练记录固定（§3.4-8/9） */
 function pinnedWeek(): DayType[] {
@@ -97,7 +97,9 @@ Page({
   onTapMonthDay(e: any) {
     const cell = this.data.monthCells[Number(e.currentTarget.dataset.i)];
     if (!cell || !cell.tappable) return; // §3.5-3/4
-    this.handleTap({ ...cell, idx: cell.weekdayIdx, md: shortDate(cell.date) }, editSheetTitle(cell.weekdayIdx));
+    // §3.5-1：月历只读，不改课表；只弹当天类型 + 记录摘要
+    const p = monthDayPopup(cell, (getSessions() as any)[cell.date], (id) => (EXERCISE_MAP[id] ? EXERCISE_MAP[id].name : id));
+    wx.showModal({ title: p.title, content: p.content, showCancel: false, confirmText: '知道了' });
   },
   onPrevWeek() {
     this.setData({ weekOffset: this.data.weekOffset - 1 });
@@ -112,10 +114,7 @@ Page({
     const idx = Number(e.currentTarget.dataset.idx);
     const cell = this.data.weekCells[idx];
     if (!cell) return;
-    this.handleTap(cell, editSheetTitle(idx));
-  },
-  handleTap(cell: any, sheetTitle: string) {
-    const idx = cell.idx;
+    const sheetTitle = editSheetTitle(idx);
     const action = tapAction(cell);
     if (action === 'locked') {
       wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });

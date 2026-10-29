@@ -1,5 +1,5 @@
 /** 计划页整月日历（纯函数，便于单测）：6 行 × 7 列，周一起 */
-import { DayKind, DAY_KINDS, SessionLite, dayTense, DayTense, isStarted, isTrained, pinnedTodayType } from './schedule';
+import { DayKind, DAY_KINDS, SessionLite, sessionSummary, PAST_NO_RECORD_LABEL, dayTense, DayTense, isStarted, isTrained, pinnedTodayType } from './schedule';
 
 export const MONTH_WEEKDAY_HEADER = ['一', '二', '三', '四', '五', '六', '日'];
 /** 月历格子窄，「未训练/休息」缩成「未练」；周视图和记录弹窗保留全称 */
@@ -22,7 +22,6 @@ export interface MonthCell {
   trained: boolean;
   hasRecord: boolean;
   noRecord: boolean;
-  editable: boolean;
   /** §3.5-4：首次使用之前 → 留空 */
   beforeFirstUse: boolean;
   /** §3.5-3/4：非本月灰色日期、首次使用之前的日期不能点 */
@@ -115,7 +114,6 @@ export function buildMonthCells(
       trained,
       hasRecord: !!s,
       noRecord: tense === 'past' && !dayType && !beforeFirstUse,
-      editable: !beforeFirstUse && tense !== 'past' && !(tense === 'today' && !!s),
       beforeFirstUse,
       tappable: inMonth && !beforeFirstUse,
     };
@@ -123,6 +121,22 @@ export function buildMonthCells(
 }
 
 /** ActionSheet 标题：课表按星期存储，改一天即改每周这一天 */
+/** §3.5-1：月历只读。点日期弹窗：当天类型 + 记录摘要；未来只显示计划类型 */
+const DAY_NAME: Record<DayKind, string> = { push: '推日', pull: '拉日', legs: '腿日', rest: '休息日' };
+export function monthDayPopup(
+  cell: Pick<MonthCell, 'date' | 'tense' | 'dayType' | 'hasRecord' | 'weekdayIdx'>,
+  session: SessionLite | null | undefined,
+  nameOf: (id: string) => string,
+): { title: string; content: string } {
+  const [, m, d] = cell.date.split('-').map(Number);
+  const title = `${m}/${d} 周${MONTH_WEEKDAY_HEADER[cell.weekdayIdx]}`;
+  const type = cell.dayType ? DAY_NAME[cell.dayType] : '';
+  if (cell.tense === 'future') return { title, content: `计划：${type}` };
+  if (cell.hasRecord && session) return { title, content: `${type}\n${sessionSummary(session, nameOf)}` };
+  if (cell.tense === 'today') return { title, content: `${type}（今天还没有训练记录）` };
+  return { title, content: PAST_NO_RECORD_LABEL };
+}
+
 export function editSheetTitle(weekdayIdx: number): string {
   return `修改每周${MONTH_WEEKDAY_HEADER[weekdayIdx] || ''}`;
 }

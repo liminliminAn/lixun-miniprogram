@@ -1,7 +1,7 @@
 <view class="container">
   <view class="card">
-    <view class="title">本周课表（{{daysPerWeek}} 练）<text class="tag-custom" wx:if="{{customized}}">自定义</text></view>
-    <view class="hint">今天及以后点某天可改为推/拉/腿/休；过去的日子点开看记录</view>
+    <view class="title">本周课表（{{daysPerWeek}} 练）<text class="tag-custom" wx:if="{{customized && !expanded}}">自定义</text></view>
+    <view class="hint">{{expanded ? '月历只用于查看，点日期看当天类型和记录；改课表请收起回周视图' : '今天及以后点某天可改为推/拉/腿/休；过去的日子点开看记录'}}</view>
     <block wx:if="{{!expanded}}">
     <view class="week-nav">
       <view class="nav-btn" bindtap="onPrevWeek">‹</view>
@@ -32,8 +32,8 @@
       </view>
     </view>
     <view class="toggle" bindtap="onToggleMonth">{{expanded ? '收起 ▴' : '展开 ▾'}}</view>
-    <view class="soft-tip" wx:if="{{streakTip}}">{{streakTip}}</view>
-    <view class="restore" wx:if="{{customized}}" bindtap="onRestoreDefault">恢复默认</view>
+    <view class="soft-tip" wx:if="{{streakTip && !expanded}}">{{streakTip}}</view>
+    <view class="restore" wx:if="{{customized && !expanded}}" bindtap="onRestoreDefault">恢复默认</view>
   </view>
 
   <view class="card" wx:for="{{dayBlocks}}" wx:key="dayType">

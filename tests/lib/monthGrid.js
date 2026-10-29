@@ -8,6 +8,7 @@ exports.clampMonthOffset = clampMonthOffset;
 exports.monthTitle = monthTitle;
 exports.monthDates = monthDates;
 exports.buildMonthCells = buildMonthCells;
+exports.monthDayPopup = monthDayPopup;
 exports.editSheetTitle = editSheetTitle;
 /** 计划页整月日历（纯函数，便于单测）：6 行 × 7 列，周一起 */
 const schedule_1 = require("./schedule");
@@ -93,13 +94,26 @@ function buildMonthCells(year, month, today, week, sessions, firstUse = '') {
             trained,
             hasRecord: !!s,
             noRecord: tense === 'past' && !dayType && !beforeFirstUse,
-            editable: !beforeFirstUse && tense !== 'past' && !(tense === 'today' && !!s),
             beforeFirstUse,
             tappable: inMonth && !beforeFirstUse,
         };
     });
 }
 /** ActionSheet 标题：课表按星期存储，改一天即改每周这一天 */
+/** §3.5-1：月历只读。点日期弹窗：当天类型 + 记录摘要；未来只显示计划类型 */
+const DAY_NAME = { push: '推日', pull: '拉日', legs: '腿日', rest: '休息日' };
+function monthDayPopup(cell, session, nameOf) {
+    const [, m, d] = cell.date.split('-').map(Number);
+    const title = `${m}/${d} 周${exports.MONTH_WEEKDAY_HEADER[cell.weekdayIdx]}`;
+    const type = cell.dayType ? DAY_NAME[cell.dayType] : '';
+    if (cell.tense === 'future')
+        return { title, content: `计划：${type}` };
+    if (cell.hasRecord && session)
+        return { title, content: `${type}\n${(0, schedule_1.sessionSummary)(session, nameOf)}` };
+    if (cell.tense === 'today')
+        return { title, content: `${type}（今天还没有训练记录）` };
+    return { title, content: schedule_1.PAST_NO_RECORD_LABEL };
+}
 function editSheetTitle(weekdayIdx) {
     return `修改每周${exports.MONTH_WEEKDAY_HEADER[weekdayIdx] || ''}`;
 }

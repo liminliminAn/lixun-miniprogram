@@ -49,13 +49,10 @@ assert.strictEqual(at(today).label, '休');
 assert.strictEqual(at('2026-10-30').label, '推');
 assert.strictEqual(at('2026-11-03').label, '拉');
 // 可改
-assert.strictEqual(at('2026-10-27').editable, false);
-assert.strictEqual(at(today).editable, true);
-assert.strictEqual(at('2026-11-08').editable, true);
+assert.ok(cells.every((c) => !('editable' in c))); // §3.5-1 月历只读
 // 今天已开练 → 锁定且固定为记录类型
 const started = { ...sessions, [today]: { dayType: 'pull', completedAt: null, warmup: { checked: ['a'] } } };
 const t2 = M.buildMonthCells(2026, 10, today, week, started).find((c) => c.isToday);
-assert.strictEqual(t2.editable, false);
 assert.strictEqual(t2.label, '拉');
 assert.strictEqual(M.editSheetTitle(2), '修改每周三');
 assert.strictEqual(M.editSheetTitle(6), '修改每周日');
@@ -64,7 +61,7 @@ assert.strictEqual(M.editSheetTitle(6), '修改每周日');
 const wxml = read('pages/plan/plan.wxml');
 assert.ok(/展开 ▾/.test(wxml) && /收起 ▴/.test(wxml) && /onPrevMonth/.test(wxml) && /onNextMonth/.test(wxml) && /onPrevWeek/.test(wxml));
 const ts = read('pages/plan/plan.ts');
-assert.ok(/editSheetTitle/.test(ts) && /alertText: sheetTitle/.test(ts) && /handleTap/.test(ts));
+assert.ok(/editSheetTitle\(idx\)/.test(ts) && /alertText: sheetTitle/.test(ts));
 const css = read('pages/plan/plan.wxss');
 const mcss = css.slice(css.indexOf('.toggle'));
 assert.ok(!/#[0-9a-fA-F]{3,6}|rgba?\(/.test(mcss), '月历只用主题变量');
