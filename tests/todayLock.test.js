@@ -11,15 +11,15 @@ const week = ['push', 'pull', 'legs', 'push', 'pull', 'rest', 'rest'];
 let c = S.buildWeekCells(week, today, 0, {})[3];
 assert.strictEqual(c.editable, true); assert.strictEqual(S.tapAction(c), 'edit');
 // 已开练（未完成）→ 锁定
-c = S.buildWeekCells(week, today, 0, { [today]: { dayType: 'push', completedAt: null } })[3];
+c = S.buildWeekCells(week, today, 0, { [today]: { dayType: 'push', completedAt: null, exercises: [{ exerciseId: 'b', sets: [{ done: true }] }] } })[3];
 assert.strictEqual(c.editable, false); assert.strictEqual(S.tapAction(c), 'locked');
 // 已完成 → 锁定
 c = S.buildWeekCells(week, today, 0, { [today]: { dayType: 'push', completedAt: 'x' } })[3];
 assert.strictEqual(S.tapAction(c), 'locked');
 assert.strictEqual(S.isTodayLocked(null), false);
-assert.strictEqual(S.isTodayLocked({ dayType: 'pull' }), true);
+assert.strictEqual(S.isTodayLocked({ dayType: 'pull', warmup: { checked: ['x'] } }), true);
 // 明天不受影响
-assert.strictEqual(S.buildWeekCells(week, today, 0, { [today]: { dayType: 'push' } })[4].editable, true);
+assert.strictEqual(S.buildWeekCells(week, today, 0, { [today]: { dayType: 'push', completedAt: 'x' } })[4].editable, true);
 
 // 恢复逻辑
 assert.strictEqual(S.restoreDecision(null, 'push'), 'fresh');

@@ -7,7 +7,7 @@ import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/pr
 const CARDS: any = require('../config/exercise-cards.js');
 const PROGRESSION = withCardRepRanges(DEFAULT_PROGRESSION, CARDS);
 import { completedTrainDates } from '../utils/warmup';
-import { restoreDecision, pinnedTodayType } from '../utils/schedule';
+import { restoreDecision, pinnedTodayType, isTrained } from '../utils/schedule';
 import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
 
 export function todayDayType(date: Date = new Date()): DayType {
@@ -37,7 +37,7 @@ export function getLastSetFor(exerciseId: string): SetRecord | undefined {
 export function exerciseHistory(exerciseId: string): SetRecord[][] {
   const sessions = getSessions();
   return Object.keys(sessions)
-    .filter((d) => sessions[d] && !!sessions[d].completedAt)
+    .filter((d) => isTrained(sessions[d] as any))
     .sort()
     .reverse()
     .map((d) => sessions[d].exercises.find((e) => e.exerciseId === exerciseId))

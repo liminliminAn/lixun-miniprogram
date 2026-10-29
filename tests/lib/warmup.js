@@ -16,6 +16,7 @@ exports.buildWarmupSections = buildWarmupSections;
  * 坡道组只写在 session.warmup，不进 session.exercises，因此不计训练容量；
  * 热身状态不影响连练（连练只认 completedAt）。
  */
+const schedule_1 = require("./schedule");
 const progression_1 = require("./progression");
 exports.DEFAULT_RAMP = {
     emptyBarKg: 20,
@@ -46,10 +47,10 @@ function firstCompound(exercises, config = progression_1.DEFAULT_PROGRESSION) {
 function withWarmup(session, warmup) {
     return Object.assign(Object.assign({}, session), { warmup: Object.assign({}, warmup) });
 }
-/** 连练日期：只认 completedAt */
+/** 连练日期：只认 completedAt（空草稿无 completedAt，不计） */
 function completedTrainDates(sessions) {
     return Object.keys(sessions)
-        .filter((d) => sessions[d] && !!sessions[d].completedAt)
+        .filter((d) => (0, schedule_1.isTrained)(sessions[d]))
         .sort();
 }
 /** 全站唯一剂量说明文案（tests/doseNote.test.js 扫描防变体） */

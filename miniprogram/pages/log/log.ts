@@ -1,3 +1,4 @@
+import { isStarted, isTrained } from '../../utils/schedule';
 import { guardEntry } from '../../services/user';
 import { listBodyWeights, addBodyWeight } from '../../services/body';
 import { getPrefs, getProfile } from '../../services/profile';
@@ -25,13 +26,14 @@ Page({
     const prefs = getPrefs();
     const sessions = getSessions();
     const recentSessions = Object.keys(sessions)
+      .filter((d) => isStarted(sessions[d] as any)) // §3.4-9：空草稿不计入记录
       .sort()
       .reverse()
       .slice(0, 10)
       .map((date) => ({
         date,
         label: DAY_TYPE_LABEL[sessions[date].dayType],
-        completed: !!sessions[date].completedAt,
+        completed: isTrained(sessions[date] as any),
       }));
     const weights = listBodyWeights();
     const profile = getProfile();

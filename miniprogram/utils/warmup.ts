@@ -3,6 +3,7 @@
  * 坡道组只写在 session.warmup，不进 session.exercises，因此不计训练容量；
  * 热身状态不影响连练（连练只认 completedAt）。
  */
+import { isTrained } from './schedule';
 import { DEFAULT_PROGRESSION, ProgressionConfig } from './progression';
 
 export interface RampConfig {
@@ -50,10 +51,10 @@ export function withWarmup(session: SessionRecord, warmup: WarmupRecord): Sessio
   return { ...session, warmup: { ...warmup } };
 }
 
-/** 连练日期：只认 completedAt */
+/** 连练日期：只认 completedAt（空草稿无 completedAt，不计） */
 export function completedTrainDates(sessions: SessionsStore): string[] {
   return Object.keys(sessions)
-    .filter((d) => sessions[d] && !!sessions[d].completedAt)
+    .filter((d) => isTrained(sessions[d] as any))
     .sort();
 }
 

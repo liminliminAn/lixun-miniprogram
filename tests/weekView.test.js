@@ -30,7 +30,7 @@ assert.strictEqual(S.canEditDay('2026-11-01', today), true);
 const week = ['push', 'pull', 'legs', 'rest', 'pull', 'rest', 'rest'];
 const sessions = {
   '2026-10-26': { dayType: 'push', completedAt: '2026-10-26T12:00:00Z', exercises: [{ exerciseId: 'bench', sets: [{ weight: 60, reps: 8 }] }] },
-  '2026-10-27': { dayType: 'pull', completedAt: null, exercises: [] },
+  '2026-10-27': { dayType: 'pull', completedAt: null, exercises: [{ exerciseId: 'row', sets: [{ weight: 40, reps: 8, done: true }] }] },
 };
 const cells = S.buildWeekCells(week, today, 0, sessions);
 assert.strictEqual(cells.length, 7);

@@ -7,7 +7,7 @@ const T = require('./lib/templates');
 const today = '2026-10-29'; // 周四 idx=3
 
 const custom = { week: ['push', 'pull', 'legs', 'legs', 'pull', 'rest', 'rest'] };
-const sess = { [today]: { dayType: 'legs', completedAt: null, exercises: [] } };
+const sess = { [today]: { dayType: 'legs', completedAt: null, exercises: [{ exerciseId: 'squat', sets: [{ reps: 8, weight: 60, done: true }] }] } };
 
 // 用户开练了腿，然后 恢复默认（自定义清除，默认 4 练周四=休）
 let week = S.effectiveWeek(T.buildWeekPlan(4).week, null);

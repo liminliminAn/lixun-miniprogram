@@ -82,9 +82,18 @@ export interface SessionLite {
   dayType?: DayKind;
   completedAt?: string | null;
   exercises?: Array<{ exerciseId: string; sets: Array<{ weight?: number; reps?: number; done?: boolean }> }>;
+  warmup?: { checked?: string[] } | null;
 }
 
-/** 只认带 completedAt 的记录 */
+/** §3.4-9：已开练 = 记下至少一组（done）或勾选至少一个热身项；已完成也算。只打开页面产生的空草稿不算 */
+export function isStarted(s: SessionLite | null | undefined): boolean {
+  if (!s) return false;
+  if (s.completedAt) return true;
+  if (s.warmup && Array.isArray(s.warmup.checked) && s.warmup.checked.length > 0) return true;
+  return (s.exercises || []).some((e) => (e.sets || []).some((x) => !!x.done));
+}
+
+/** 只认带 completedAt 的记录（点了「完成训练」才算练过；未完成草稿不计入连练） */
 export function isTrained(s: SessionLite | null | undefined): boolean {
   return !!(s && s.completedAt);
 }
@@ -111,7 +120,9 @@ export function buildWeekCells(
 ): WeekCell[] {
   return weekDates(today, offset).map((date, idx) => {
     const tense = dayTense(date, today);
-    const s = sessions[date];
+    const raw = sessions[date];
+    // §3.4-9：空草稿视同无记录
+    const s = isStarted(raw) ? raw : undefined;
     const recorded = tense === 'past' && s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : null;
     return {
       idx,
@@ -123,7 +134,7 @@ export function buildWeekCells(
       trained: isTrained(s),
       hasRecord: !!s,
       noRecord: tense === 'past' && !recorded,
-      // §3.4-4：今天已开练或已完成（当天有任何记录）→ 锁定类型
+      // §3.4-4/9：今天已开练（记下一组或勾选热身）或已完成 → 锁定类型
       editable: canEditDay(date, today) && !(tense === 'today' && !!s),
     };
   });
@@ -154,7 +165,7 @@ export function restoreDecision(existing: SessionLite | null | undefined, dayTyp
 
 /** §3.4-4：今天有任何记录（开练或完成）→ 锁定，不能改类型 */
 export function isTodayLocked(todaySession: SessionLite | null | undefined): boolean {
-  return !!todaySession;
+  return isStarted(todaySession);
 }
 
 export const TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';
@@ -187,6 +198,6 @@ export const PAST_NO_RECORD_LABEL = '未训练/休息';
  * 记录按日期存储，日期一过自然失效，无需单独的 pin key。
  */
 export function pinnedTodayType(week: DayKind[], idx: number, todaySession: SessionLite | null | undefined): DayKind {
-  if (todaySession && todaySession.dayType && DAY_KINDS.indexOf(todaySession.dayType) >= 0) return todaySession.dayType;
+  if (isStarted(todaySession) && todaySession && todaySession.dayType && DAY_KINDS.indexOf(todaySession.dayType) >= 0) return todaySession.dayType;
   return week[idx] || 'rest';
 }

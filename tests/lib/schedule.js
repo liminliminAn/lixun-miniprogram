@@ -10,6 +10,7 @@ exports.weekDates = weekDates;
 exports.shortDate = shortDate;
 exports.dayTense = dayTense;
 exports.canEditDay = canEditDay;
+exports.isStarted = isStarted;
 exports.isTrained = isTrained;
 exports.buildWeekCells = buildWeekCells;
 exports.tapAction = tapAction;
@@ -75,14 +76,26 @@ function dayTense(date, today) {
 function canEditDay(date, today) {
     return dayTense(date, today) !== 'past';
 }
-/** 只认带 completedAt 的记录 */
+/** §3.4-9：已开练 = 记下至少一组（done）或勾选至少一个热身项；已完成也算。只打开页面产生的空草稿不算 */
+function isStarted(s) {
+    if (!s)
+        return false;
+    if (s.completedAt)
+        return true;
+    if (s.warmup && Array.isArray(s.warmup.checked) && s.warmup.checked.length > 0)
+        return true;
+    return (s.exercises || []).some((e) => (e.sets || []).some((x) => !!x.done));
+}
+/** 只认带 completedAt 的记录（点了「完成训练」才算练过；未完成草稿不计入连练） */
 function isTrained(s) {
     return !!(s && s.completedAt);
 }
 function buildWeekCells(week, today, offset, sessions) {
     return weekDates(today, offset).map((date, idx) => {
         const tense = dayTense(date, today);
-        const s = sessions[date];
+        const raw = sessions[date];
+        // §3.4-9：空草稿视同无记录
+        const s = isStarted(raw) ? raw : undefined;
         const recorded = tense === 'past' && s && s.dayType && exports.DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : null;
         return {
             idx,
@@ -94,7 +107,7 @@ function buildWeekCells(week, today, offset, sessions) {
             trained: isTrained(s),
             hasRecord: !!s,
             noRecord: tense === 'past' && !recorded,
-            // §3.4-4：今天已开练或已完成（当天有任何记录）→ 锁定类型
+            // §3.4-4/9：今天已开练（记下一组或勾选热身）或已完成 → 锁定类型
             editable: canEditDay(date, today) && !(tense === 'today' && !!s),
         };
     });
@@ -125,7 +138,7 @@ function restoreDecision(existing, dayType) {
 }
 /** §3.4-4：今天有任何记录（开练或完成）→ 锁定，不能改类型 */
 function isTodayLocked(todaySession) {
-    return !!todaySession;
+    return isStarted(todaySession);
 }
 exports.TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';
 /** 最长连续训练天数（周日→周一循环计算）；全训练返回 7 */
@@ -153,7 +166,7 @@ exports.PAST_NO_RECORD_LABEL = '未训练/休息';
  * 记录按日期存储，日期一过自然失效，无需单独的 pin key。
  */
 function pinnedTodayType(week, idx, todaySession) {
-    if (todaySession && todaySession.dayType && exports.DAY_KINDS.indexOf(todaySession.dayType) >= 0)
+    if (isStarted(todaySession) && todaySession && todaySession.dayType && exports.DAY_KINDS.indexOf(todaySession.dayType) >= 0)
         return todaySession.dayType;
     return week[idx] || 'rest';
 }
