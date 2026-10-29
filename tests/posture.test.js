@@ -104,7 +104,7 @@ walk(root).filter((f) => /\.(wxml|ts|json|wxss|js)$/.test(f)).forEach((f) => {
   assert.ok(t.includes('setClipboardData') && t.includes('COPY_TOAST'), f);
 });
 walk(root).filter((f) => f.endsWith('.wxss') && !f.endsWith('app.wxss')).forEach((f) =>
-  assert.ok(!/#fff(fff)?\b|\bwhite\b/i.test(fs.readFileSync(f, 'utf8')), `hardcoded white in ${path.relative(root, f)}`));
+  assert.ok(!/#fff(fff)?\b|\bwhite\b(?!-space)/i.test(fs.readFileSync(f, 'utf8')), `hardcoded white in ${path.relative(root, f)}`));
 // BUG-A：剂量旁标注「剂量为通用建议，因人而异」，来源链接不与剂量同行
 { const { DOSE_LABEL } = require('./lib/warmup');
   assert.strictEqual(DOSE_LABEL, '剂量为通用建议，因人而异');

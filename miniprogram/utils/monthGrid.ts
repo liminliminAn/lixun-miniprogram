@@ -1,9 +1,9 @@
 /** 计划页整月日历（纯函数，便于单测）：6 行 × 7 列，周一起 */
-import { DayKind, DAY_KINDS, SessionLite, sessionSummary, PAST_NO_RECORD_LABEL, dayTense, DayTense, isStarted, isTrained, pinType, resolveDayType, DateOverrides } from './schedule';
+import { DayKind, DAY_KINDS, SessionLite, sessionSummary, PAST_NO_RECORD_LABEL, dayTense, DayTense, isStarted, isTrained, pinType, resolveDayType, PAST_REST_LABEL, DateOverrides } from './schedule';
 
 export const MONTH_WEEKDAY_HEADER = ['一', '二', '三', '四', '五', '六', '日'];
-/** 月历格子窄，「未训练/休息」缩成「未练」；周视图和记录弹窗保留全称 */
-export const MONTH_NO_RECORD_LABEL = '未练';
+/** 过去无记录：格子里显示单字「休」（深灰），记录弹窗保留「未训练/休息」 */
+export const MONTH_NO_RECORD_LABEL = PAST_REST_LABEL;
 export const PAST_UNFINISHED_LABEL = '未完成';
 const KIND_LABEL: Record<DayKind, string> = { push: '推', pull: '拉', legs: '腿', rest: '休' };
 const pad = (n: number) => `${n}`.padStart(2, '0');
@@ -94,7 +94,7 @@ export function buildMonthCells(
     if (tense === 'past') {
       // §3.4-7：过去日只显示实际记录
       dayType = s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : null;
-      label = trained ? '✓已练' : dayType ? PAST_UNFINISHED_LABEL : MONTH_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
+      label = trained && dayType ? `✓${KIND_LABEL[dayType]}` : trained ? '✓' : dayType ? PAST_UNFINISHED_LABEL : MONTH_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
     } else {
       dayType = pinType(resolveDayType(date, week, overrides), tense === 'today' ? s : null);
       label = KIND_LABEL[dayType];

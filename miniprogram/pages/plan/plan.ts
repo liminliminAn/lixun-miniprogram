@@ -5,7 +5,7 @@ import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSc
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedWeek, hasOverrideIn, overrideSheetTitle,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedWeek, hasOverrideIn, overrideSheetTitle,
 } from '../../utils/schedule';
 import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
@@ -46,7 +46,8 @@ Page({
     const weekCells = buildWeekCells(getEffectiveWeek(), today, offset, getSessions() as any, getDateOverrides()).map((c) => ({
       ...c,
       wd: WEEKDAY_LABELS[c.idx],
-      label: c.noRecord ? PAST_NO_RECORD_LABEL : DAY_TYPE_LABEL[c.dayType],
+      // 过去无记录「休」；已练「✓推」（类型色）；未完成在下方标「未完成」
+      label: c.noRecord ? PAST_REST_LABEL : c.tense === 'past' && c.trained ? `✓${DAY_TYPE_LABEL[c.dayType]}` : DAY_TYPE_LABEL[c.dayType],
     }));
     const dates = weekDates(today, offset);
     const types: Array<Exclude<DayType, 'rest'>> = ['push', 'pull', 'legs'];

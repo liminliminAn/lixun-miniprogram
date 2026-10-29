@@ -12,8 +12,8 @@
       <view class="cell {{item.isToday ? 'today' : ''}} {{item.tense}}" wx:for="{{weekCells}}" wx:key="idx" data-idx="{{item.idx}}" bindtap="onTapDay">
         <text class="wd">周{{item.wd}}</text>
         <text class="md">{{item.md}}</text>
-        <text class="dt {{item.noRecord ? 'none' : item.dayType}}">{{item.label}}</text>
-        <text class="mark" wx:if="{{item.tense === 'past' && item.hasRecord}}">{{item.trained ? '✓ 已练' : '未完成'}}</text>
+        <text class="dt {{item.noRecord ? 'rest' : item.dayType}}">{{item.label}}</text>
+        <text class="mark" wx:if="{{item.tense === 'past' && item.hasRecord && !item.trained}}">未完成</text>
       </view>
     </view>
     </block>
@@ -27,7 +27,7 @@
       <view class="m-grid">
         <view class="m-cell {{item.inMonth ? '' : 'out'}} {{item.tappable ? '' : 'static'}} {{item.tense}}" wx:for="{{monthCells}}" wx:key="date" data-i="{{index}}" bindtap="onTapMonthDay">
           <text class="m-day {{item.isToday ? 'today' : ''}}">{{item.day}}</text>
-          <text class="m-type {{item.trained ? 'done' : (item.tense === 'past' && item.dayType ? 'unfinished' : (item.dayType || 'none'))}}">{{item.label}}</text>
+          <text class="m-type {{item.tense === 'past' && item.dayType && !item.trained ? 'unfinished' : (item.dayType || 'rest')}}">{{item.label}}</text>
         </view>
       </view>
     </view>

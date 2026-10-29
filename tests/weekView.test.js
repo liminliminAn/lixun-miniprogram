@@ -64,5 +64,5 @@ assert.ok(/onPrevWeek/.test(wxml) && /onNextWeek/.test(wxml) && /\{\{item\.md\}\
   assert.strictEqual(cs[3].noRecord, false); assert.strictEqual(cs[3].dayType, 'push'); // 今天按课表
   assert.ok(S.buildWeekCells(['push', 'pull', 'legs', 'push', 'pull', 'legs', 'push'], today, -1, {}).every((c) => c.noRecord));
   assert.strictEqual(S.PAST_NO_RECORD_LABEL, '未训练/休息');
-  assert.ok(/c\.noRecord \? PAST_NO_RECORD_LABEL/.test(ts)); }
+  assert.ok(/c\.noRecord \? PAST_REST_LABEL/.test(ts)); }
 console.log('weekView.test ok');

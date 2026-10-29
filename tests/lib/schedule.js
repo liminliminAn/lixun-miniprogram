@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PAST_NO_RECORD_LABEL = exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
+exports.PAST_REST_LABEL = exports.PAST_NO_RECORD_LABEL = exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
 exports.isValidWeek = isValidWeek;
 exports.effectiveWeek = effectiveWeek;
 exports.setDay = setDay;
@@ -169,6 +169,8 @@ function streakSoftTip(week) {
     return maxConsecutiveTraining(week) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
 }
 exports.PAST_NO_RECORD_LABEL = '未训练/休息';
+/** 周视图、月历格子：过去无记录统一显示单字「休」（深灰）；记录弹窗保留全称 */
+exports.PAST_REST_LABEL = '休';
 /**
  * §3.4-8：今天已有记录（开练或完成）时，今天类型固定为记录的类型；
  * 恢复默认 / 改天数 / 重做问卷只从明天起生效。无记录则按生效课表。

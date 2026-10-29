@@ -192,6 +192,8 @@ export function streakSoftTip(week: DayKind[]): string {
 }
 
 export const PAST_NO_RECORD_LABEL = '未训练/休息';
+/** 周视图、月历格子：过去无记录统一显示单字「休」（深灰）；记录弹窗保留全称 */
+export const PAST_REST_LABEL = '休';
 
 /**
  * §3.4-8：今天已有记录（开练或完成）时，今天类型固定为记录的类型；

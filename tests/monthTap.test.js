@@ -18,7 +18,7 @@ assert.strictEqual(pre.label, '');
 assert.strictEqual(pre.noRecord, false);
 assert.strictEqual(pre.tappable, false);
 // 首次使用当天及之后正常
-assert.strictEqual(at('2026-10-10').label, '未练');
+assert.strictEqual(at('2026-10-10').label, '休');
 assert.strictEqual(at('2026-10-10').tappable, true);
 assert.strictEqual(at('2026-10-30').tappable, true);
 // 不传 firstUse 时兼容
