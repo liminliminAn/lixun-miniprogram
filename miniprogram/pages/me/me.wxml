@@ -1,7 +1,7 @@
 <view class="container">
   <view class="card user" wx:if="{{user}}">
     <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-      <image class="avatar" src="{{user.avatarPath || defaultAvatar}}" mode="aspectFill" />
+      <image class="avatar-img" src="{{user.avatarPath || defaultAvatar}}" mode="aspectFill" />
     </button>
     <view class="user-main">
       <input class="nick" type="nickname" value="{{nickDraft}}" bindinput="onNickInput" bindblur="onNickSave" bindconfirm="onNickSave" placeholder="1–20 个字" />
