@@ -3,10 +3,15 @@ import { DAY_TYPE_LABEL, WEEKDAY_LABELS } from '../../constants/templates';
 import { exercisesByDay, EXERCISE_MAP } from '../../constants/exercises';
 import { getPlan, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, hasCustomSchedule } from '../../services/profile';
 import { getSessions } from '../../services/workout';
-import { formatDate } from '../../utils/date';
+import { formatDate, mondayBasedIndex } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, weekWithTodayPinned,
 } from '../../utils/schedule';
+
+/** 生效课表 + 今天按已开练记录固定（§3.4-8/9） */
+function pinnedWeek(): DayType[] {
+  return weekWithTodayPinned(getEffectiveWeek(), mondayBasedIndex(new Date()), (getSessions() as any)[formatDate()]);
+}
 
 Page({
   data: {
@@ -43,7 +48,7 @@ Page({
     this.setData({
       daysPerWeek: plan.daysPerWeek,
       customized: hasCustomSchedule(),
-      streakTip: streakSoftTip(getEffectiveWeek()),
+      streakTip: streakSoftTip(pinnedWeek()),
       weekOffset: offset,
       weekRange: `${shortDate(dates[0])} – ${shortDate(dates[6])}`,
       weekCells,

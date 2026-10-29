@@ -201,3 +201,10 @@ export function pinnedTodayType(week: DayKind[], idx: number, todaySession: Sess
   if (isStarted(todaySession) && todaySession && todaySession.dayType && DAY_KINDS.indexOf(todaySession.dayType) >= 0) return todaySession.dayType;
   return week[idx] || 'rest';
 }
+
+/** 今天按 §3.4-8/9 固定后的生效周课表（连练软提示等按实际今天类型计算） */
+export function weekWithTodayPinned(week: DayKind[], todayIdx: number, todaySession: SessionLite | null | undefined): DayKind[] {
+  const out = [...week];
+  out[todayIdx] = pinnedTodayType(week, todayIdx, todaySession);
+  return out;
+}

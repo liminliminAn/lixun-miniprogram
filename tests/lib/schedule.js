@@ -20,6 +20,7 @@ exports.isTodayLocked = isTodayLocked;
 exports.maxConsecutiveTraining = maxConsecutiveTraining;
 exports.streakSoftTip = streakSoftTip;
 exports.pinnedTodayType = pinnedTodayType;
+exports.weekWithTodayPinned = weekWithTodayPinned;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
 exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
 function isValidWeek(week) {
@@ -169,4 +170,10 @@ function pinnedTodayType(week, idx, todaySession) {
     if (isStarted(todaySession) && todaySession && todaySession.dayType && exports.DAY_KINDS.indexOf(todaySession.dayType) >= 0)
         return todaySession.dayType;
     return week[idx] || 'rest';
+}
+/** 今天按 §3.4-8/9 固定后的生效周课表（连练软提示等按实际今天类型计算） */
+function weekWithTodayPinned(week, todayIdx, todaySession) {
+    const out = [...week];
+    out[todayIdx] = pinnedTodayType(week, todayIdx, todaySession);
+    return out;
 }
