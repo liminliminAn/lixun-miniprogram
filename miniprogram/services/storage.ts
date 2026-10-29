@@ -10,6 +10,8 @@ export const KEYS = {
   dietLog: 'lixun:v1:dietLog',
   /** IT2-07 本地登录资料 LocalUser */
   user: 'lixun:v1:user',
+  /** 用户自定义本周课表 CustomSchedule；存在时优先于 plan.week */
+  customSchedule: 'lixun:v1:customSchedule',
 } as const;
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];

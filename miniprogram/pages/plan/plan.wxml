@@ -1,14 +1,14 @@
 <view class="container">
   <view class="card">
-    <view class="title">本周课表（{{daysPerWeek}} 练）</view>
-    <view class="hint" wx:if="{{daysPerWeek===4}}">4 练：推、拉、腿、休、拉、休、休（去掉第二次推）</view>
-    <view class="hint" wx:else>5 练：推、拉、腿、休、推、拉、休</view>
+    <view class="title">本周课表（{{customized ? '自定义' : daysPerWeek + ' 练'}}）</view>
+    <view class="hint">点某一天可改为推/拉/腿/休</view>
     <view class="week">
-      <view class="cell" wx:for="{{weekCells}}" wx:key="idx">
+      <view class="cell" wx:for="{{weekCells}}" wx:key="idx" data-idx="{{item.idx}}" bindtap="onTapDay">
         <text class="wd">周{{item.wd}}</text>
         <text class="dt {{item.dayType}}">{{item.label}}</text>
       </view>
     </view>
+    <view class="restore" wx:if="{{customized}}" bindtap="onRestoreDefault">恢复默认</view>
   </view>
 
   <view class="card" wx:for="{{dayBlocks}}" wx:key="dayType">

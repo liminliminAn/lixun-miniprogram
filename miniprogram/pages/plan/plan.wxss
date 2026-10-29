@@ -52,3 +52,12 @@
   align-items: center;
 }
 .ex:last-child { border-bottom: none; }
+.cell { min-height: var(--hit-min); }
+.restore {
+  margin-top: 20rpx;
+  text-align: center;
+  min-height: var(--hit-min);
+  line-height: var(--hit-min);
+  color: var(--color-accent);
+  font-size: var(--font-meta);
+}

@@ -1,6 +1,7 @@
 import { storage, KEYS } from './storage';
 import { classify } from '../utils/classify';
 import { buildWeekPlan } from '../constants/templates';
+import { effectiveWeek, isCustomized, CustomSchedule } from '../utils/schedule';
 
 export { classify };
 
@@ -39,4 +40,26 @@ export function getPrefs(): Prefs {
 
 export function setPrefs(patch: Partial<Prefs>): void {
   storage.set(KEYS.prefs, { ...getPrefs(), ...patch });
+}
+
+export function getCustomSchedule(): CustomSchedule | null {
+  return storage.get<CustomSchedule | null>(KEYS.customSchedule, null);
+}
+
+export function saveCustomSchedule(c: CustomSchedule): void {
+  storage.set(KEYS.customSchedule, c);
+}
+
+export function clearCustomSchedule(): void {
+  storage.remove(KEYS.customSchedule);
+}
+
+export function hasCustomSchedule(): boolean {
+  return isCustomized(getCustomSchedule());
+}
+
+/** 所有读周课表的地方统一走这里：自定义优先 */
+export function getEffectiveWeek(): DayType[] {
+  const plan = getPlan();
+  return effectiveWeek(plan ? plan.week : null, getCustomSchedule());
 }

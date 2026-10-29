@@ -7,6 +7,7 @@ declare const wx: {
   getSystemInfoSync(): { pixelRatio: number; theme?: 'light' | 'dark'; [k: string]: any };
   setClipboardData(opts: { data: string; success?: () => void }): void;
   showToast(opts: { title: string; icon?: string; duration?: number }): void;
+  showActionSheet(opts: { itemList: string[]; itemColor?: string; success?: (res: { tapIndex: number }) => void; fail?: (err: unknown) => void }): void;
   showModal(opts: {
     title: string;
     content: string;

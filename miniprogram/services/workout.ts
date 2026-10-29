@@ -1,6 +1,6 @@
 import { storage, KEYS } from './storage';
 import { exercisesByDay } from '../constants/exercises';
-import { getPlan } from './profile';
+import { getPlan, getEffectiveWeek } from './profile';
 import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/progression';
 
 // IT2-04：次数区间以动作卡正式组剂量为准
@@ -12,7 +12,7 @@ import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../util
 export function todayDayType(date: Date = new Date()): DayType {
   const plan = getPlan();
   if (!plan) return 'rest';
-  return plan.week[mondayBasedIndex(date)];
+  return getEffectiveWeek()[mondayBasedIndex(date)];
 }
 
 export function getSessions(): SessionsStore {
