@@ -5,7 +5,7 @@ import { getPlan, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, has
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
 } from '../../utils/schedule';
 
 Page({
@@ -62,6 +62,10 @@ Page({
     const cell = this.data.weekCells[idx];
     if (!cell) return;
     const action = tapAction(cell);
+    if (action === 'locked') {
+      wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });
+      return;
+    }
     if (action === 'none') {
       wx.showToast({ title: '这天没有训练记录', icon: 'none' });
       return;

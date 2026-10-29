@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
+exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
 exports.isValidWeek = isValidWeek;
 exports.effectiveWeek = effectiveWeek;
 exports.setDay = setDay;
@@ -14,6 +14,8 @@ exports.isTrained = isTrained;
 exports.buildWeekCells = buildWeekCells;
 exports.tapAction = tapAction;
 exports.sessionSummary = sessionSummary;
+exports.restoreDecision = restoreDecision;
+exports.isTodayLocked = isTodayLocked;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
 exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
 function isValidWeek(week) {
@@ -88,7 +90,8 @@ function buildWeekCells(week, today, offset, sessions) {
             isToday: tense === 'today',
             trained: isTrained(s),
             hasRecord: !!s,
-            editable: canEditDay(date, today),
+            // §3.4-4：今天已开练或已完成（当天有任何记录）→ 锁定类型
+            editable: canEditDay(date, today) && !(tense === 'today' && !!s),
         };
     });
 }
@@ -96,6 +99,8 @@ function buildWeekCells(week, today, offset, sessions) {
 function tapAction(cell) {
     if (cell.editable)
         return 'edit';
+    if (cell.isToday)
+        return 'locked';
     return cell.hasRecord ? 'record' : 'none';
 }
 /** 过去某天记录的文字摘要（复用 sessions 数据，弹窗展示） */
@@ -106,3 +111,16 @@ function sessionSummary(s, nameOf) {
     const head = s.completedAt ? '已完成' : '未完成';
     return lines.length ? `${head}\n${lines.join('\n')}` : `${head}（无组记录）`;
 }
+/** 开练时对当日已有记录的处理：只恢复与生效类型一致的未完成记录 */
+function restoreDecision(existing, dayType) {
+    if (!existing)
+        return 'fresh';
+    if (isTrained(existing))
+        return 'completed';
+    return existing.dayType === dayType ? 'restore' : 'fresh';
+}
+/** §3.4-4：今天有任何记录（开练或完成）→ 锁定，不能改类型 */
+function isTodayLocked(todaySession) {
+    return !!todaySession;
+}
+exports.TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';

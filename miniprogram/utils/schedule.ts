@@ -120,14 +120,16 @@ export function buildWeekCells(
       isToday: tense === 'today',
       trained: isTrained(s),
       hasRecord: !!s,
-      editable: canEditDay(date, today),
+      // §3.4-4：今天已开练或已完成（当天有任何记录）→ 锁定类型
+      editable: canEditDay(date, today) && !(tense === 'today' && !!s),
     };
   });
 }
 
 /** 点格子后的动作：可改 → ActionSheet；过去日有记录 → 看记录；否则 toast */
-export function tapAction(cell: Pick<WeekCell, 'editable' | 'hasRecord'>): 'edit' | 'record' | 'none' {
+export function tapAction(cell: Pick<WeekCell, 'editable' | 'hasRecord'> & { isToday?: boolean }): 'edit' | 'record' | 'none' | 'locked' {
   if (cell.editable) return 'edit';
+  if (cell.isToday) return 'locked';
   return cell.hasRecord ? 'record' : 'none';
 }
 
@@ -139,3 +141,17 @@ export function sessionSummary(s: SessionLite, nameOf: (id: string) => string): 
   const head = s.completedAt ? '已完成' : '未完成';
   return lines.length ? `${head}\n${lines.join('\n')}` : `${head}（无组记录）`;
 }
+
+/** 开练时对当日已有记录的处理：只恢复与生效类型一致的未完成记录 */
+export function restoreDecision(existing: SessionLite | null | undefined, dayType: DayKind): 'restore' | 'fresh' | 'completed' {
+  if (!existing) return 'fresh';
+  if (isTrained(existing)) return 'completed';
+  return existing.dayType === dayType ? 'restore' : 'fresh';
+}
+
+/** §3.4-4：今天有任何记录（开练或完成）→ 锁定，不能改类型 */
+export function isTodayLocked(todaySession: SessionLite | null | undefined): boolean {
+  return !!todaySession;
+}
+
+export const TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';

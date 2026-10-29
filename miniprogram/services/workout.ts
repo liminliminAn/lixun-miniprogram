@@ -7,6 +7,7 @@ import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/pr
 const CARDS: any = require('../config/exercise-cards.js');
 const PROGRESSION = withCardRepRanges(DEFAULT_PROGRESSION, CARDS);
 import { completedTrainDates } from '../utils/warmup';
+import { restoreDecision } from '../utils/schedule';
 import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
 
 export function todayDayType(date: Date = new Date()): DayType {
@@ -51,7 +52,9 @@ export function startOrResumeSession(
   if (dayType === 'rest') return null;
 
   const existing = getSession(date);
-  if (existing) return existing;
+  const decision = restoreDecision(existing, dayType);
+  // 只恢复与今天生效类型一致的未完成记录；已完成的原样返回；类型不符则按新类型重开
+  if (existing && decision !== 'fresh') return existing;
 
   const lastSets = getLastSets();
   const exercises = exercisesByDay(dayType).map((ex) => {
