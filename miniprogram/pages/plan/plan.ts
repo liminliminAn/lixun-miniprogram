@@ -65,7 +65,7 @@ Page({
     if (!cell) return;
     const action = tapAction(cell);
     if (action === 'locked') {
-      wx.showToast({ title: TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, icon: 'none' });
+      wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });
       return;
     }
     if (action === 'none') {
