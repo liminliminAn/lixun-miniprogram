@@ -30,6 +30,9 @@ exports.withOverride = withOverride;
 exports.hasOverrideIn = hasOverrideIn;
 exports.pinType = pinType;
 exports.pinnedResolvedWeek = pinnedResolvedWeek;
+exports.pinnedResolvedDays = pinnedResolvedDays;
+exports.maxConsecutiveLinear = maxConsecutiveLinear;
+exports.streakSoftTipDays = streakSoftTipDays;
 exports.overrideSheetTitle = overrideSheetTitle;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
 exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
@@ -251,6 +254,29 @@ function pinnedResolvedWeek(week, today, overrides, todaySession) {
         const t = resolveDayType(d, week, overrides);
         return d === today ? pinType(t, todaySession) : t;
     });
+}
+/** 具体日期序列（本周一 → 下周日，14 天）：覆盖 → 模板，今天按开练记录固定。不做循环拼接 */
+function pinnedResolvedDays(week, today, overrides, todaySession) {
+    const sun = parse(weekDates(today, 0)[6]);
+    const nextMon = fmt(new Date(sun.getFullYear(), sun.getMonth(), sun.getDate() + 1));
+    return weekDates(today, 0).concat(weekDates(nextMon, 0)).map((d) => {
+        const t = resolveDayType(d, week, overrides);
+        return d === today ? pinType(t, todaySession) : t;
+    });
+}
+/** 线性最长连续训练天数（具体日期，周日不接回本周一） */
+function maxConsecutiveLinear(days) {
+    let best = 0;
+    let run = 0;
+    days.forEach((d) => {
+        run = d !== 'rest' ? run + 1 : 0;
+        best = Math.max(best, run);
+    });
+    return best;
+}
+/** 周视图软提示：按具体日期线性计算 */
+function streakSoftTipDays(days) {
+    return maxConsecutiveLinear(days) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
 }
 /** 「修改 M/D」 */
 function overrideSheetTitle(date) {

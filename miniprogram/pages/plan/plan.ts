@@ -5,14 +5,14 @@ import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSc
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedWeek, overrideSheetTitle,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTipDays, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedDays, overrideSheetTitle,
 } from '../../utils/schedule';
 import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
-/** 本周生效类型（日期覆盖 → 周模板）+ 今天按已开练记录固定（§3.4-8/9） */
-function pinnedWeek(): DayType[] {
+/** 本周一到下周日的具体生效类型（日期覆盖 → 周模板）+ 今天按已开练记录固定（§3.4-8/9）；连练按日期线性计算 */
+function pinnedDays(): DayType[] {
   const today = formatDate();
-  return pinnedResolvedWeek(getEffectiveWeek(), today, getDateOverrides(), (getSessions() as any)[today]);
+  return pinnedResolvedDays(getEffectiveWeek(), today, getDateOverrides(), (getSessions() as any)[today]);
 }
 
 Page({
@@ -62,7 +62,7 @@ Page({
       daysPerWeek: plan.daysPerWeek,
       customized: restorable,
       restorable,
-      streakTip: streakSoftTip(pinnedWeek()),
+      streakTip: streakSoftTipDays(pinnedDays()),
       weekOffset: offset,
       weekRange: `${shortDate(dates[0])} – ${shortDate(dates[6])}`,
       weekCells,
@@ -159,7 +159,7 @@ Page({
         if (!kind) return;
         setDateOverride(date, kind); // 软提示，不拦截保存
         this.refresh();
-        const tip = streakSoftTip(pinnedWeek());
+        const tip = streakSoftTipDays(pinnedDays());
         if (tip) wx.showToast({ title: tip, icon: 'none' });
       },
     });

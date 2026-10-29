@@ -283,6 +283,32 @@ export function pinnedResolvedWeek(week: DayKind[], today: string, overrides: Da
   });
 }
 
+/** 具体日期序列（本周一 → 下周日，14 天）：覆盖 → 模板，今天按开练记录固定。不做循环拼接 */
+export function pinnedResolvedDays(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined): DayKind[] {
+  const sun = parse(weekDates(today, 0)[6]);
+  const nextMon = fmt(new Date(sun.getFullYear(), sun.getMonth(), sun.getDate() + 1));
+  return weekDates(today, 0).concat(weekDates(nextMon, 0)).map((d) => {
+    const t = resolveDayType(d, week, overrides);
+    return d === today ? pinType(t, todaySession) : t;
+  });
+}
+
+/** 线性最长连续训练天数（具体日期，周日不接回本周一） */
+export function maxConsecutiveLinear(days: DayKind[]): number {
+  let best = 0;
+  let run = 0;
+  days.forEach((d) => {
+    run = d !== 'rest' ? run + 1 : 0;
+    best = Math.max(best, run);
+  });
+  return best;
+}
+
+/** 周视图软提示：按具体日期线性计算 */
+export function streakSoftTipDays(days: DayKind[]): string {
+  return maxConsecutiveLinear(days) > STREAK_SOFT_LIMIT ? STREAK_SOFT_TIP : '';
+}
+
 /** 「修改 M/D」 */
 export function overrideSheetTitle(date: string): string {
   return `修改 ${shortDate(date)}`;
