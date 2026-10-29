@@ -165,10 +165,19 @@ Page({
     });
   },
   onRestoreDefault() {
-    // 恢复默认：清除自定义周模板和所有日期覆盖
-    clearCustomSchedule();
-    clearDateOverrides();
-    this.refresh();
-    wx.showToast({ title: '已恢复默认', icon: 'none' });
+    // 恢复默认：二次确认后才清除自定义周模板和所有日期覆盖；今天已开练仍按记录固定（§3.4-8）
+    wx.showModal({
+      title: '恢复默认课表？',
+      content: '会清除你自定义的周课表和所有按日修改，按问卷结果恢复默认课表。',
+      confirmText: '恢复默认',
+      cancelText: '取消',
+      success: (r) => {
+        if (!r.confirm) return;
+        clearCustomSchedule();
+        clearDateOverrides();
+        this.refresh();
+        wx.showToast({ title: '已恢复默认', icon: 'none' });
+      },
+    });
   },
 });
