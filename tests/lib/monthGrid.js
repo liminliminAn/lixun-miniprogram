@@ -53,7 +53,7 @@ function monthDates(year, month) {
     const lead = js === 0 ? 6 : js - 1;
     return Array.from({ length: 42 }, (_, i) => fmt(new Date(year, month - 1, 1 - lead + i)));
 }
-function buildMonthCells(year, month, today, week, sessions) {
+function buildMonthCells(year, month, today, week, sessions, firstUse = '') {
     return monthDates(year, month).map((date, i) => {
         const [, m, d] = date.split('-').map(Number);
         const weekdayIdx = i % 7;
@@ -72,10 +72,16 @@ function buildMonthCells(year, month, today, week, sessions) {
             dayType = (0, schedule_1.pinnedTodayType)(week, weekdayIdx, tense === 'today' ? s : null);
             label = KIND_LABEL[dayType];
         }
+        const inMonth = m === month;
+        const beforeFirstUse = !!firstUse && date < firstUse;
+        if (beforeFirstUse) {
+            dayType = null;
+            label = '';
+        }
         return {
             date,
             day: d,
-            inMonth: m === month,
+            inMonth,
             isToday: tense === 'today',
             tense,
             weekdayIdx,
@@ -83,8 +89,10 @@ function buildMonthCells(year, month, today, week, sessions) {
             label,
             trained,
             hasRecord: !!s,
-            noRecord: tense === 'past' && !dayType,
-            editable: tense !== 'past' && !(tense === 'today' && !!s),
+            noRecord: tense === 'past' && !dayType && !beforeFirstUse,
+            editable: !beforeFirstUse && tense !== 'past' && !(tense === 'today' && !!s),
+            beforeFirstUse,
+            tappable: inMonth && !beforeFirstUse,
         };
     });
 }

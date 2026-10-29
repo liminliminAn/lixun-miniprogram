@@ -20,6 +20,10 @@ export interface MonthCell {
   hasRecord: boolean;
   noRecord: boolean;
   editable: boolean;
+  /** §3.5-4：首次使用之前 → 留空 */
+  beforeFirstUse: boolean;
+  /** §3.5-3/4：非本月灰色日期、首次使用之前的日期不能点 */
+  tappable: boolean;
 }
 
 /** 由 today 所在月偏移 offset 个月 → { year, month(1-12) } */
@@ -71,6 +75,7 @@ export function buildMonthCells(
   today: string,
   week: DayKind[],
   sessions: Record<string, SessionLite | undefined>,
+  firstUse: string = '',
 ): MonthCell[] {
   return monthDates(year, month).map((date, i) => {
     const [, m, d] = date.split('-').map(Number);
@@ -89,10 +94,16 @@ export function buildMonthCells(
       dayType = pinnedTodayType(week, weekdayIdx, tense === 'today' ? s : null);
       label = KIND_LABEL[dayType];
     }
+    const inMonth = m === month;
+    const beforeFirstUse = !!firstUse && date < firstUse;
+    if (beforeFirstUse) {
+      dayType = null;
+      label = '';
+    }
     return {
       date,
       day: d,
-      inMonth: m === month,
+      inMonth,
       isToday: tense === 'today',
       tense,
       weekdayIdx,
@@ -100,8 +111,10 @@ export function buildMonthCells(
       label,
       trained,
       hasRecord: !!s,
-      noRecord: tense === 'past' && !dayType,
-      editable: tense !== 'past' && !(tense === 'today' && !!s),
+      noRecord: tense === 'past' && !dayType && !beforeFirstUse,
+      editable: !beforeFirstUse && tense !== 'past' && !(tense === 'today' && !!s),
+      beforeFirstUse,
+      tappable: inMonth && !beforeFirstUse,
     };
   });
 }

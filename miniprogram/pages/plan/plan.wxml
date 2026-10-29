@@ -25,7 +25,7 @@
       </view>
       <view class="m-head"><text class="m-wd" wx:for="{{monthHeader}}" wx:key="*this">{{item}}</text></view>
       <view class="m-grid">
-        <view class="m-cell {{item.inMonth ? '' : 'out'}} {{item.tense}}" wx:for="{{monthCells}}" wx:key="date" data-i="{{index}}" bindtap="onTapMonthDay">
+        <view class="m-cell {{item.inMonth ? '' : 'out'}} {{item.tappable ? '' : 'static'}} {{item.tense}}" wx:for="{{monthCells}}" wx:key="date" data-i="{{index}}" bindtap="onTapMonthDay">
           <text class="m-day {{item.isToday ? 'today' : ''}}">{{item.day}}</text>
           <text class="m-type {{item.trained ? 'done' : (item.dayType || 'none')}}">{{item.label}}</text>
         </view>

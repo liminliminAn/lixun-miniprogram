@@ -68,7 +68,8 @@ Page({
     const today = formatDate();
     const sessions = getSessions() as any;
     const profile = getProfile();
-    const range = monthOffsetRange(today, firstUseDate(profile ? profile.createdAt : null, Object.keys(sessions), today));
+    const firstUse = firstUseDate(profile ? profile.createdAt : null, Object.keys(sessions), today);
+    const range = monthOffsetRange(today, firstUse);
     const monthOffset = clampMonthOffset(this.data.monthOffset, range);
     const { year, month } = shiftMonth(today, monthOffset);
     this.setData({
@@ -76,7 +77,7 @@ Page({
       monthMin: range.min,
       monthMax: range.max,
       monthTitle: monthTitle(year, month),
-      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), sessions),
+      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), sessions, firstUse),
     });
   },
   onToggleMonth() {
@@ -95,7 +96,7 @@ Page({
   },
   onTapMonthDay(e: any) {
     const cell = this.data.monthCells[Number(e.currentTarget.dataset.i)];
-    if (!cell) return;
+    if (!cell || !cell.tappable) return; // §3.5-3/4
     this.handleTap({ ...cell, idx: cell.weekdayIdx, md: shortDate(cell.date) }, editSheetTitle(cell.weekdayIdx));
   },
   onPrevWeek() {
