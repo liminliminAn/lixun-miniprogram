@@ -13,6 +13,11 @@ page {
   --color-success-soft: #163A2C;
   --color-warning-soft: #3A2E12;
   --color-done: #7AB8FF;
+  /* 训练类型色（推橙 / 拉蓝 / 腿绿 / 休及过去未练深灰）；对 --color-bg、--color-surface 均 ≥4.5:1 */
+  --type-push: #FF9F43;
+  --type-pull: #5AA9FF;
+  --type-legs: #3DDC97;
+  --type-rest: #9AA1AD;
   --color-info: #2EE6C5;
   --color-border: #2A303C;
   --color-danger: #FF6B6B;
@@ -64,6 +69,10 @@ page {
     --color-success-soft: #E5F3EC;
     --color-warning-soft: #FBF1E1;
     --color-done: #2F6FD1;
+    --type-push: #A84E08;
+    --type-pull: #1D5FD1;
+    --type-legs: #127035;
+    --type-rest: #4B5563;
     --color-info: #0D9B86;
     --color-border: #E6E8EC;
     --color-danger: #D14343;
