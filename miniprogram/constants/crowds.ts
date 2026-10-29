@@ -1,3 +1,4 @@
+import { BF_BAND_TEXT } from '../utils/labels';
 export interface CrowdInfo {
   id: CrowdId;
   name: string;
@@ -64,18 +65,9 @@ export const CROWD_LIST: CrowdInfo[] = [
   CROWDS.beginner,
 ];
 
-/** 体脂刻度说明（自报 bfBand） */
+/** 体脂刻度说明（自报 bfBand）；文案统一来自 utils/labels */
+const BANDS: BfBand[] = ['very_low', 'low', 'mid', 'high'];
 export const BF_BAND_LABELS: Record<Sex, { band: BfBand; label: string }[]> = {
-  male: [
-    { band: 'very_low', label: '很低（<12%）' },
-    { band: 'low', label: '较低（12–18%）' },
-    { band: 'mid', label: '中等（18–25%）' },
-    { band: 'high', label: '偏高（>25%）' },
-  ],
-  female: [
-    { band: 'very_low', label: '很低（<18%）' },
-    { band: 'low', label: '较低（18–25%）' },
-    { band: 'mid', label: '中等（25–32%）' },
-    { band: 'high', label: '偏高（>32%）' },
-  ],
+  male: BANDS.map((band) => ({ band, label: BF_BAND_TEXT.male[band] })),
+  female: BANDS.map((band) => ({ band, label: BF_BAND_TEXT.female[band] })),
 };

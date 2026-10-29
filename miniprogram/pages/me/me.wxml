@@ -11,10 +11,12 @@
   <view class="card" wx:if="{{profile}}">
     <view class="title">档案</view>
     <view class="row"><text>人群</text><text>{{crowdName}}</text></view>
-    <view class="row"><text>性别</text><text>{{profile.sex === 'male' ? '男' : '女'}}</text></view>
+    <view class="row"><text>性别</text><text>{{labels.sex}}</text></view>
     <view class="row"><text>身高/体重</text><text>{{profile.heightCm}} cm / {{profile.weightKg}} kg</text></view>
-    <view class="row"><text>体脂区间</text><text>{{profile.bfBand}}</text></view>
-    <view class="row"><text>目标</text><text>{{profile.goal}}</text></view>
+    <view class="row"><text>体脂区间</text><text>{{labels.bfBand}}</text></view>
+    <view class="row"><text>目标</text><text>{{labels.goal}}</text></view>
+    <view class="row"><text>训练年限</text><text>{{labels.trainYears}}</text></view>
+    <view class="row"><text>关节限制</text><text>{{labels.jointLimit}}</text></view>
     <view class="row tap" bindtap="onTapDays"><text>每周</text><text>{{profile.daysPerWeek}} 练 ›</text></view>
   </view>
 

@@ -1,6 +1,7 @@
 import { guardEntry } from '../../services/user';
 import { CROWDS } from '../../constants/crowds';
 import { getProfile, getPrefs, setPrefs, changeDaysPerWeek, hasCustomSchedule } from '../../services/profile';
+import { profileLabels } from '../../utils/labels';
 import { DAYS_PER_WEEK_OPTIONS } from '../../constants/templates';
 import { getUser, saveUser, persistAvatar, clearAllLocalData } from '../../services/user';
 import { validateNickname, DEFAULT_AVATAR, LOCAL_ONLY_COPY } from '../../utils/login';
@@ -9,6 +10,7 @@ Page({
   data: {
     profile: null as UserProfile | null,
     crowdName: '',
+    labels: {} as Record<string, string>,
     restSoftWarnDays: 3,
     showWarmup: true,
     user: null as LocalUser | null,
@@ -25,6 +27,7 @@ Page({
       user,
       nickDraft: user ? user.nickname : '',
       profile,
+      labels: profileLabels(profile),
       crowdName: profile ? CROWDS[profile.crowd].name : '',
       restSoftWarnDays: prefs.restSoftWarnDays,
       showWarmup: prefs.showWarmup !== false,
@@ -45,7 +48,8 @@ Page({
         if (!n || n === cur.daysPerWeek) return;
         const apply = (overwrite: boolean) => {
           if (!changeDaysPerWeek(n, overwrite)) return;
-          this.setData({ profile: getProfile() });
+          const np = getProfile();
+          this.setData({ profile: np, labels: profileLabels(np) });
           wx.showToast({ title: overwrite ? '已重新生成课表' : '已保存，保留自定义课表', icon: 'none' });
         };
         if (!hasCustomSchedule()) {
