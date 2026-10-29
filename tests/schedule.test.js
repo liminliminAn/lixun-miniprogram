@@ -33,8 +33,12 @@ assert.ok(!/plan\.week/.test(planTs));
 assert.ok(/恢复默认/.test(read('pages/plan/plan.wxml')) && /bindtap="onTapDay"/.test(read('pages/plan/plan.wxml')));
 console.log('schedule.test ok');
 
-// P2-2：重做问卷生成新档案/课表时清除自定义课表
+// §3.4-3（取代 P2-2 自动清除）：重做问卷不自动清自定义课表；有则弹窗「重新排课 / 保留我的课表」
 { const prof = read('services/profile.ts');
   const body = prof.slice(prof.indexOf('export function saveOnboarding'), prof.indexOf('export function getPlan'));
-  assert.ok(/storage\.set\(KEYS\.plan, buildWeekPlan/.test(body) && /storage\.remove\(KEYS\.customSchedule\)/.test(body), 'saveOnboarding 需清 customSchedule'); }
-console.log('schedule.test P2-2 ok');
+  assert.ok(/storage\.set\(KEYS\.plan, buildWeekPlan/.test(body));
+  assert.ok(!/customSchedule/.test(body.replace(/\/\/.*$/gm, '')), 'saveOnboarding 不应自动清自定义课表');
+  const ob = read('pages/onboarding/onboarding.ts');
+  assert.ok(/if \(hasCustomSchedule\(\)\)[\s\S]*用新结果重新排课？[\s\S]*confirmText: '重新排课'[\s\S]*cancelText: '保留我的课表'[\s\S]*if \(r\.confirm\) clearCustomSchedule\(\)/.test(ob));
+  assert.ok(!/\$\{profile\.crowd\}/.test(ob), '问卷 toast 不应显示英文人群枚举'); }
+console.log('schedule.test §3.4-3 ok');
