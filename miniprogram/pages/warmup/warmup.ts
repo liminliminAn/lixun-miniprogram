@@ -2,7 +2,7 @@ import { DAY_TYPE_LABEL } from '../../constants/templates';
 import { EXERCISE_MAP } from '../../constants/exercises';
 import { startOrResumeSession, saveSession } from '../../services/workout';
 import { DEFAULT_PROGRESSION } from '../../utils/progression';
-import { rampSets, firstCompound, withWarmup, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, videoLine, VIDEO_TOAST, WarmupViewItem, figureUrl, WARMUP_FIGURE_PAGE } from '../../utils/warmup';
+import { rampSets, firstCompound, withWarmup, withLiveChecked, buildWarmupSections, rampConfigFromJson, contentNotes, DOSE_LABEL, videoLine, VIDEO_TOAST, WarmupViewItem, figureUrl, WARMUP_FIGURE_PAGE } from '../../utils/warmup';
 import { formatDate } from '../../utils/date';
 import { shoulderWarmupAddon, COPY_TOAST } from '../../utils/posture';
 
@@ -94,6 +94,13 @@ Page({
       const cur = this.data.sections[si].items[idx].checked;
       this.setData({ [`sections[${si}].items[${idx}].checked`]: !cur });
     }
+    this.persistChecked();
+  },
+  /** §3.4-12：勾选第一个热身项立即落盘 → 今天立即锁定；全部取消则解锁（§3.4-11） */
+  persistChecked() {
+    if (!this.session) return;
+    this.session = withLiveChecked(this.session, this.collectChecked());
+    saveSession(this.session);
   },
   /** 视频：复制「<url> <time>」，不内嵌 */
   onCopyVideo(e: any) {

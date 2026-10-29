@@ -51,6 +51,19 @@ export function withWarmup(session: SessionRecord, warmup: WarmupRecord): Sessio
   return { ...session, warmup: { ...warmup } };
 }
 
+/** §3.4-11/12：勾选/取消热身项立即写入会话（不等「完成」「跳过」）；全部取消后 checked 为空，今天重新可改 */
+export function withLiveChecked(session: SessionRecord, checked: string[], at: string = new Date().toISOString()): SessionRecord {
+  const prev = session.warmup;
+  return withWarmup(session, {
+    status: prev && prev.status === 'done' ? 'done' : 'partial',
+    checked: [...checked],
+    ramp: prev ? prev.ramp : [],
+    rampExerciseId: prev ? prev.rampExerciseId : undefined,
+    elapsedSec: prev ? prev.elapsedSec : 0,
+    at,
+  });
+}
+
 /** 连练日期：只认 completedAt（空草稿无 completedAt，不计） */
 export function completedTrainDates(sessions: SessionsStore): string[] {
   return Object.keys(sessions)

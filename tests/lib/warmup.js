@@ -4,6 +4,7 @@ exports.POSTURE_FIGURE_PAGE = exports.WARMUP_FIGURE_PAGE = exports.FIGURE_EMPTY_
 exports.rampSets = rampSets;
 exports.firstCompound = firstCompound;
 exports.withWarmup = withWarmup;
+exports.withLiveChecked = withLiveChecked;
 exports.completedTrainDates = completedTrainDates;
 exports.contentNotes = contentNotes;
 exports.videoLine = videoLine;
@@ -46,6 +47,18 @@ function firstCompound(exercises, config = progression_1.DEFAULT_PROGRESSION) {
 /** 写入热身状态（返回新对象，不触碰 completedAt / exercises） */
 function withWarmup(session, warmup) {
     return Object.assign(Object.assign({}, session), { warmup: Object.assign({}, warmup) });
+}
+/** §3.4-11/12：勾选/取消热身项立即写入会话（不等「完成」「跳过」）；全部取消后 checked 为空，今天重新可改 */
+function withLiveChecked(session, checked, at = new Date().toISOString()) {
+    const prev = session.warmup;
+    return withWarmup(session, {
+        status: prev && prev.status === 'done' ? 'done' : 'partial',
+        checked: [...checked],
+        ramp: prev ? prev.ramp : [],
+        rampExerciseId: prev ? prev.rampExerciseId : undefined,
+        elapsedSec: prev ? prev.elapsedSec : 0,
+        at,
+    });
 }
 /** 连练日期：只认 completedAt（空草稿无 completedAt，不计） */
 function completedTrainDates(sessions) {
