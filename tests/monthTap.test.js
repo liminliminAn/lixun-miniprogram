@@ -29,3 +29,8 @@ const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.
 assert.ok(/onTapMonthDay[\s\S]*?if \(!cell \|\| !cell\.tappable\) return;/.test(ts));
 assert.ok(/getEffectiveWeek\(\), sessions, firstUse\)/.test(ts));
 console.log('monthTap.test ok');
+// §3.5-5：过去开练未完成 → 「未完成」
+{ const c = M.buildMonthCells(2026, 10, today, week, { '2026-10-20': { dayType: 'pull', completedAt: null, exercises: [{ exerciseId: 'row', sets: [{ done: true }] }] } }, '2026-10-01').find((x) => x.date === '2026-10-20');
+  assert.strictEqual(c.label, '未完成'); assert.strictEqual(c.hasRecord, true); assert.strictEqual(c.trained, false);
+  assert.ok(/'unfinished'/.test(fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.wxml'), 'utf8'))); }
+console.log('monthTap unfinished ok');

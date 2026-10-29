@@ -88,3 +88,4 @@
 .m-type.pull, .m-type.done { color: var(--color-success); }
 .m-type.legs { color: var(--color-warning); }
 .m-cell.out { opacity: 0.35; }
+.m-type.unfinished { color: var(--color-warning); }
