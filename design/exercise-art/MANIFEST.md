@@ -16,7 +16,7 @@ Total prompt ids: 62. Pack WebP total (subpkg/exercises, 62 webp, 2026-10-28 rev
 | single_arm_pulldown | exercises | 6948 | 6948 |
 | neutral_pulldown | exercises | 10810 | 10810 |
 | machine_row | exercises | 9396 | 9396 |
-| wide_row | exercises | 4926 | 4926 |
+| wide_row | exercises | 4886 | 4886 |
 | cable_curl | exercises | 4662 | 4662 |
 | single_leg_rdl | exercises | 4658 | 4658 |
 | bulgarian_split_squat | exercises | 4958 | 4958 |
@@ -53,7 +53,7 @@ Total prompt ids: 62. Pack WebP total (subpkg/exercises, 62 webp, 2026-10-28 rev
 | posture_shoulder_impingement_01 | posture | 4928 | 4928 |
 | posture_shoulder_impingement_02 | posture | 3922 | 3922 |
 | posture_shoulder_impingement_03 | posture | 4646 | 4646 |
-| selfcheck_shoulder_impingement | selfcheck | 4982 | 4982 |
+| selfcheck_shoulder_impingement | selfcheck | 4912 | 4912 |
 | posture_rounded_shoulders_01 | posture | 4578 | 4578 |
 | posture_rounded_shoulders_02 | posture | 4958 | 4958 |
 | posture_rounded_shoulders_03 | posture | 4878 | 4878 |
@@ -65,11 +65,11 @@ Total prompt ids: 62. Pack WebP total (subpkg/exercises, 62 webp, 2026-10-28 rev
 | posture_anterior_pelvic_tilt_01 | posture | 4864 | 4864 |
 | posture_anterior_pelvic_tilt_02 | posture | 5312 | 5312 |
 | posture_anterior_pelvic_tilt_03 | posture | 6192 | 6192 |
-| selfcheck_anterior_pelvic_tilt | selfcheck | 3952 | 3952 |
+| selfcheck_anterior_pelvic_tilt | selfcheck | 4046 | 4046 |
 | posture_low_back_01 | posture | 4958 | 4958 |
 | posture_low_back_02 | posture | 4290 | 4290 |
-| posture_low_back_03 | posture | 4450 | 4450 |
-| selfcheck_low_back | selfcheck | 4668 | 4668 |
+| posture_low_back_03 | posture | 3836 | 3836 |
+| selfcheck_low_back | selfcheck | 4302 | 4302 |
 
 Notes:
 - warmup_pull_07 ← warmup_push_05; warmup_pull_11 ← warmup_push_08.
@@ -80,3 +80,4 @@ Notes:
 
 - 2026-10-29 arrow fix: 4 files repainted with thick teal arrows + solid heads (PIL, /workspace/it2build/arrowfix.py).
 - 2026-10-29 arrow fix pass 2: 46 more files got thick teal arrows (arrowfix2.py, drawn over old arrow path on the pre-fix WebP; originals backed up in /workspace/it2build/pre-arrowfix2-webp/). posture_low_back_02 arm arrow reversed to point forward.
+- 2026-10-29 arrow fix pass 3 (arrowfix3.py, from pre-arrowfix2 WebP, old arrow painted out): wide_row, posture_low_back_03 (arrow removed), selfcheck_low_back (arrow removed), selfcheck_anterior_pelvic_tilt, selfcheck_shoulder_impingement.

@@ -66,3 +66,11 @@ Same style (10px #2EE6C5, dark edge, solid head; 8px/6px for tight spots). Drawn
 - wide_row: 4926 B
 Fixed direction: posture_low_back_02 arm arrow now points forward (bird-dog reach). No arrow added to: dips, machine_row, neutral_pulldown, y_raise, warmup_legs_03, warmup_pull_04, warmup_pull_05, warmup_push_03, warmup_shoulder_01.
 Subpkg total: 294650 B.
+
+## 2026-10-29 (Asia/Shanghai): arrow pass 3, directions checked against posture.json text
+- wide_row 4886 B: arrows reversed, from hands up along the arms to the shoulders/torso (the pull).
+- posture_low_back_03 侧桥 3836 B: cue「肘在肩正下方，身体成直线」, dose 20–30 秒 = static hold; hip arrow removed.
+- selfcheck_low_back 4302 B: how「记录久坐、弯腰或训练后腰背酸痛的程度和持续时间」= observation, no movement; arrow removed.
+- selfcheck_anterior_pelvic_tilt 4046 B: how「仰卧屈膝，用手伸进腰下与地面的空隙」; arrow = hand sliding into the gap under the waist.
+- selfcheck_shoulder_impingement 4912 B: how「上臂外展约 90°、屈肘 90°，前臂向上外旋」; arrow reversed, now sweeping up to the vertical forearm (old one pointed down).
+Subpkg total: 293654 B.
