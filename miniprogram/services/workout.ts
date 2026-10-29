@@ -1,4 +1,5 @@
 import { storage, KEYS } from './storage';
+import { mergeLastSets } from '../utils/persist';
 import { exercisesByDay } from '../constants/exercises';
 import { getPlan, getEffectiveWeek } from './profile';
 import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/progression';
@@ -95,14 +96,8 @@ export function saveSession(session: SessionRecord): void {
   all[session.date] = session;
   storage.set(KEYS.sessions, all);
 
-  // 更新 lastSets：取每个动作最后一组
-  const lastSets = getLastSets();
-  session.exercises.forEach((ex) => {
-    if (ex.sets.length > 0) {
-      lastSets[ex.exerciseId] = { ...ex.sets[ex.sets.length - 1] };
-    }
-  });
-  storage.set(KEYS.lastSets, lastSets);
+  // 更新 lastSets：只取每个动作最后一个 done=true 的组；未勾选的草稿组不覆盖
+  storage.set(KEYS.lastSets, mergeLastSets(getLastSets(), session.exercises));
 }
 
 export function completeSession(date: string = formatDate()): void {
