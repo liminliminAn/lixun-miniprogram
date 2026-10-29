@@ -57,20 +57,15 @@ const app = JSON.parse(read('app.json'));
   assert.ok(/\.img\s*\{[^}]*border-radius:\s*24rpx/.test(read(b + '.wxss')));
 });
 console.log(`figure tests passed (warmup ${wn}, posture ${pn}, selfcheck ${sn})`);
-// P3：任何 <image> 只要可能显示 webp（分包内全部页面 / src 含 .webp）必须 webp="{{true}}"
+// P3-1：图解已全部改为 JPEG，分包页 <image> 不再带 webp 属性
 {
-  const wk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? wk(path.join(d, e.name)) : [path.join(d, e.name)]);
   let n = 0;
-  wk(root).filter((f) => f.endsWith('.wxml')).forEach((f) => {
-    const rel = path.relative(root, f);
-    (fs.readFileSync(f, 'utf8').match(/<image\b[^>]*>/g) || []).forEach((tag) => {
-      if (rel.startsWith('subpkg') || /\.webp/.test(tag)) { n++; assert.ok(/\bwebp="\{\{true\}\}"/.test(tag), `missing webp="{{true}}" in ${rel}: ${tag}`); }
-    });
+  ['detail/detail', 'warmup-figure/warmup-figure', 'posture-figure/posture-figure'].forEach((pg) => {
+    (read('subpkg/exercises/' + pg + '.wxml').match(/<image\b[^>]*>/g) || []).forEach((tag) => { n++; assert.ok(!/\bwebp=/.test(tag), `webp attr left in ${pg}: ${tag}`); });
   });
-  assert.ok(n >= 3, `webp images checked ${n}`);
-  assert.ok(!/\bwebp="\{\{true\}\}"/.test('<image src="a.webp" />'));
+  assert.strictEqual(n, 3, `figure images checked ${n}`);
 }
-console.log('webp attr tests passed');
+console.log('no-webp-attr tests passed');
 // P3：路径白名单 + 全空提示
 {
   const { subpkgImage } = require('./lib/exerciseCards');

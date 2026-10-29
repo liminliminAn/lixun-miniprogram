@@ -3,7 +3,7 @@
   <view class="empty-btn" bindtap="onBack">返回</view>
 </view>
 <view class="container" wx:if="{{card}}">
-  <image class="img" webp="{{true}}" wx:if="{{showImg}}" src="{{card.detailImage}}" mode="aspectFit" binderror="onImgError" />
+  <image class="img" wx:if="{{showImg}}" src="{{card.detailImage}}" mode="aspectFit" binderror="onImgError" />
   <view class="img-fail" wx:if="{{imgFailed}}">{{imgFailHint}}</view>
   <view class="card">
     <view class="sec">步骤</view>
