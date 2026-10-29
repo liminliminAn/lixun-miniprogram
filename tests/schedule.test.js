@@ -42,3 +42,9 @@ console.log('schedule.test ok');
   assert.ok(/if \(hasCustomSchedule\(\)\)[\s\S]*用新结果重新排课？[\s\S]*confirmText: '重新排课'[\s\S]*cancelText: '保留我的课表'[\s\S]*if \(r\.confirm\) clearCustomSchedule\(\)/.test(ob));
   assert.ok(!/\$\{profile\.crowd\}/.test(ob), '问卷 toast 不应显示英文人群枚举'); }
 console.log('schedule.test §3.4-3 ok');
+// P3：自定义生效时标题旁显示「自定义」小标签
+{ const wxml = read('pages/plan/plan.wxml');
+  assert.ok(/本周课表（\{\{daysPerWeek\}\} 练）<text class="tag-custom" wx:if="\{\{customized\}\}">自定义<\/text>/.test(wxml));
+  assert.ok(/\.tag-custom\s*\{/.test(read('pages/plan/plan.wxss')));
+  assert.ok(/customized: hasCustomSchedule\(\)/.test(read('pages/plan/plan.ts'))); }
+console.log('schedule.test tag ok');

@@ -1,6 +1,6 @@
 <view class="container">
   <view class="card">
-    <view class="title">本周课表（{{customized ? '自定义' : daysPerWeek + ' 练'}}）</view>
+    <view class="title">本周课表（{{daysPerWeek}} 练）<text class="tag-custom" wx:if="{{customized}}">自定义</text></view>
     <view class="hint">今天及以后点某天可改为推/拉/腿/休；过去的日子点开看记录</view>
     <view class="week-nav">
       <view class="nav-btn" bindtap="onPrevWeek">‹</view>
