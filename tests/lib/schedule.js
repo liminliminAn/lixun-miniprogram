@@ -18,6 +18,7 @@ exports.restoreDecision = restoreDecision;
 exports.isTodayLocked = isTodayLocked;
 exports.maxConsecutiveTraining = maxConsecutiveTraining;
 exports.streakSoftTip = streakSoftTip;
+exports.pinnedTodayType = pinnedTodayType;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
 exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
 function isValidWeek(week) {
@@ -87,7 +88,7 @@ function buildWeekCells(week, today, offset, sessions) {
             idx,
             date,
             md: shortDate(date),
-            dayType: tense === 'past' ? recorded || 'rest' : week[idx] || 'rest',
+            dayType: tense === 'past' ? recorded || 'rest' : pinnedTodayType(week, idx, tense === 'today' ? s : null),
             tense,
             isToday: tense === 'today',
             trained: isTrained(s),
@@ -146,3 +147,13 @@ function streakSoftTip(week) {
     return maxConsecutiveTraining(week) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
 }
 exports.PAST_NO_RECORD_LABEL = '未训练/休息';
+/**
+ * §3.4-8：今天已有记录（开练或完成）时，今天类型固定为记录的类型；
+ * 恢复默认 / 改天数 / 重做问卷只从明天起生效。无记录则按生效课表。
+ * 记录按日期存储，日期一过自然失效，无需单独的 pin key。
+ */
+function pinnedTodayType(week, idx, todaySession) {
+    if (todaySession && todaySession.dayType && exports.DAY_KINDS.indexOf(todaySession.dayType) >= 0)
+        return todaySession.dayType;
+    return week[idx] || 'rest';
+}

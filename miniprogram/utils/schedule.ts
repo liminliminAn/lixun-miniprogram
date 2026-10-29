@@ -117,7 +117,7 @@ export function buildWeekCells(
       idx,
       date,
       md: shortDate(date),
-      dayType: tense === 'past' ? recorded || 'rest' : week[idx] || 'rest',
+      dayType: tense === 'past' ? recorded || 'rest' : pinnedTodayType(week, idx, tense === 'today' ? s : null),
       tense,
       isToday: tense === 'today',
       trained: isTrained(s),
@@ -180,3 +180,13 @@ export function streakSoftTip(week: DayKind[]): string {
 }
 
 export const PAST_NO_RECORD_LABEL = '未训练/休息';
+
+/**
+ * §3.4-8：今天已有记录（开练或完成）时，今天类型固定为记录的类型；
+ * 恢复默认 / 改天数 / 重做问卷只从明天起生效。无记录则按生效课表。
+ * 记录按日期存储，日期一过自然失效，无需单独的 pin key。
+ */
+export function pinnedTodayType(week: DayKind[], idx: number, todaySession: SessionLite | null | undefined): DayKind {
+  if (todaySession && todaySession.dayType && DAY_KINDS.indexOf(todaySession.dayType) >= 0) return todaySession.dayType;
+  return week[idx] || 'rest';
+}

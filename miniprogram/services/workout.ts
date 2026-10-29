@@ -7,13 +7,14 @@ import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/pr
 const CARDS: any = require('../config/exercise-cards.js');
 const PROGRESSION = withCardRepRanges(DEFAULT_PROGRESSION, CARDS);
 import { completedTrainDates } from '../utils/warmup';
-import { restoreDecision } from '../utils/schedule';
+import { restoreDecision, pinnedTodayType } from '../utils/schedule';
 import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
 
 export function todayDayType(date: Date = new Date()): DayType {
   const plan = getPlan();
   if (!plan) return 'rest';
-  return getEffectiveWeek()[mondayBasedIndex(date)];
+  // §3.4-8：当天已有记录 → 固定为记录的类型（新课表从明天起生效）
+  return pinnedTodayType(getEffectiveWeek(), mondayBasedIndex(date), getSession(formatDate(date)));
 }
 
 export function getSessions(): SessionsStore {

@@ -26,7 +26,7 @@ assert.deepStrictEqual(S.DAY_KIND_SHEET, ['推', '拉', '腿', '休']);
 
 // 接线：新 key、今日走生效课表、计划页 ActionSheet + 恢复默认
 assert.ok(/customSchedule:\s*'lixun:v1:customSchedule'/.test(read('services/storage.ts')));
-assert.ok(/getEffectiveWeek\(\)\[mondayBasedIndex/.test(read('services/workout.ts')));
+assert.ok(/getEffectiveWeek\(\), mondayBasedIndex/.test(read('services/workout.ts')));
 const planTs = read('pages/plan/plan.ts');
 assert.ok(/wx\.showActionSheet/.test(planTs) && /clearCustomSchedule\(\)/.test(planTs) && /getEffectiveWeek\(\)/.test(planTs));
 assert.ok(!/plan\.week/.test(planTs));
