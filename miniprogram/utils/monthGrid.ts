@@ -29,6 +29,30 @@ export function shiftMonth(today: string, offset: number): { year: number; month
   return { year: d.getFullYear(), month: d.getMonth() + 1 };
 }
 
+/** 首次使用日：档案创建日（本地日期）与最早一条会话日期中较早者；都没有则为 today */
+export function firstUseDate(createdAt: string | null | undefined, sessionDates: string[], today: string): string {
+  const c: string[] = [];
+  if (createdAt) {
+    const d = new Date(createdAt);
+    if (!isNaN(d.getTime())) c.push(fmt(d));
+  }
+  sessionDates.forEach((x) => /^\d{4}-\d{2}-\d{2}$/.test(x) && c.push(x));
+  c.push(today);
+  return c.sort()[0];
+}
+
+/** §3.5-2：翻月范围 —— 最早到首次使用那个月，最晚到下个月 */
+export function monthOffsetRange(today: string, firstUse: string): { min: number; max: number } {
+  const [ty, tm] = today.split('-').map(Number);
+  const [fy, fm] = firstUse.split('-').map(Number);
+  return { min: Math.min(0, (fy - ty) * 12 + (fm - tm)), max: 1 };
+}
+
+export function clampMonthOffset(offset: number, range: { min: number; max: number }): number {
+  const n = Math.trunc(Number(offset) || 0);
+  return Math.max(range.min, Math.min(range.max, n));
+}
+
 export function monthTitle(year: number, month: number): string {
   return `${year}年${month}月`;
 }

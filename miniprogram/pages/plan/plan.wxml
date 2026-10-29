@@ -19,9 +19,9 @@
     </block>
     <view class="month" wx:else>
       <view class="week-nav">
-        <view class="nav-btn" bindtap="onPrevMonth">‹</view>
+        <view class="nav-btn {{monthOffset <= monthMin ? 'disabled' : ''}}" bindtap="onPrevMonth">‹</view>
         <text class="month-title">{{monthTitle}}</text>
-        <view class="nav-btn" bindtap="onNextMonth">›</view>
+        <view class="nav-btn {{monthOffset >= monthMax ? 'disabled' : ''}}" bindtap="onNextMonth">›</view>
       </view>
       <view class="m-head"><text class="m-wd" wx:for="{{monthHeader}}" wx:key="*this">{{item}}</text></view>
       <view class="m-grid">

@@ -1,13 +1,13 @@
 import { guardEntry } from '../../services/user';
 import { DAY_TYPE_LABEL, WEEKDAY_LABELS } from '../../constants/templates';
 import { exercisesByDay, EXERCISE_MAP } from '../../constants/exercises';
-import { getPlan, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, hasCustomSchedule } from '../../services/profile';
+import { getPlan, getProfile, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, hasCustomSchedule } from '../../services/profile';
 import { getSessions } from '../../services/workout';
 import { formatDate, mondayBasedIndex } from '../../utils/date';
 import {
   DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, weekWithTodayPinned,
 } from '../../utils/schedule';
-import { buildMonthCells, shiftMonth, monthTitle, editSheetTitle, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
+import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, editSheetTitle, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
 /** 生效课表 + 今天按已开练记录固定（§3.4-8/9） */
 function pinnedWeek(): DayType[] {
@@ -28,6 +28,8 @@ Page({
     monthTitle: '',
     monthHeader: MONTH_WEEKDAY_HEADER,
     monthCells: [] as any[],
+    monthMin: 0,
+    monthMax: 1,
   },
   onShow() {
     if (!guardEntry()) return;
@@ -64,10 +66,17 @@ Page({
   },
   refreshMonth() {
     const today = formatDate();
-    const { year, month } = shiftMonth(today, this.data.monthOffset);
+    const sessions = getSessions() as any;
+    const profile = getProfile();
+    const range = monthOffsetRange(today, firstUseDate(profile ? profile.createdAt : null, Object.keys(sessions), today));
+    const monthOffset = clampMonthOffset(this.data.monthOffset, range);
+    const { year, month } = shiftMonth(today, monthOffset);
     this.setData({
+      monthOffset,
+      monthMin: range.min,
+      monthMax: range.max,
       monthTitle: monthTitle(year, month),
-      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), getSessions() as any),
+      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), sessions),
     });
   },
   onToggleMonth() {
@@ -75,10 +84,12 @@ Page({
     if (this.data.expanded) this.refreshMonth();
   },
   onPrevMonth() {
+    if (this.data.monthOffset <= this.data.monthMin) return;
     this.setData({ monthOffset: this.data.monthOffset - 1 });
     this.refreshMonth();
   },
   onNextMonth() {
+    if (this.data.monthOffset >= this.data.monthMax) return;
     this.setData({ monthOffset: this.data.monthOffset + 1 });
     this.refreshMonth();
   },

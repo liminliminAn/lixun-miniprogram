@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MONTH_WEEKDAY_HEADER = void 0;
 exports.shiftMonth = shiftMonth;
+exports.firstUseDate = firstUseDate;
+exports.monthOffsetRange = monthOffsetRange;
+exports.clampMonthOffset = clampMonthOffset;
 exports.monthTitle = monthTitle;
 exports.monthDates = monthDates;
 exports.buildMonthCells = buildMonthCells;
@@ -17,6 +20,28 @@ function shiftMonth(today, offset) {
     const [y, m] = today.split('-').map(Number);
     const d = new Date(y, m - 1 + Math.trunc(Number(offset) || 0), 1);
     return { year: d.getFullYear(), month: d.getMonth() + 1 };
+}
+/** 首次使用日：档案创建日（本地日期）与最早一条会话日期中较早者；都没有则为 today */
+function firstUseDate(createdAt, sessionDates, today) {
+    const c = [];
+    if (createdAt) {
+        const d = new Date(createdAt);
+        if (!isNaN(d.getTime()))
+            c.push(fmt(d));
+    }
+    sessionDates.forEach((x) => /^\d{4}-\d{2}-\d{2}$/.test(x) && c.push(x));
+    c.push(today);
+    return c.sort()[0];
+}
+/** §3.5-2：翻月范围 —— 最早到首次使用那个月，最晚到下个月 */
+function monthOffsetRange(today, firstUse) {
+    const [ty, tm] = today.split('-').map(Number);
+    const [fy, fm] = firstUse.split('-').map(Number);
+    return { min: Math.min(0, (fy - ty) * 12 + (fm - tm)), max: 1 };
+}
+function clampMonthOffset(offset, range) {
+    const n = Math.trunc(Number(offset) || 0);
+    return Math.max(range.min, Math.min(range.max, n));
 }
 function monthTitle(year, month) {
     return `${year}年${month}月`;
