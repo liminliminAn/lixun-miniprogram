@@ -46,22 +46,25 @@ Page({
       success: (res) => {
         const n = DAYS_PER_WEEK_OPTIONS[res.tapIndex];
         if (!n || n === cur.daysPerWeek) return;
-        const apply = (overwrite: boolean) => {
-          if (!changeDaysPerWeek(n, overwrite)) return;
+        const apply = () => {
+          if (!changeDaysPerWeek(n, true)) return;
           const np = getProfile();
           this.setData({ profile: np, labels: profileLabels(np) });
-          wx.showToast({ title: overwrite ? '已重新生成课表' : '已保存，保留自定义课表', icon: 'none' });
+          wx.showToast({ title: '已按新天数重排', icon: 'none' });
         };
         if (!hasCustomSchedule()) {
-          apply(true);
+          apply();
           return;
         }
+        // §3.4-5：只有「按新天数重排」（覆盖自定义）和「取消」；取消不改天数
         wx.showModal({
-          title: '覆盖自定义课表？',
-          content: `改为每周 ${n} 练会重新生成默认课表。确定则清除你自定义的课表；取消则保留自定义课表（仍按它安排训练）。`,
-          confirmText: '覆盖',
-          cancelText: '保留',
-          success: (r) => apply(!!r.confirm),
+          title: `改为每周 ${n} 练？`,
+          content: '会按新天数重新生成课表，并覆盖你自定义的课表。',
+          confirmText: '按新天数重排',
+          cancelText: '取消',
+          success: (r) => {
+            if (r.confirm) apply();
+          },
         });
       },
     });
