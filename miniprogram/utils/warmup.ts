@@ -3,6 +3,9 @@
  * 坡道组只写在 session.warmup，不进 session.exercises，因此不计训练容量；
  * 热身状态不影响连练（连练只认 completedAt）。
  */
+/** 小程序运行时提供 console；tsconfig lib 不含其声明 */
+declare const console: { warn: (...args: unknown[]) => void };
+
 import { isTrained } from './schedule';
 import { DEFAULT_PROGRESSION, ProgressionConfig } from './progression';
 
@@ -175,4 +178,13 @@ export function buildWarmupSections(cfg: any, dayType: string): WarmupViewSectio
     sections.push({ key: 'shoulder', title: sh.label || '肩部激活（可选）', optional: true, items: mapItems('shoulder_act', sh.activate) });
   }
   return sections;
+}
+
+/** 图片加载失败时的文字兜底（不再静默整块隐藏） */
+export const IMG_FAIL_HINT = '图解加载失败，请参考下方文字说明';
+/** binderror 统一处理：console.warn 打印路径与错误信息，返回兜底状态 */
+export function onFigureError(path: string, e: any): { showImg: boolean; imgFailed: boolean } {
+  const msg = e && e.detail && e.detail.errMsg ? e.detail.errMsg : '';
+  try { console.warn('[figure] image load failed', path, msg); } catch (_) { /* noop */ }
+  return { showImg: false, imgFailed: true };
 }

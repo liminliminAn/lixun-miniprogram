@@ -52,7 +52,7 @@ const app = JSON.parse(read('app.json'));
   const b = 'subpkg/exercises/' + pg;
   ['.ts', '.wxml', '.wxss', '.json'].forEach((e) => assert.ok(exists(b + e), b + e));
   assert.ok(/<image[^>]*wx:if="\{\{showImg\}\}"[^>]*binderror="onImgError"/.test(read(b + '.wxml')));
-  assert.ok(/onImgError\(\)\s*\{\s*\(this as any\)\.setData\(\{ showImg: false \}\)/.test(read(b + '.ts')));
+  assert.ok(/onImgError\(e: any\)\s*\{[\s\S]*?onFigureError\(/.test(read(b + '.ts'))); // 真机 P0：warn + 文字兜底
   assert.ok(/subpkgFigure/.test(read(b + '.ts')));
   assert.ok(/\.img\s*\{[^}]*border-radius:\s*24rpx/.test(read(b + '.wxss')));
 });

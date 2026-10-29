@@ -4,6 +4,7 @@
 </view>
 <view class="container" wx:if="{{!empty}}">
   <image class="img" webp="{{true}}" wx:if="{{showImg}}" src="{{img}}" mode="aspectFit" binderror="onImgError" />
+  <view class="img-fail" wx:if="{{imgFailed}}">{{imgFailHint}}</view>
   <view class="card" wx:if="{{title || cue}}">
     <view class="sec" wx:if="{{title}}">{{title}}</view>
     <view class="tip" wx:if="{{cue}}">{{cue}}</view>

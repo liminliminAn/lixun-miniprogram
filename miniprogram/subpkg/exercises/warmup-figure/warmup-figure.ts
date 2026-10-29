@@ -1,8 +1,8 @@
-import { subpkgFigure } from '../../../utils/warmup';
+import { subpkgFigure, IMG_FAIL_HINT, onFigureError } from '../../../utils/warmup';
 
-/** 图解页：只认 /subpkg/ 下的文件名路径；加载失败 → 整块隐藏 */
+/** 图解页：只认 /subpkg/ 下的文件名路径；加载失败 → warn + 文字兜底 */
 Page({
-  data: { img: '', title: '', cue: '', showImg: false, empty: false },
+  data: { img: '', title: '', cue: '', showImg: false, empty: false, imgFailed: false, imgFailHint: IMG_FAIL_HINT },
   onLoad(q: any) {
     const dec = (v: any) => (v ? decodeURIComponent(String(v)) : '');
     const img = subpkgFigure(dec(q && q.img));
@@ -17,7 +17,9 @@ Page({
     if (getCurrentPages().length > 1) wx.navigateBack();
     else wx.switchTab({ url: '/pages/today/today' });
   },
-  onImgError() {
-    (this as any).setData({ showImg: false });
+  /** 图片加载失败 → console.warn 路径 + 文字兜底 */
+  onImgError(e: any) {
+    const self = this as any;
+    self.setData(onFigureError(self.data.img || '', e));
   },
 });

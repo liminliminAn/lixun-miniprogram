@@ -1,3 +1,4 @@
+import { IMG_FAIL_HINT, onFigureError } from '../../../utils/warmup';
 import { buildExerciseCard, ExerciseCardView } from '../../../utils/exerciseCards';
 
 // 分包可引用主包配置
@@ -7,6 +8,8 @@ Page({
   data: {
     card: null as ExerciseCardView | null,
     showImg: false,
+    imgFailed: false,
+    imgFailHint: IMG_FAIL_HINT,
     empty: false,
   },
   onLoad(q: any) {
@@ -24,8 +27,10 @@ Page({
     if (getCurrentPages().length > 1) wx.navigateBack();
     else wx.switchTab({ url: '/pages/today/today' });
   },
-  /** 图片加载失败 → 整块隐藏（不用占位图） */
-  onImgError() {
-    (this as any).setData({ showImg: false });
+  /** 图片加载失败 → warn + 文字兜底（不用占位图） */
+  /** 图片加载失败 → console.warn 路径 + 文字兜底 */
+  onImgError(e: any) {
+    const self = this as any;
+    self.setData(onFigureError(self.data.card.detailImage || '', e));
   },
 });

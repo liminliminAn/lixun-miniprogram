@@ -145,3 +145,11 @@ function buildWarmupSections(cfg, dayType) {
     }
     return sections;
 }
+/** 图片加载失败时的文字兜底（不再静默整块隐藏） */
+exports.IMG_FAIL_HINT = '图解加载失败，请参考下方文字说明';
+function onFigureError(path, e) {
+    const msg = e && e.detail && e.detail.errMsg ? e.detail.errMsg : '';
+    try { console.warn('[figure] image load failed', path, msg); } catch (_) { }
+    return { showImg: false, imgFailed: true };
+}
+exports.onFigureError = onFigureError;
