@@ -84,10 +84,10 @@ function videoLine(v) {
     const time = v.time ? String(v.time) : '';
     return { url: v.url, time, note: v.note ? String(v.note) : '', copyText: time ? `${v.url} ${time}` : v.url };
 }
-/** 分包图解路径白名单：必须 /subpkg/ 开头、仅 .webp/.png/.jpg、不得含 '..'；否则 ''（隐藏图片） */
+/** 分包图解路径白名单：必须 /subpkg/ 开头、仅 .png/.jpg（不接受 .webp）、不得含 '..'；否则 ''（隐藏图片） */
 function subpkgFigure(img) {
     const p = typeof img === 'string' ? img.trim() : '';
-    return p.indexOf('/subpkg/') === 0 && p.indexOf('..') < 0 && /\.(webp|png|jpg)$/.test(p) ? p : '';
+    return p.indexOf('/subpkg/') === 0 && p.indexOf('..') < 0 && /\.(png|jpg)$/.test(p) ? p : '';
 }
 exports.FIGURE_EMPTY_HINT = '没有可显示的图解内容';
 exports.WARMUP_FIGURE_PAGE = '/subpkg/exercises/warmup-figure/warmup-figure';

@@ -36,3 +36,14 @@ walk(root).filter((f) => /\.(ts|js)$/.test(f) && !/services[\\/]user\.ts$/.test(
   assert.ok(!/accessSync|getFileInfo|getFileSystemManager/.test(s), `runtime file check in ${path.relative(root, f)}`);
 });
 console.log(`figureJpg OK (${jpgs.length} jpg, ${refs.size} refs)`);
+// P3-2：路径白名单拒绝 .webp
+{
+  const W = require('./lib/warmup');
+  const { subpkgImage } = require('./lib/exerciseCards');
+  [W.subpkgFigure, subpkgImage].forEach((fn) => {
+    assert.strictEqual(fn('/subpkg/exercises/bench_press.webp'), '');
+    assert.strictEqual(fn('/subpkg/exercises/bench_press.jpg'), '/subpkg/exercises/bench_press.jpg');
+  });
+  ['utils/warmup.ts', 'utils/exerciseCards.ts'].forEach((f) => assert.ok(!/webp\|/.test(fs.readFileSync(path.join(root, f), 'utf8')), f));
+  console.log('webp rejected OK');
+}

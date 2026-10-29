@@ -18,11 +18,11 @@ export function formatCardDose(d: any): string {
   return `${d.sets} 组 × ${d.repMin}–${d.repMax} 次`;
 }
 
-/** 配置里的分包图片路径（/subpkg/exercises/<contentId>.png）；非分包路径返回 '' */
-/** 图片路径白名单：必须 /subpkg/ 开头、仅 .webp/.png/.jpg、不得含 '..'；否则 ''（隐藏图片） */
+/** 配置里的分包图片路径（/subpkg/exercises/<contentId>.jpg）；非分包路径返回 '' */
+/** 图片路径白名单：必须 /subpkg/ 开头、仅 .png/.jpg（不接受 .webp）、不得含 '..'；否则 ''（隐藏图片） */
 export function subpkgImage(path: unknown): string {
   const p = typeof path === 'string' ? path.trim() : '';
-  return p.indexOf(`/${IMAGE_SUBPKG_ROOT}/`) === 0 && p.indexOf('..') < 0 && /\.(webp|png|jpg)$/.test(p) ? p : '';
+  return p.indexOf(`/${IMAGE_SUBPKG_ROOT}/`) === 0 && p.indexOf('..') < 0 && /\.(png|jpg)$/.test(p) ? p : '';
 }
 
 export function detailUrl(exerciseId: string): string {

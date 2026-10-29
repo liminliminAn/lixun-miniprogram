@@ -10,10 +10,10 @@ const wcfg = require(path.join(root, 'config/warmup.js'));
 const pcfg = require(path.join(root, 'config/posture.js'));
 const exists = (p) => fs.existsSync(path.join(root, p));
 
-assert.strictEqual(W.subpkgFigure('/subpkg/exercises/a.webp'), '/subpkg/exercises/a.webp');
-['/assets/a.png', null, '', 'subpkg/a.webp', 3].forEach((x) => assert.strictEqual(W.subpkgFigure(x), ''));
-assert.strictEqual(W.figureUrl(W.WARMUP_FIGURE_PAGE, '/subpkg/exercises/a.webp', '标 题', 'c&d'),
-  '/subpkg/exercises/warmup-figure/warmup-figure?img=%2Fsubpkg%2Fexercises%2Fa.webp&title=%E6%A0%87%20%E9%A2%98&cue=c%26d');
+assert.strictEqual(W.subpkgFigure('/subpkg/exercises/a.jpg'), '/subpkg/exercises/a.jpg');
+['/assets/a.png', null, '', 'subpkg/a.jpg', '/subpkg/exercises/a.webp', 3].forEach((x) => assert.strictEqual(W.subpkgFigure(x), ''));
+assert.strictEqual(W.figureUrl(W.WARMUP_FIGURE_PAGE, '/subpkg/exercises/a.jpg', '标 题', 'c&d'),
+  '/subpkg/exercises/warmup-figure/warmup-figure?img=%2Fsubpkg%2Fexercises%2Fa.jpg&title=%E6%A0%87%20%E9%A2%98&cue=c%26d');
 assert.strictEqual(W.mainPkgImage, undefined, 'mainPkgImage removed');
 
 // 热身：每个有 /subpkg/ 图的条目都有 figure，且文件存在；无图则无入口
@@ -70,9 +70,9 @@ console.log('no-webp-attr tests passed');
 {
   const { subpkgImage } = require('./lib/exerciseCards');
   [W.subpkgFigure, subpkgImage].forEach((fn) => {
-    ['/subpkg/exercises/a.webp', '/subpkg/exercises/a.png', '/subpkg/exercises/a.jpg'].forEach((ok) => assert.strictEqual(fn(ok), ok));
-    ['subpkg/exercises/a.webp', '/assets/a.webp', '/subpkg/exercises/a.gif', '/subpkg/exercises/a.jpeg', '/subpkg/exercises/a.svg',
-      '/subpkg/../assets/a.webp', '/subpkg/exercises/..a.webp', 'https://x/subpkg/a.webp', '/subpkg/exercises/a.webp?x', '', null, 1]
+    ['/subpkg/exercises/a.png', '/subpkg/exercises/a.jpg'].forEach((ok) => assert.strictEqual(fn(ok), ok));
+    ['/subpkg/exercises/a.webp', '/subpkg/exercises/a.WEBP', 'subpkg/exercises/a.jpg', '/assets/a.jpg', '/subpkg/exercises/a.gif', '/subpkg/exercises/a.jpeg', '/subpkg/exercises/a.svg',
+      '/subpkg/../assets/a.jpg', '/subpkg/exercises/..a.jpg', 'https://x/subpkg/a.jpg', '/subpkg/exercises/a.jpg?x', '', null, 1]
       .forEach((bad) => assert.strictEqual(fn(bad), '', String(bad)));
   });
   assert.strictEqual(W.FIGURE_EMPTY_HINT, '没有可显示的图解内容');
