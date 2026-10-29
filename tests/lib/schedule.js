@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
+exports.PAST_NO_RECORD_LABEL = exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
 exports.isValidWeek = isValidWeek;
 exports.effectiveWeek = effectiveWeek;
 exports.setDay = setDay;
@@ -87,11 +87,12 @@ function buildWeekCells(week, today, offset, sessions) {
             idx,
             date,
             md: shortDate(date),
-            dayType: recorded || week[idx] || 'rest',
+            dayType: tense === 'past' ? recorded || 'rest' : week[idx] || 'rest',
             tense,
             isToday: tense === 'today',
             trained: isTrained(s),
             hasRecord: !!s,
+            noRecord: tense === 'past' && !recorded,
             // §3.4-4：今天已开练或已完成（当天有任何记录）→ 锁定类型
             editable: canEditDay(date, today) && !(tense === 'today' && !!s),
         };
@@ -144,3 +145,4 @@ exports.STREAK_SOFT_TIP = '已连续训练超过 3 天，注意安排休息';
 function streakSoftTip(week) {
     return maxConsecutiveTraining(week) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
 }
+exports.PAST_NO_RECORD_LABEL = '未训练/休息';

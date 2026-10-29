@@ -5,7 +5,7 @@ import { getPlan, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, has
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
 } from '../../utils/schedule';
 
 Page({
@@ -31,7 +31,7 @@ Page({
     const weekCells = buildWeekCells(getEffectiveWeek(), today, offset, getSessions() as any).map((c) => ({
       ...c,
       wd: WEEKDAY_LABELS[c.idx],
-      label: DAY_TYPE_LABEL[c.dayType],
+      label: c.noRecord ? PAST_NO_RECORD_LABEL : DAY_TYPE_LABEL[c.dayType],
     }));
     const dates = weekDates(today, offset);
     const types: Array<Exclude<DayType, 'rest'>> = ['push', 'pull', 'legs'];
@@ -65,7 +65,7 @@ Page({
     if (!cell) return;
     const action = tapAction(cell);
     if (action === 'locked') {
-      wx.showToast({ title: TODAY_LOCKED_TIP, streakSoftTip, icon: 'none' });
+      wx.showToast({ title: TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, icon: 'none' });
       return;
     }
     if (action === 'none') {

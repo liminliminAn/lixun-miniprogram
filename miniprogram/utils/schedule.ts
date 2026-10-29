@@ -98,6 +98,8 @@ export interface WeekCell {
   isToday: boolean;
   trained: boolean;
   hasRecord: boolean;
+  /** §3.4-7：过去日无记录 → 不显示课表类型，显示「未训练/休息」 */
+  noRecord: boolean;
   editable: boolean;
 }
 
@@ -115,11 +117,12 @@ export function buildWeekCells(
       idx,
       date,
       md: shortDate(date),
-      dayType: recorded || week[idx] || 'rest',
+      dayType: tense === 'past' ? recorded || 'rest' : week[idx] || 'rest',
       tense,
       isToday: tense === 'today',
       trained: isTrained(s),
       hasRecord: !!s,
+      noRecord: tense === 'past' && !recorded,
       // §3.4-4：今天已开练或已完成（当天有任何记录）→ 锁定类型
       editable: canEditDay(date, today) && !(tense === 'today' && !!s),
     };
@@ -175,3 +178,5 @@ export const STREAK_SOFT_TIP = '已连续训练超过 3 天，注意安排休息
 export function streakSoftTip(week: DayKind[]): string {
   return maxConsecutiveTraining(week) > STREAK_SOFT_LIMIT ? STREAK_SOFT_TIP : '';
 }
+
+export const PAST_NO_RECORD_LABEL = '未训练/休息';

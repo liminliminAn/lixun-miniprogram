@@ -11,8 +11,8 @@
       <view class="cell {{item.isToday ? 'today' : ''}} {{item.tense}}" wx:for="{{weekCells}}" wx:key="idx" data-idx="{{item.idx}}" bindtap="onTapDay">
         <text class="wd">周{{item.wd}}</text>
         <text class="md">{{item.md}}</text>
-        <text class="dt {{item.dayType}}">{{item.label}}</text>
-        <text class="mark" wx:if="{{item.tense === 'past' && item.dayType !== 'rest'}}">{{item.trained ? '✓ 已练' : '未练'}}</text>
+        <text class="dt {{item.noRecord ? 'none' : item.dayType}}">{{item.label}}</text>
+        <text class="mark" wx:if="{{item.tense === 'past' && item.hasRecord}}">{{item.trained ? '✓ 已练' : '未完成'}}</text>
       </view>
     </view>
     <view class="soft-tip" wx:if="{{streakTip}}">{{streakTip}}</view>

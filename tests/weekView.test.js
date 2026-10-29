@@ -56,4 +56,13 @@ assert.ok(/tapAction\(cell\)/.test(ts) && /action === 'none'[\s\S]*showToast/.te
 assert.ok(/onPrevWeek/.test(ts) && /onNextWeek[\s\S]*weekOffset >= 0\) return/.test(ts));
 const wxml = read('pages/plan/plan.wxml');
 assert.ok(/onPrevWeek/.test(wxml) && /onNextWeek/.test(wxml) && /\{\{item\.md\}\}/.test(wxml) && /item\.isToday/.test(wxml) && /item\.trained/.test(wxml));
+// §3.4-7：过去日只显示实际记录；无记录不显示课表类型
+{ const cs = S.buildWeekCells(['push', 'pull', 'legs', 'push', 'pull', 'rest', 'rest'], today, 0, sessions);
+  assert.strictEqual(cs[0].dayType, 'push'); assert.strictEqual(cs[0].noRecord, false);
+  assert.strictEqual(cs[1].dayType, 'pull'); assert.strictEqual(cs[1].trained, false); // 有记录未完成
+  assert.strictEqual(cs[2].noRecord, true); assert.strictEqual(cs[2].dayType, 'rest'); // 课表是腿，但无记录
+  assert.strictEqual(cs[3].noRecord, false); assert.strictEqual(cs[3].dayType, 'push'); // 今天按课表
+  assert.ok(S.buildWeekCells(['push', 'pull', 'legs', 'push', 'pull', 'legs', 'push'], today, -1, {}).every((c) => c.noRecord));
+  assert.strictEqual(S.PAST_NO_RECORD_LABEL, '未训练/休息');
+  assert.ok(/c\.noRecord \? PAST_NO_RECORD_LABEL/.test(ts)); }
 console.log('weekView.test ok');
