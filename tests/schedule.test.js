@@ -39,7 +39,7 @@ console.log('schedule.test ok');
   assert.ok(/storage\.set\(KEYS\.plan, buildWeekPlan/.test(body));
   assert.ok(!/customSchedule/.test(body.replace(/\/\/.*$/gm, '')), 'saveOnboarding 不应自动清自定义课表');
   const ob = read('pages/onboarding/onboarding.ts');
-  assert.ok(/if \(hasCustomSchedule\(\)\)[\s\S]*用新结果重新排课？[\s\S]*confirmText: '重新排课'[\s\S]*cancelText: '保留我的课表'[\s\S]*if \(r\.confirm\) clearCustomSchedule\(\)/.test(ob));
+  assert.ok(/if \(needsRescheduleConfirm\(\)\)[\s\S]*用新结果重新排课？[\s\S]*confirmText: '重新排课'[\s\S]*cancelText: '保留我的课表'[\s\S]*if \(r\.confirm\) \{\s*clearCustomSchedule\(\);/.test(ob));
   assert.ok(!/\$\{profile\.crowd\}/.test(ob), '问卷 toast 不应显示英文人群枚举'); }
 console.log('schedule.test §3.4-3 ok');
 // P3：自定义生效时标题旁显示「自定义」小标签

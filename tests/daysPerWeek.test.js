@@ -30,9 +30,9 @@ assert.deepStrictEqual(S.effectiveWeek(T.buildWeekPlan(3).week, custom), custom.
 // 接线
 const prof = read('services/profile.ts');
 assert.ok(/export function changeDaysPerWeek/.test(prof));
-assert.ok(/KEYS\.profile, \{ \.\.\.p, daysPerWeek: n/.test(prof) && /KEYS\.plan, buildWeekPlan\(n\)/.test(prof) && /if \(overwriteCustom\) clearCustomSchedule\(\)/.test(prof));
+assert.ok(/KEYS\.profile, \{ \.\.\.p, daysPerWeek: n/.test(prof) && /KEYS\.plan, buildWeekPlan\(n\)/.test(prof) && /if \(overwriteCustom\) \{\s*clearCustomSchedule\(\);/.test(prof));
 const me = read('pages/me/me.ts');
-assert.ok(/onTapDays[\s\S]*showActionSheet[\s\S]*hasCustomSchedule\(\)[\s\S]*showModal/.test(me));
+assert.ok(/onTapDays[\s\S]*showActionSheet[\s\S]*needsRescheduleConfirm\(\)[\s\S]*showModal/.test(me));
 // §3.4-5：两个按钮，取消不改天数；不再有「保留」
 assert.ok(/confirmText: '按新天数重排'/.test(me) && /cancelText: '取消'/.test(me) && /if \(r\.confirm\) apply\(\);/.test(me));
 assert.ok(!/保留/.test(me) && /changeDaysPerWeek\(n, true\)/.test(me) && !/changeDaysPerWeek\(n, false\)/.test(me));

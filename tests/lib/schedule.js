@@ -23,6 +23,8 @@ exports.pinnedTodayType = pinnedTodayType;
 exports.weekWithTodayPinned = weekWithTodayPinned;
 exports.resolveDayType = resolveDayType;
 exports.resolveDates = resolveDates;
+exports.dropOverridesFrom = dropOverridesFrom;
+exports.rescheduleContent = rescheduleContent;
 exports.pruneOverrides = pruneOverrides;
 exports.withOverride = withOverride;
 exports.hasOverrideIn = hasOverrideIn;
@@ -203,6 +205,19 @@ function resolveDates(dates, week, overrides) {
     return dates.map((d) => resolveDayType(d, week, overrides));
 }
 /** 去掉今天之前的覆盖（过去日不可改，留着无用） */
+/** 去掉今天及以后的覆盖（过去的只作记录，保留） */
+function dropOverridesFrom(overrides, today) {
+    const out = {};
+    Object.keys(overrides || {}).forEach((d) => {
+        if (d < today)
+            out[d] = overrides[d];
+    });
+    return out;
+}
+/** 重排弹窗正文：N>0 时追加「将清除 N 个按日修改」 */
+function rescheduleContent(base, n) {
+    return n > 0 ? `${base}\n将清除 ${n} 个按日修改` : base;
+}
 function pruneOverrides(overrides, today) {
     const out = {};
     Object.keys(overrides || {}).forEach((d) => {

@@ -233,6 +233,20 @@ export function resolveDates(dates: string[], week: DayKind[], overrides: DateOv
 }
 
 /** 去掉今天之前的覆盖（过去日不可改，留着无用） */
+/** 去掉今天及以后的覆盖（过去的只作记录，保留） */
+export function dropOverridesFrom(overrides: DateOverrides | null | undefined, today: string): DateOverrides {
+  const out: DateOverrides = {};
+  Object.keys(overrides || {}).forEach((d) => {
+    if (d < today) out[d] = (overrides as DateOverrides)[d];
+  });
+  return out;
+}
+
+/** 重排弹窗正文：N>0 时追加「将清除 N 个按日修改」 */
+export function rescheduleContent(base: string, n: number): string {
+  return n > 0 ? `${base}\n将清除 ${n} 个按日修改` : base;
+}
+
 export function pruneOverrides(overrides: DateOverrides | null | undefined, today: string): DateOverrides {
   const out: DateOverrides = {};
   Object.keys(overrides || {}).forEach((d) => {

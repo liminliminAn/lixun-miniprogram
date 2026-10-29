@@ -1,0 +1,24 @@
+/** node tests/rescheduleOverrides.test.js — P2-1：改天数 / 重做问卷时，有周模板或今天起有按日修改都弹窗；确认重排清除今天起的覆盖，保留则不动 */
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const S = require('./lib/schedule');
+const read = (p) => fs.readFileSync(path.join(__dirname, '../miniprogram', p), 'utf8');
+const today = '2026-10-29';
+const ov = { '2026-10-20': 'pull', '2026-10-29': 'push', '2026-11-05': 'legs' };
+assert.deepStrictEqual(S.dropOverridesFrom(ov, today), { '2026-10-20': 'pull' });
+assert.deepStrictEqual(S.dropOverridesFrom(null, today), {});
+assert.strictEqual(S.rescheduleContent('正文', 0), '正文');
+assert.strictEqual(S.rescheduleContent('正文', 2), '正文\n将清除 2 个按日修改');
+const prof = read('services/profile.ts');
+assert.ok(/needsRescheduleConfirm[\s\S]*?hasCustomSchedule\(\) \|\| countActiveOverrides\(today\) > 0/.test(prof));
+assert.ok(/if \(overwriteCustom\) \{\s*clearCustomSchedule\(\);\s*clearOverridesFrom\(\);/.test(prof), '改天数重排清今天起覆盖');
+const me = read('pages/me/me.ts');
+assert.ok(/if \(!needsRescheduleConfirm\(\)\)/.test(me) && !/hasCustomSchedule/.test(me));
+assert.ok(/rescheduleContent\([^)]*countActiveOverrides\(\)\)/.test(me));
+assert.ok(/changeDaysPerWeek\(n, true\)/.test(me));
+const ob = read('pages/onboarding/onboarding.ts');
+assert.ok(/if \(needsRescheduleConfirm\(\)\)/.test(ob) && !/hasCustomSchedule/.test(ob));
+assert.ok(/rescheduleContent\([^)]*countActiveOverrides\(\)\)/.test(ob));
+assert.ok(/if \(r\.confirm\) \{\s*clearCustomSchedule\(\);\s*clearOverridesFrom\(\);\s*\}/.test(ob), '重新排课清覆盖；保留我的课表不动');
+console.log('rescheduleOverrides.test ok');

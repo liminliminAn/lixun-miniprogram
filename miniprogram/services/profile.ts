@@ -2,7 +2,7 @@ import { storage, KEYS } from './storage';
 import { keepCreatedAt } from '../utils/persist';
 import { classify } from '../utils/classify';
 import { buildWeekPlan, isDaysPerWeek } from '../constants/templates';
-import { effectiveWeek, isCustomized, CustomSchedule, DateOverrides, resolveDayType, withOverride, pruneOverrides } from '../utils/schedule';
+import { effectiveWeek, isCustomized, CustomSchedule, DateOverrides, resolveDayType, withOverride, pruneOverrides, dropOverridesFrom } from '../utils/schedule';
 import { formatDate } from '../utils/date';
 
 export { classify };
@@ -75,6 +75,21 @@ export function clearDateOverrides(): void {
   storage.remove(KEYS.dateOverrides);
 }
 
+/** 今天及以后的覆盖个数 */
+export function countActiveOverrides(today: string = formatDate()): number {
+  return Object.keys(pruneOverrides(getDateOverrides(), today)).length;
+}
+
+/** 清除今天及以后的覆盖 */
+export function clearOverridesFrom(today: string = formatDate()): void {
+  storage.set(KEYS.dateOverrides, dropOverridesFrom(getDateOverrides(), today));
+}
+
+/** 需要重排确认：有自定义周模板，或今天及以后有覆盖 */
+export function needsRescheduleConfirm(today: string = formatDate()): boolean {
+  return hasCustomSchedule() || countActiveOverrides(today) > 0;
+}
+
 /** 今天及以后是否还有覆盖 */
 export function hasActiveOverrides(today: string = formatDate()): boolean {
   return Object.keys(pruneOverrides(getDateOverrides(), today)).length > 0;
@@ -101,6 +116,9 @@ export function changeDaysPerWeek(n: DaysPerWeek, overwriteCustom: boolean): boo
   if (!p) return false;
   storage.set(KEYS.profile, { ...p, daysPerWeek: n, updatedAt: new Date().toISOString() });
   storage.set(KEYS.plan, buildWeekPlan(n));
-  if (overwriteCustom) clearCustomSchedule();
+  if (overwriteCustom) {
+    clearCustomSchedule();
+    clearOverridesFrom();
+  }
   return true;
 }

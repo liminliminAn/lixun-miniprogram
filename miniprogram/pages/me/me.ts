@@ -1,6 +1,7 @@
 import { guardEntry } from '../../services/user';
 import { CROWDS } from '../../constants/crowds';
-import { getProfile, getPrefs, setPrefs, changeDaysPerWeek, hasCustomSchedule } from '../../services/profile';
+import { getProfile, getPrefs, setPrefs, changeDaysPerWeek, needsRescheduleConfirm, countActiveOverrides } from '../../services/profile';
+import { rescheduleContent } from '../../utils/schedule';
 import { profileLabels } from '../../utils/labels';
 import { DAYS_PER_WEEK_OPTIONS } from '../../constants/templates';
 import { getUser, saveUser, persistAvatar, clearAllLocalData } from '../../services/user';
@@ -52,14 +53,14 @@ Page({
           this.setData({ profile: np, labels: profileLabels(np) });
           wx.showToast({ title: '已按新天数重排', icon: 'none' });
         };
-        if (!hasCustomSchedule()) {
+        if (!needsRescheduleConfirm()) {
           apply();
           return;
         }
         // §3.4-5：只有「按新天数重排」（覆盖自定义）和「取消」；取消不改天数
         wx.showModal({
           title: `改为每周 ${n} 练？`,
-          content: '会按新天数重新生成课表，并覆盖你自定义的课表。',
+          content: rescheduleContent('会按新天数重新生成课表，并覆盖你自定义的课表。', countActiveOverrides()),
           confirmText: '按新天数重排',
           cancelText: '取消',
           success: (r) => {
