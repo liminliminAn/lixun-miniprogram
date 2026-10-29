@@ -7,6 +7,7 @@ import { formatDate, mondayBasedIndex } from '../../utils/date';
 import {
   DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, weekWithTodayPinned,
 } from '../../utils/schedule';
+import { buildMonthCells, shiftMonth, monthTitle, editSheetTitle, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
 /** 生效课表 + 今天按已开练记录固定（§3.4-8/9） */
 function pinnedWeek(): DayType[] {
@@ -22,10 +23,15 @@ Page({
     streakTip: '',
     weekCells: [] as any[],
     dayBlocks: [] as any[],
+    expanded: false,
+    monthOffset: 0,
+    monthTitle: '',
+    monthHeader: MONTH_WEEKDAY_HEADER,
+    monthCells: [] as any[],
   },
   onShow() {
     if (!guardEntry()) return;
-    this.setData({ weekOffset: 0 });
+    this.setData({ weekOffset: 0, monthOffset: 0 });
     this.refresh();
   },
   refresh() {
@@ -54,6 +60,32 @@ Page({
       weekCells,
       dayBlocks,
     });
+    if (this.data.expanded) this.refreshMonth();
+  },
+  refreshMonth() {
+    const today = formatDate();
+    const { year, month } = shiftMonth(today, this.data.monthOffset);
+    this.setData({
+      monthTitle: monthTitle(year, month),
+      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), getSessions() as any),
+    });
+  },
+  onToggleMonth() {
+    this.setData({ expanded: !this.data.expanded, monthOffset: 0 });
+    if (this.data.expanded) this.refreshMonth();
+  },
+  onPrevMonth() {
+    this.setData({ monthOffset: this.data.monthOffset - 1 });
+    this.refreshMonth();
+  },
+  onNextMonth() {
+    this.setData({ monthOffset: this.data.monthOffset + 1 });
+    this.refreshMonth();
+  },
+  onTapMonthDay(e: any) {
+    const cell = this.data.monthCells[Number(e.currentTarget.dataset.i)];
+    if (!cell) return;
+    this.handleTap({ ...cell, idx: cell.weekdayIdx, md: shortDate(cell.date) }, editSheetTitle(cell.weekdayIdx));
   },
   onPrevWeek() {
     this.setData({ weekOffset: this.data.weekOffset - 1 });
@@ -68,6 +100,10 @@ Page({
     const idx = Number(e.currentTarget.dataset.idx);
     const cell = this.data.weekCells[idx];
     if (!cell) return;
+    this.handleTap(cell, editSheetTitle(idx));
+  },
+  handleTap(cell: any, sheetTitle: string) {
+    const idx = cell.idx;
     const action = tapAction(cell);
     if (action === 'locked') {
       wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });
@@ -80,7 +116,7 @@ Page({
     if (action === 'record') {
       const s = (getSessions() as any)[cell.date];
       wx.showModal({
-        title: `${cell.md} ${DAY_TYPE_LABEL[cell.dayType as DayType]}日记录`,
+        title: `${cell.md} ${cell.dayType ? DAY_TYPE_LABEL[cell.dayType as DayType] : ''}日记录`,
         content: sessionSummary(s, (id) => (EXERCISE_MAP[id] ? EXERCISE_MAP[id].name : id)),
         showCancel: false,
         confirmText: '知道了',
@@ -88,6 +124,7 @@ Page({
       return;
     }
     wx.showActionSheet({
+      alertText: sheetTitle,
       itemList: DAY_KIND_SHEET,
       success: (res) => {
         const kind = DAY_KINDS[res.tapIndex];

@@ -2,6 +2,7 @@
   <view class="card">
     <view class="title">本周课表（{{daysPerWeek}} 练）<text class="tag-custom" wx:if="{{customized}}">自定义</text></view>
     <view class="hint">今天及以后点某天可改为推/拉/腿/休；过去的日子点开看记录</view>
+    <block wx:if="{{!expanded}}">
     <view class="week-nav">
       <view class="nav-btn" bindtap="onPrevWeek">‹</view>
       <text class="range">{{weekOffset === 0 ? '本周 · ' : ''}}{{weekRange}}</text>
@@ -15,6 +16,22 @@
         <text class="mark" wx:if="{{item.tense === 'past' && item.hasRecord}}">{{item.trained ? '✓ 已练' : '未完成'}}</text>
       </view>
     </view>
+    </block>
+    <view class="month" wx:else>
+      <view class="week-nav">
+        <view class="nav-btn" bindtap="onPrevMonth">‹</view>
+        <text class="month-title">{{monthTitle}}</text>
+        <view class="nav-btn" bindtap="onNextMonth">›</view>
+      </view>
+      <view class="m-head"><text class="m-wd" wx:for="{{monthHeader}}" wx:key="*this">{{item}}</text></view>
+      <view class="m-grid">
+        <view class="m-cell {{item.inMonth ? '' : 'out'}} {{item.tense}}" wx:for="{{monthCells}}" wx:key="date" data-i="{{index}}" bindtap="onTapMonthDay">
+          <text class="m-day {{item.isToday ? 'today' : ''}}">{{item.day}}</text>
+          <text class="m-type {{item.trained ? 'done' : (item.dayType || 'none')}}">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="toggle" bindtap="onToggleMonth">{{expanded ? '收起 ▴' : '展开 ▾'}}</view>
     <view class="soft-tip" wx:if="{{streakTip}}">{{streakTip}}</view>
     <view class="restore" wx:if="{{customized}}" bindtap="onRestoreDefault">恢复默认</view>
   </view>
