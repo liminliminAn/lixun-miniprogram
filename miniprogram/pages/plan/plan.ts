@@ -12,7 +12,8 @@ import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shif
 /** 本周一到下周日的具体生效类型（日期覆盖 → 周模板）+ 今天按已开练记录固定（§3.4-8/9）；连练按日期线性计算 */
 function pinnedDays(): DayType[] {
   const today = formatDate();
-  return pinnedResolvedDays(getEffectiveWeek(), today, getDateOverrides(), (getSessions() as any)[today]);
+  const sessions = getSessions() as any;
+  return pinnedResolvedDays(getEffectiveWeek(), today, getDateOverrides(), sessions[today], sessions);
 }
 
 Page({

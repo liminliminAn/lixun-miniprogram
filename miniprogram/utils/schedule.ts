@@ -284,10 +284,15 @@ export function pinnedResolvedWeek(week: DayKind[], today: string, overrides: Da
 }
 
 /** 具体日期序列（本周一 → 下周日，14 天）：覆盖 → 模板，今天按开练记录固定。不做循环拼接 */
-export function pinnedResolvedDays(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined): DayKind[] {
+export function pinnedResolvedDays(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined, sessions?: Record<string, SessionLite | undefined> | null): DayKind[] {
   const sun = parse(weekDates(today, 0)[6]);
   const nextMon = fmt(new Date(sun.getFullYear(), sun.getMonth(), sun.getDate() + 1));
   return weekDates(today, 0).concat(weekDates(nextMon, 0)).map((d) => {
+    // P3-A：传入记录时，过去日按实际记录（已开练或 completedAt 才算训练，与 BUG-02 一致），漏练算休
+    if (sessions && d < today) {
+      const s = sessions[d];
+      return isStarted(s) ? ((s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : 'push') as DayKind) : 'rest';
+    }
     const t = resolveDayType(d, week, overrides);
     return d === today ? pinType(t, todaySession) : t;
   });
