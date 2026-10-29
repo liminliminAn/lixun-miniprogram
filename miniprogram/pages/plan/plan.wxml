@@ -1,11 +1,18 @@
 <view class="container">
   <view class="card">
     <view class="title">本周课表（{{customized ? '自定义' : daysPerWeek + ' 练'}}）</view>
-    <view class="hint">点某一天可改为推/拉/腿/休</view>
+    <view class="hint">今天及以后点某天可改为推/拉/腿/休；过去的日子点开看记录</view>
+    <view class="week-nav">
+      <view class="nav-btn" bindtap="onPrevWeek">‹</view>
+      <text class="range">{{weekOffset === 0 ? '本周 · ' : ''}}{{weekRange}}</text>
+      <view class="nav-btn {{weekOffset >= 0 ? 'disabled' : ''}}" bindtap="onNextWeek">›</view>
+    </view>
     <view class="week">
-      <view class="cell" wx:for="{{weekCells}}" wx:key="idx" data-idx="{{item.idx}}" bindtap="onTapDay">
+      <view class="cell {{item.isToday ? 'today' : ''}} {{item.tense}}" wx:for="{{weekCells}}" wx:key="idx" data-idx="{{item.idx}}" bindtap="onTapDay">
         <text class="wd">周{{item.wd}}</text>
+        <text class="md">{{item.md}}</text>
         <text class="dt {{item.dayType}}">{{item.label}}</text>
+        <text class="mark" wx:if="{{item.tense === 'past' && item.dayType !== 'rest'}}">{{item.trained ? '✓ 已练' : '未练'}}</text>
       </view>
     </view>
     <view class="restore" wx:if="{{customized}}" bindtap="onRestoreDefault">恢复默认</view>

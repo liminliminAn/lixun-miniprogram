@@ -12,6 +12,8 @@ declare const wx: {
     title: string;
     content: string;
     showCancel?: boolean;
+    confirmText?: string;
+    cancelText?: string;
     success?: (res: { confirm: boolean; cancel: boolean }) => void;
   }): void;
   navigateTo(opts: { url: string }): void;

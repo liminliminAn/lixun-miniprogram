@@ -61,3 +61,13 @@
   color: var(--color-accent);
   font-size: var(--font-meta);
 }
+.week-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16rpx; }
+.nav-btn { width: var(--hit-min); min-height: var(--hit-min); line-height: var(--hit-min); text-align: center; font-size: var(--font-section); color: var(--color-accent); }
+.nav-btn.disabled { color: var(--color-border); }
+.range { font-size: var(--font-meta); color: var(--color-ink-secondary); }
+.md { display: block; font-size: var(--font-caption); color: var(--color-ink-secondary); }
+.cell.today { border-radius: 12rpx; background: var(--color-accent-soft); }
+.cell.today .wd, .cell.today .md { color: var(--color-accent); font-weight: 600; }
+.cell.past .dt { opacity: 0.6; }
+.mark { display: block; margin-top: 4rpx; font-size: 20rpx; color: var(--color-ink-secondary); }
+.cell.past .mark { color: var(--color-ink-secondary); }
