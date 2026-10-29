@@ -36,6 +36,6 @@ assert.ok(mt && /white-space: nowrap/.test(mt) && !/opacity/.test(mt));
 assert.ok(Number(mt.match(/font-size: (\d+)rpx/)[1]) >= 22);
 assert.ok(/color: var\(--type-rest\)/.test(mt));
 const opac = css.split('}').filter((r) => /opacity/.test(r)).map((r) => r.trim().split('{')[0].trim());
-assert.deepStrictEqual(opac, ['.m-cell.out'], '只有非本月格子降透明度');
+assert.deepStrictEqual(opac, [], 'P3-3：非本月格子不再降透明度，改用次要色');
 assert.ok(!/--color-done/.test(read('app.wxss')));
 console.log('pastLabels.test ok');

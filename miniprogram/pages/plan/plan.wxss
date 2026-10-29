@@ -75,5 +75,7 @@
 .m-type.pull { color: var(--type-pull); }
 .m-type.legs { color: var(--type-legs); }
 .m-type.rest, .m-type.none { color: var(--type-rest); }
-.m-cell.out { opacity: 0.5; }
+/* 非本月：不降透明度（深色下「休」会低于 4.5:1），改用次要色区分 */
+.m-cell.out .m-day { color: var(--color-ink-secondary); }
+.m-cell.out .m-type { color: var(--type-rest); }
 .m-type.unfinished { color: var(--color-ink-secondary); }

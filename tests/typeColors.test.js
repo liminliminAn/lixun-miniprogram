@@ -44,5 +44,17 @@ for (const t of ['push', 'pull', 'legs', 'rest']) {
   assert.ok(new RegExp(`\\.m-type\\.${t}[^{]*\\{ color: var\\(--type-${t}\\); \\}`).test(css), `.m-type.${t}`);
 }
 assert.ok(!/\.cell\.past \.dt \{[^}]*opacity/.test(css));
+// P3-3：非本月格子（.m-cell.out）的「休」按实际透明度与卡片底混色后仍需 ≥4.5:1（两套主题）
+const outOpacity = (() => { const m = css.match(/\.m-cell\.out \{[^}]*opacity:\s*([\d.]+)/); return m ? parseFloat(m[1]) : 1; })();
+const blend = (fg, bg, a) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(fg.slice(i, i + 2), 16) * a + parseInt(bg.slice(i, i + 2), 16) * (1 - a)).toString(16).padStart(2, '0')).join('');
+assert.ok(/\.m-cell\.out \.m-type \{ color: var\(--type-rest\); \}/.test(css), '非本月标签用 --type-rest');
+for (const [theme, part] of Object.entries(themes)) {
+  const bg = pick(part, 'color-surface');
+  for (const tok of ['type-rest', 'color-ink-secondary']) {
+    const r = ratio(blend(pick(part, tok), bg, outOpacity), bg);
+    report.push(`${theme} out ${tok} opacity ${outOpacity}: ${r.toFixed(2)}`);
+    assert.ok(r >= 4.5, `${theme} 非本月 ${tok} 只有 ${r.toFixed(2)}:1`);
+  }
+}
 if (process.env.SHOW) console.log(report.join('\n'));
 console.log('typeColors.test ok');

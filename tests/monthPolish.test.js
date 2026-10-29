@@ -15,7 +15,7 @@ for (const v of ['done', 'success-soft', 'warning-soft']) { // 已不用，已�
 }
 assert.ok(!/--color-done/.test(css));
 assert.ok(!/\.m-type\.pull[^{]*\.m-type\.done|\.m-type\.done[^{]*\.m-type\.pull/.test(css), '拉与✓已练不共用颜色');
-assert.ok(/\.m-cell\.out \{ opacity: 0\.5; \}/.test(css));
+assert.ok(/\.m-cell\.out \.m-day \{ color: var\(--color-ink-secondary\); \}/.test(css));
 assert.ok(!/rgba?\(|#[0-9a-fA-F]{3,6}\b/.test(css), 'plan.wxss 不含硬编码颜色');
 // 「未练」只在月历格子；周视图保留全称
 assert.strictEqual(M.MONTH_NO_RECORD_LABEL, '休');
