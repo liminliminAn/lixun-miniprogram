@@ -5,7 +5,7 @@ import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSc
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTipDays, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedDays, overrideSheetTitle,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTipDays, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, streakDays, overrideSheetTitle,
 } from '../../utils/schedule';
 import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
@@ -13,7 +13,7 @@ import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shif
 function pinnedDays(): DayType[] {
   const today = formatDate();
   const sessions = getSessions() as any;
-  return pinnedResolvedDays(getEffectiveWeek(), today, getDateOverrides(), sessions[today], sessions);
+  return streakDays(getEffectiveWeek(), today, getDateOverrides(), sessions[today], sessions);
 }
 
 Page({

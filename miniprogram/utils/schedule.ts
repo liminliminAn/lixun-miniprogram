@@ -290,12 +290,30 @@ export function pinnedResolvedDays(week: DayKind[], today: string, overrides: Da
   return weekDates(today, 0).concat(weekDates(nextMon, 0)).map((d) => {
     // P3-A：传入记录时，过去日按实际记录（已开练或 completedAt 才算训练，与 BUG-02 一致），漏练算休
     if (sessions && d < today) {
-      const s = sessions[d];
-      return isStarted(s) ? ((s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : 'push') as DayKind) : 'rest';
+      return actualKind(sessions[d]);
     }
     const t = resolveDayType(d, week, overrides);
     return d === today ? pinType(t, todaySession) : t;
   });
+}
+
+/** 往前回看的天数（上周五~周日） */
+export const STREAK_LOOKBACK_DAYS = 3;
+
+/** 过去某天是否算训练：按实际记录（开练或 completedAt，与 BUG-02 一致） */
+function actualKind(s: SessionLite | null | undefined): DayKind {
+  return isStarted(s) ? ((s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : 'push') as DayKind) : 'rest';
+}
+
+/** 连练序列：上周五~周日（实际记录）+ 本周一~下周日（pinnedResolvedDays），跨周连续计算 */
+export function streakDays(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined, sessions: Record<string, SessionLite | undefined> | null | undefined): DayKind[] {
+  const mon = parse(weekDates(today, 0)[0]);
+  const back: DayKind[] = [];
+  for (let i = STREAK_LOOKBACK_DAYS; i >= 1; i--) {
+    const d = fmt(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() - i));
+    back.push(actualKind((sessions || {})[d]));
+  }
+  return back.concat(pinnedResolvedDays(week, today, overrides, todaySession, sessions || {}));
 }
 
 /** 线性最长连续训练天数（具体日期，周日不接回本周一） */

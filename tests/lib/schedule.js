@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PAST_REST_LABEL = exports.PAST_NO_RECORD_LABEL = exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
+exports.STREAK_LOOKBACK_DAYS = exports.PAST_REST_LABEL = exports.PAST_NO_RECORD_LABEL = exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
 exports.isValidWeek = isValidWeek;
 exports.effectiveWeek = effectiveWeek;
 exports.setDay = setDay;
@@ -31,6 +31,7 @@ exports.hasOverrideIn = hasOverrideIn;
 exports.pinType = pinType;
 exports.pinnedResolvedWeek = pinnedResolvedWeek;
 exports.pinnedResolvedDays = pinnedResolvedDays;
+exports.streakDays = streakDays;
 exports.maxConsecutiveLinear = maxConsecutiveLinear;
 exports.streakSoftTipDays = streakSoftTipDays;
 exports.overrideSheetTitle = overrideSheetTitle;
@@ -262,12 +263,27 @@ function pinnedResolvedDays(week, today, overrides, todaySession, sessions) {
     return weekDates(today, 0).concat(weekDates(nextMon, 0)).map((d) => {
         // P3-A：传入记录时，过去日按实际记录（已开练或 completedAt 才算训练，与 BUG-02 一致），漏练算休
         if (sessions && d < today) {
-            const s = sessions[d];
-            return isStarted(s) ? (s && s.dayType && exports.DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : 'push') : 'rest';
+            return actualKind(sessions[d]);
         }
         const t = resolveDayType(d, week, overrides);
         return d === today ? pinType(t, todaySession) : t;
     });
+}
+/** 往前回看的天数（上周五~周日） */
+exports.STREAK_LOOKBACK_DAYS = 3;
+/** 过去某天是否算训练：按实际记录（开练或 completedAt，与 BUG-02 一致） */
+function actualKind(s) {
+    return isStarted(s) ? (s && s.dayType && exports.DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : 'push') : 'rest';
+}
+/** 连练序列：上周五~周日（实际记录）+ 本周一~下周日（pinnedResolvedDays），跨周连续计算 */
+function streakDays(week, today, overrides, todaySession, sessions) {
+    const mon = parse(weekDates(today, 0)[0]);
+    const back = [];
+    for (let i = exports.STREAK_LOOKBACK_DAYS; i >= 1; i--) {
+        const d = fmt(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() - i));
+        back.push(actualKind((sessions || {})[d]));
+    }
+    return back.concat(pinnedResolvedDays(week, today, overrides, todaySession, sessions || {}));
 }
 /** 线性最长连续训练天数（具体日期，周日不接回本周一） */
 function maxConsecutiveLinear(days) {

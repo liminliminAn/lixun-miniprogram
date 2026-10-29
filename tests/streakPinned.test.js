@@ -18,5 +18,5 @@ assert.deepStrictEqual(S.weekWithTodayPinned(week, 3, null), week);
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');
 assert.ok(/streakTip: streakSoftTipDays\(pinnedDays\(\)\)/.test(ts));
 assert.ok(!/streakSoftTip\(getEffectiveWeek\(\)\)/.test(ts));
-assert.ok(/pinnedResolvedDays\(getEffectiveWeek\(\), today, getDateOverrides\(\)/.test(ts));
+assert.ok(/streakDays\(getEffectiveWeek\(\), today, getDateOverrides\(\)/.test(ts));
 console.log('streakPinned.test ok');
