@@ -30,5 +30,5 @@ const s5 = { '2026-10-25': done('legs'), '2026-10-26': done('push') };
 assert.strictEqual(S.maxConsecutiveLinear(S.streakDays(tmpl, today, { '2026-10-29': 'push', '2026-10-30': 'pull' }, null, s5)), 2);
 // 页面接线
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');
-assert.ok(/streakSoftTipDays\(pinnedDays\(\)\)/.test(ts) && /return streakDays\(/.test(ts));
+assert.ok(/streakSoftTipDays\(pinnedDays\(\), streakTodayIndex\(formatDate\(\)\)\)/.test(ts) && /return streakDays\(/.test(ts));
 console.log('streakLookback.test ok');

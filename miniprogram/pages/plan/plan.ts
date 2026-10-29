@@ -5,7 +5,7 @@ import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSc
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTipDays, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, streakDays, overrideSheetTitle,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTipDays, PAST_REST_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, streakDays, streakTodayIndex, overrideSheetTitle,
 } from '../../utils/schedule';
 import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
@@ -63,7 +63,7 @@ Page({
       daysPerWeek: plan.daysPerWeek,
       customized: restorable,
       restorable,
-      streakTip: streakSoftTipDays(pinnedDays()),
+      streakTip: streakSoftTipDays(pinnedDays(), streakTodayIndex(formatDate())),
       weekOffset: offset,
       weekRange: `${shortDate(dates[0])} – ${shortDate(dates[6])}`,
       weekCells,
@@ -160,7 +160,7 @@ Page({
         if (!kind) return;
         setDateOverride(date, kind); // 软提示，不拦截保存
         this.refresh();
-        const tip = streakSoftTipDays(pinnedDays());
+        const tip = streakSoftTipDays(pinnedDays(), streakTodayIndex(formatDate()));
         if (tip) wx.showToast({ title: tip, icon: 'none' });
       },
     });

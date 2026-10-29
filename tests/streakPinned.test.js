@@ -16,7 +16,7 @@ assert.deepStrictEqual(S.weekWithTodayPinned(week, 3, { dayType: 'legs', exercis
 assert.deepStrictEqual(S.weekWithTodayPinned(week, 3, null), week);
 // 接线
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');
-assert.ok(/streakTip: streakSoftTipDays\(pinnedDays\(\)\)/.test(ts));
+assert.ok(/streakTip: streakSoftTipDays\(pinnedDays\(\), streakTodayIndex\(formatDate\(\)\)\)/.test(ts));
 assert.ok(!/streakSoftTip\(getEffectiveWeek\(\)\)/.test(ts));
 assert.ok(/streakDays\(getEffectiveWeek\(\), today, getDateOverrides\(\)/.test(ts));
 console.log('streakPinned.test ok');

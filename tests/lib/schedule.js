@@ -33,6 +33,8 @@ exports.pinnedResolvedWeek = pinnedResolvedWeek;
 exports.pinnedResolvedDays = pinnedResolvedDays;
 exports.streakDays = streakDays;
 exports.maxConsecutiveLinear = maxConsecutiveLinear;
+exports.maxRunReaching = maxRunReaching;
+exports.streakTodayIndex = streakTodayIndex;
 exports.streakSoftTipDays = streakSoftTipDays;
 exports.overrideSheetTitle = overrideSheetTitle;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
@@ -295,9 +297,28 @@ function maxConsecutiveLinear(days) {
     });
     return best;
 }
-/** 周视图软提示：按具体日期线性计算 */
-function streakSoftTipDays(days) {
-    return maxConsecutiveLinear(days) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
+/** 线性最长连续训练天数，只计「结束位置 ≥ fromIdx」的连练（P3-C：含今天或未来日的连练） */
+function maxRunReaching(days, fromIdx) {
+    let best = 0;
+    let run = 0;
+    for (let i = 0; i <= days.length; i++) {
+        if (i < days.length && days[i] !== 'rest') {
+            run += 1;
+            continue;
+        }
+        if (i - 1 >= fromIdx)
+            best = Math.max(best, run);
+        run = 0;
+    }
+    return best;
+}
+/** streakDays 序列里今天的下标（回看 3 天 + 本周第几天） */
+function streakTodayIndex(today) {
+    return exports.STREAK_LOOKBACK_DAYS + weekDates(today, 0).indexOf(today);
+}
+/** 周视图软提示：按具体日期线性计算；fromIdx 为今天下标时，已结束的过去连练不提示 */
+function streakSoftTipDays(days, fromIdx = 0) {
+    return maxRunReaching(days, fromIdx) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
 }
 /** 「修改 M/D」 */
 function overrideSheetTitle(date) {

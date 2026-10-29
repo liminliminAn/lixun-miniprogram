@@ -327,9 +327,29 @@ export function maxConsecutiveLinear(days: DayKind[]): number {
   return best;
 }
 
-/** 周视图软提示：按具体日期线性计算 */
-export function streakSoftTipDays(days: DayKind[]): string {
-  return maxConsecutiveLinear(days) > STREAK_SOFT_LIMIT ? STREAK_SOFT_TIP : '';
+/** 线性最长连续训练天数，只计「结束位置 ≥ fromIdx」的连练（P3-C：含今天或未来日的连练） */
+export function maxRunReaching(days: DayKind[], fromIdx: number): number {
+  let best = 0;
+  let run = 0;
+  for (let i = 0; i <= days.length; i++) {
+    if (i < days.length && days[i] !== 'rest') {
+      run += 1;
+      continue;
+    }
+    if (i - 1 >= fromIdx) best = Math.max(best, run);
+    run = 0;
+  }
+  return best;
+}
+
+/** streakDays 序列里今天的下标（回看 3 天 + 本周第几天） */
+export function streakTodayIndex(today: string): number {
+  return STREAK_LOOKBACK_DAYS + weekDates(today, 0).indexOf(today);
+}
+
+/** 周视图软提示：按具体日期线性计算；fromIdx 为今天下标时，已结束的过去连练不提示 */
+export function streakSoftTipDays(days: DayKind[], fromIdx: number = 0): string {
+  return maxRunReaching(days, fromIdx) > STREAK_SOFT_LIMIT ? STREAK_SOFT_TIP : '';
 }
 
 /** 「修改 M/D」 */
