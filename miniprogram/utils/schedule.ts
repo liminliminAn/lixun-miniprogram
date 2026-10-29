@@ -155,3 +155,23 @@ export function isTodayLocked(todaySession: SessionLite | null | undefined): boo
 }
 
 export const TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';
+
+/** 最长连续训练天数（周日→周一循环计算）；全训练返回 7 */
+export function maxConsecutiveTraining(week: DayKind[]): number {
+  if (week.every((d) => d !== 'rest')) return week.length;
+  let best = 0;
+  let run = 0;
+  for (let i = 0; i < week.length * 2; i++) {
+    run = week[i % week.length] !== 'rest' ? run + 1 : 0;
+    best = Math.max(best, run);
+  }
+  return Math.min(best, week.length);
+}
+
+export const STREAK_SOFT_LIMIT = 3;
+export const STREAK_SOFT_TIP = '已连续训练超过 3 天，注意安排休息';
+
+/** §3.4-6：连续训练 >3 天只软提示，不拦截 */
+export function streakSoftTip(week: DayKind[]): string {
+  return maxConsecutiveTraining(week) > STREAK_SOFT_LIMIT ? STREAK_SOFT_TIP : '';
+}

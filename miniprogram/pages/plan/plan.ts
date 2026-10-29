@@ -5,7 +5,7 @@ import { getPlan, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, has
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates,
 } from '../../utils/schedule';
 
 Page({
@@ -14,6 +14,7 @@ Page({
     customized: false,
     weekOffset: 0,
     weekRange: '',
+    streakTip: '',
     weekCells: [] as any[],
     dayBlocks: [] as any[],
   },
@@ -42,6 +43,7 @@ Page({
     this.setData({
       daysPerWeek: plan.daysPerWeek,
       customized: hasCustomSchedule(),
+      streakTip: streakSoftTip(getEffectiveWeek()),
       weekOffset: offset,
       weekRange: `${shortDate(dates[0])} – ${shortDate(dates[6])}`,
       weekCells,
@@ -63,7 +65,7 @@ Page({
     if (!cell) return;
     const action = tapAction(cell);
     if (action === 'locked') {
-      wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });
+      wx.showToast({ title: TODAY_LOCKED_TIP, streakSoftTip, icon: 'none' });
       return;
     }
     if (action === 'none') {
@@ -85,8 +87,11 @@ Page({
       success: (res) => {
         const kind = DAY_KINDS[res.tapIndex];
         if (!kind) return;
-        saveCustomSchedule(setDay(getEffectiveWeek(), idx, kind));
+        const next = setDay(getEffectiveWeek(), idx, kind);
+        saveCustomSchedule(next); // 软提示，不拦截保存
         this.refresh();
+        const tip = streakSoftTip(next.week);
+        if (tip) wx.showToast({ title: tip, icon: 'none' });
       },
     });
   },

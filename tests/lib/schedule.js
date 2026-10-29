@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
+exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
 exports.isValidWeek = isValidWeek;
 exports.effectiveWeek = effectiveWeek;
 exports.setDay = setDay;
@@ -16,6 +16,8 @@ exports.tapAction = tapAction;
 exports.sessionSummary = sessionSummary;
 exports.restoreDecision = restoreDecision;
 exports.isTodayLocked = isTodayLocked;
+exports.maxConsecutiveTraining = maxConsecutiveTraining;
+exports.streakSoftTip = streakSoftTip;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
 exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
 function isValidWeek(week) {
@@ -124,3 +126,21 @@ function isTodayLocked(todaySession) {
     return !!todaySession;
 }
 exports.TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';
+/** 最长连续训练天数（周日→周一循环计算）；全训练返回 7 */
+function maxConsecutiveTraining(week) {
+    if (week.every((d) => d !== 'rest'))
+        return week.length;
+    let best = 0;
+    let run = 0;
+    for (let i = 0; i < week.length * 2; i++) {
+        run = week[i % week.length] !== 'rest' ? run + 1 : 0;
+        best = Math.max(best, run);
+    }
+    return Math.min(best, week.length);
+}
+exports.STREAK_SOFT_LIMIT = 3;
+exports.STREAK_SOFT_TIP = '已连续训练超过 3 天，注意安排休息';
+/** §3.4-6：连续训练 >3 天只软提示，不拦截 */
+function streakSoftTip(week) {
+    return maxConsecutiveTraining(week) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
+}
