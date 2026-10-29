@@ -23,14 +23,12 @@ assert.strictEqual(T.buildWeekPlan(4).week[0], 'push'); // 模板不被改写
 assert.ok(T.isDaysPerWeek(3) && !T.isDaysPerWeek(6) && !T.isDaysPerWeek('4'));
 
 // 覆盖语义：确认=清自定义 → 生效新默认；取消=保留自定义 → 仍生效自定义
-const custom = S.setDay(T.buildWeekPlan(4).week, 6, 'legs');
-assert.deepStrictEqual(S.effectiveWeek(T.buildWeekPlan(3).week, null), T.buildWeekPlan(3).week);
-assert.deepStrictEqual(S.effectiveWeek(T.buildWeekPlan(3).week, custom), custom.week);
+assert.deepStrictEqual(S.planWeek(T.buildWeekPlan(3).week), T.buildWeekPlan(3).week);
 
 // 接线
 const prof = read('services/profile.ts');
 assert.ok(/export function changeDaysPerWeek/.test(prof));
-assert.ok(/KEYS\.profile, \{ \.\.\.p, daysPerWeek: n/.test(prof) && /KEYS\.plan, buildWeekPlan\(n\)/.test(prof) && /if \(overwriteCustom\) \{\s*clearCustomSchedule\(\);/.test(prof));
+assert.ok(/KEYS\.profile, \{ \.\.\.p, daysPerWeek: n/.test(prof) && /KEYS\.plan, buildWeekPlan\(n\)/.test(prof) && /if \(clearOverrides\) clearOverridesFrom\(\);/.test(prof));
 const me = read('pages/me/me.ts');
 assert.ok(/onTapDays[\s\S]*showActionSheet[\s\S]*needsRescheduleConfirm\(\)[\s\S]*showModal/.test(me));
 // §3.4-5：两个按钮，取消不改天数；不再有「保留」

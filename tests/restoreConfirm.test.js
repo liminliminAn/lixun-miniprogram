@@ -11,7 +11,8 @@ assert.ok(/content: '将清除所有按日修改，恢复为问卷生成的课�
 assert.ok(/confirmText: '恢复默认'/.test(fn) && /cancelText: '取消'/.test(fn));
 const guard = fn.indexOf('if (!r.confirm) return;');
 assert.ok(guard > modal, '取消直接返回');
-for (const call of ['clearCustomSchedule()', 'clearDateOverrides()']) {
+assert.ok(!/clearCustomSchedule/.test(fn), '模板层已移除');
+for (const call of ['clearDateOverrides()']) {
   const i = fn.indexOf(call);
   assert.ok(i > guard, `${call} 只在确认后执行`);
 }
@@ -21,9 +22,9 @@ const run = (confirm) => {
   const wx = { showModal: (o) => o.success({ confirm }), showToast: () => calls.push('toast') };
   const page = { refresh: () => calls.push('refresh') };
   const src = fn.replace('onRestoreDefault()', 'function f()');
-  new Function('wx', 'clearCustomSchedule', 'clearDateOverrides', `${src}\n  }\n  return f;`)(wx, () => calls.push('custom'), () => calls.push('ov')).call(page);
+  new Function('wx', 'clearDateOverrides', `${src}\n  }\n  return f;`)(wx, () => calls.push('ov')).call(page);
   return calls;
 };
 assert.deepStrictEqual(run(false), []);
-assert.deepStrictEqual(run(true), ['custom', 'ov', 'refresh', 'toast']);
+assert.deepStrictEqual(run(true), ['ov', 'refresh', 'toast']);
 console.log('restoreConfirm.test ok');

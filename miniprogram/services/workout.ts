@@ -14,7 +14,7 @@ import { formatDate, countConsecutiveTrainDays } from '../utils/date';
 export function todayDayType(date: Date = new Date()): DayType {
   const plan = getPlan();
   if (!plan) return 'rest';
-  // 日期覆盖 → 周模板；§3.4-8：当天已有记录 → 固定为记录的类型
+  // 日期覆盖 → 默认课表；§3.4-8：当天已有记录 → 固定为记录的类型
   const d = formatDate(date);
   return pinType(resolveDay(d), getSession(d));
 }

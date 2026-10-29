@@ -1,5 +1,5 @@
 import { storage, KEYS, get } from './services/storage';
-import { isOnboardingDone } from './services/profile';
+import { isOnboardingDone, migrateRemoveCustomSchedule } from './services/profile';
 import { launchRedirect } from './utils/login';
 
 App<IAppOption>({
@@ -8,6 +8,8 @@ App<IAppOption>({
   },
   onLaunch() {
     storage.ensureDefaults();
+    // 周模板层已移除：删除遗留 lixun:v1:customSchedule
+    migrateRemoveCustomSchedule();
     // BUG-D：首个 Tab 渲染前判定，避免「今日」闪屏
     const to = launchRedirect(get(KEYS.user, null), isOnboardingDone());
     if (to) wx.reLaunch({ url: to });

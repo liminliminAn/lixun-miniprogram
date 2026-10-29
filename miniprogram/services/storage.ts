@@ -10,11 +10,12 @@ export const KEYS = {
   dietLog: 'lixun:v1:dietLog',
   /** IT2-07 本地登录资料 LocalUser */
   user: 'lixun:v1:user',
-  /** 用户自定义本周课表 CustomSchedule；存在时优先于 plan.week */
-  customSchedule: 'lixun:v1:customSchedule',
-  /** 按日期覆盖 { [YYYY-MM-DD]: DayType }；优先于周模板 */
+  /** 按日期覆盖 { [YYYY-MM-DD]: DayType }；优先于问卷默认课表 */
   dateOverrides: 'lixun:v1:dateOverrides',
 } as const;
+
+/** 已移除的周模板层遗留 key，仅供启动迁移删除 */
+export const LEGACY_CUSTOM_SCHEDULE_KEY = 'lixun:v1:customSchedule';
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];
 

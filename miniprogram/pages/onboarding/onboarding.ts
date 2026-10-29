@@ -1,6 +1,6 @@
 import { BF_BAND_LABELS, CROWDS } from '../../constants/crowds';
 import { isDaysPerWeek } from '../../constants/templates';
-import { saveOnboarding, needsRescheduleConfirm, countActiveOverrides, clearCustomSchedule, clearOverridesFrom } from '../../services/profile';
+import { saveOnboarding, needsRescheduleConfirm, countActiveOverrides, clearOverridesFrom } from '../../services/profile';
 import { rescheduleContent } from '../../utils/schedule';
 
 Page({
@@ -59,18 +59,15 @@ Page({
       jointLimit: this.data.jointLimit,
     };
     const profile = saveOnboarding(input);
-    // §3.4-3：已有自定义课表 → 询问是否按新结果重新排课
+    // §3.4-3：今天起有按日修改 → 询问是否按新结果重新排课；保留我的课表 = 保留按日修改
     if (needsRescheduleConfirm()) {
       wx.showModal({
         title: '用新结果重新排课？',
-        content: rescheduleContent('你有自定义的课表。重新排课会清除它，按新问卷结果生成默认课表。', countActiveOverrides()),
+        content: rescheduleContent('你有按日修改的课表。重新排课会清除它们，按新问卷结果生成课表。', countActiveOverrides()),
         confirmText: '重新排课',
         cancelText: '保留我的课表',
         success: (r) => {
-          if (r.confirm) {
-            clearCustomSchedule();
-            clearOverridesFrom();
-          }
+          if (r.confirm) clearOverridesFrom();
           this.afterSave(input, profile);
         },
       });

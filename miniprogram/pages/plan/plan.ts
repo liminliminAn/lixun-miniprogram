@@ -1,7 +1,7 @@
 import { guardEntry } from '../../services/user';
 import { DAY_TYPE_LABEL, WEEKDAY_LABELS } from '../../constants/templates';
 import { exercisesByDay, EXERCISE_MAP } from '../../constants/exercises';
-import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSchedule, getDateOverrides, setDateOverride, clearDateOverrides, hasActiveOverrides } from '../../services/profile';
+import { getPlan, getProfile, getPlanWeek, getDateOverrides, setDateOverride, clearDateOverrides, hasActiveOverrides } from '../../services/profile';
 import { getSessions } from '../../services/workout';
 import { formatDate } from '../../utils/date';
 import {
@@ -9,11 +9,11 @@ import {
 } from '../../utils/schedule';
 import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
-/** 本周一到下周日的具体生效类型（日期覆盖 → 周模板）+ 今天按已开练记录固定（§3.4-8/9）；连练按日期线性计算 */
+/** 本周一到下周日的具体生效类型（日期覆盖 → 默认课表）+ 今天按已开练记录固定（§3.4-8/9）；连练按日期线性计算 */
 function pinnedDays(): DayType[] {
   const today = formatDate();
   const sessions = getSessions() as any;
-  return streakDays(getEffectiveWeek(), today, getDateOverrides(), sessions[today], sessions);
+  return streakDays(getPlanWeek(), today, getDateOverrides(), sessions[today], sessions);
 }
 
 Page({
@@ -44,7 +44,7 @@ Page({
     if (!plan) return;
     const today = formatDate();
     const offset = clampWeekOffset(this.data.weekOffset);
-    const weekCells = buildWeekCells(getEffectiveWeek(), today, offset, getSessions() as any, getDateOverrides()).map((c) => ({
+    const weekCells = buildWeekCells(getPlanWeek(), today, offset, getSessions() as any, getDateOverrides()).map((c) => ({
       ...c,
       wd: WEEKDAY_LABELS[c.idx],
       // 过去无记录「休」；已练「✓推」（类型色）；未完成在下方标「未完成」
@@ -57,8 +57,8 @@ Page({
       label: DAY_TYPE_LABEL[t],
       exercises: exercisesByDay(t),
     }));
-    // 「自定义」标签与「恢复默认」同一口径：有周模板，或今天及以后有覆盖
-    const restorable = hasCustomSchedule() || hasActiveOverrides(today);
+    // 「自定义」标签与「恢复默认」：只看今天及以后有无按日修改
+    const restorable = hasActiveOverrides(today);
     this.setData({
       daysPerWeek: plan.daysPerWeek,
       customized: restorable,
@@ -84,7 +84,7 @@ Page({
       monthMin: range.min,
       monthMax: range.max,
       monthTitle: monthTitle(year, month),
-      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), sessions, firstUse, getDateOverrides()),
+      monthCells: buildMonthCells(year, month, today, getPlanWeek(), sessions, firstUse, getDateOverrides()),
     });
   },
   onToggleMonth() {
@@ -166,7 +166,7 @@ Page({
     });
   },
   onRestoreDefault() {
-    // 恢复默认：二次确认后才清除自定义周模板和所有日期覆盖；今天已开练仍按记录固定（§3.4-8）
+    // 恢复默认：二次确认后才清除所有日期覆盖；今天已开练仍按记录固定（§3.4-8）
     wx.showModal({
       title: '恢复默认课表？',
       content: '将清除所有按日修改，恢复为问卷生成的课表',
@@ -174,7 +174,6 @@ Page({
       cancelText: '取消',
       success: (r) => {
         if (!r.confirm) return;
-        clearCustomSchedule();
         clearDateOverrides();
         this.refresh();
         wx.showToast({ title: '已恢复默认', icon: 'none' });

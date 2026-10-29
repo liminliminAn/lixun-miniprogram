@@ -2,9 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.STREAK_LOOKBACK_DAYS = exports.PAST_REST_LABEL = exports.PAST_NO_RECORD_LABEL = exports.STREAK_SOFT_TIP = exports.STREAK_SOFT_LIMIT = exports.TODAY_LOCKED_TIP = exports.DAY_KIND_SHEET = exports.DAY_KINDS = void 0;
 exports.isValidWeek = isValidWeek;
-exports.effectiveWeek = effectiveWeek;
-exports.setDay = setDay;
-exports.isCustomized = isCustomized;
+exports.planWeek = planWeek;
 exports.clampWeekOffset = clampWeekOffset;
 exports.weekDates = weekDates;
 exports.shortDate = shortDate;
@@ -17,8 +15,6 @@ exports.tapAction = tapAction;
 exports.sessionSummary = sessionSummary;
 exports.restoreDecision = restoreDecision;
 exports.isTodayLocked = isTodayLocked;
-exports.maxConsecutiveTraining = maxConsecutiveTraining;
-exports.streakSoftTip = streakSoftTip;
 exports.pinnedTodayType = pinnedTodayType;
 exports.weekWithTodayPinned = weekWithTodayPinned;
 exports.resolveDayType = resolveDayType;
@@ -29,7 +25,6 @@ exports.pruneOverrides = pruneOverrides;
 exports.withOverride = withOverride;
 exports.hasOverrideIn = hasOverrideIn;
 exports.pinType = pinType;
-exports.pinnedResolvedWeek = pinnedResolvedWeek;
 exports.pinnedResolvedDays = pinnedResolvedDays;
 exports.streakDays = streakDays;
 exports.maxConsecutiveLinear = maxConsecutiveLinear;
@@ -42,23 +37,11 @@ exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
 function isValidWeek(week) {
     return Array.isArray(week) && week.length === 7 && week.every((d) => exports.DAY_KINDS.indexOf(d) >= 0);
 }
-/** 生效课表：自定义合法则用自定义，否则用默认 plan.week */
-function effectiveWeek(defaultWeek, custom) {
-    if (custom && isValidWeek(custom.week))
-        return [...custom.week];
+/** 默认课表（问卷生成的 plan.week）；不合法时全休 */
+function planWeek(defaultWeek) {
     if (isValidWeek(defaultWeek))
         return [...defaultWeek];
     return ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'];
-}
-/** 改某一天，返回新的自定义课表（以当前生效课表为底） */
-function setDay(base, idx, kind, now = new Date()) {
-    const week = [...base];
-    if (idx >= 0 && idx < 7 && exports.DAY_KINDS.indexOf(kind) >= 0)
-        week[idx] = kind;
-    return { week, updatedAt: now.toISOString() };
-}
-function isCustomized(custom) {
-    return !!(custom && isValidWeek(custom.week));
 }
 /* ---------- 周视图：日期、翻周、完成标记、过去日禁改 ---------- */
 const pad = (n) => `${n}`.padStart(2, '0');
@@ -159,23 +142,8 @@ function isTodayLocked(todaySession) {
 }
 exports.TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';
 /** 最长连续训练天数（周日→周一循环计算）；全训练返回 7 */
-function maxConsecutiveTraining(week) {
-    if (week.every((d) => d !== 'rest'))
-        return week.length;
-    let best = 0;
-    let run = 0;
-    for (let i = 0; i < week.length * 2; i++) {
-        run = week[i % week.length] !== 'rest' ? run + 1 : 0;
-        best = Math.max(best, run);
-    }
-    return Math.min(best, week.length);
-}
 exports.STREAK_SOFT_LIMIT = 3;
 exports.STREAK_SOFT_TIP = '已连续训练超过 3 天，注意安排休息';
-/** §3.4-6：连续训练 >3 天只软提示，不拦截 */
-function streakSoftTip(week) {
-    return maxConsecutiveTraining(week) > exports.STREAK_SOFT_LIMIT ? exports.STREAK_SOFT_TIP : '';
-}
 exports.PAST_NO_RECORD_LABEL = '未训练/休息';
 /** 周视图、月历格子：过去无记录统一显示单字「休」（深灰）；记录弹窗保留全称 */
 exports.PAST_REST_LABEL = '休';
@@ -199,7 +167,7 @@ function mondayIdxOf(date) {
     const js = parse(date).getDay();
     return js === 0 ? 6 : js - 1;
 }
-/** 某天生效类型：日期覆盖 → 自定义周模板 / 默认模板（week 已是二者合并后的模板） */
+/** 某天生效类型：日期覆盖 → 问卷默认课表（week） */
 function resolveDayType(date, week, overrides) {
     const o = overrides && overrides[date];
     if (o && exports.DAY_KINDS.indexOf(o) >= 0)
@@ -249,14 +217,6 @@ function pinType(planned, todaySession) {
     if (isStarted(todaySession) && todaySession && todaySession.dayType && exports.DAY_KINDS.indexOf(todaySession.dayType) >= 0)
         return todaySession.dayType;
     return planned;
-}
-/** 本周（today 所在周）生效类型，今天按已开练固定——连练提示用 */
-function pinnedResolvedWeek(week, today, overrides, todaySession) {
-    const dates = weekDates(today, 0);
-    return dates.map((d) => {
-        const t = resolveDayType(d, week, overrides);
-        return d === today ? pinType(t, todaySession) : t;
-    });
 }
 /** 具体日期序列（本周一 → 下周日，14 天）：覆盖 → 模板，今天按开练记录固定。不做循环拼接 */
 function pinnedResolvedDays(week, today, overrides, todaySession, sessions) {

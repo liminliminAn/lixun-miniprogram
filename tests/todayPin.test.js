@@ -6,11 +6,10 @@ const S = require('./lib/schedule');
 const T = require('./lib/templates');
 const today = '2026-10-29'; // 周四 idx=3
 
-const custom = { week: ['push', 'pull', 'legs', 'legs', 'pull', 'rest', 'rest'] };
 const sess = { [today]: { dayType: 'legs', completedAt: null, exercises: [{ exerciseId: 'squat', sets: [{ reps: 8, weight: 60, done: true }] }] } };
 
-// 用户开练了腿，然后 恢复默认（自定义清除，默认 4 练周四=休）
-let week = S.effectiveWeek(T.buildWeekPlan(4).week, null);
+// 用户开练了腿，然后 恢复默认（按日修改清除，默认 4 练周四=休）
+let week = S.planWeek(T.buildWeekPlan(4).week);
 assert.strictEqual(week[3], 'rest');
 assert.strictEqual(S.pinnedTodayType(week, 3, sess[today]), 'legs', '今天保持已开练的类型');
 let cells = S.buildWeekCells(week, today, 0, sess);
@@ -29,7 +28,7 @@ assert.strictEqual(S.buildWeekCells(week, today, 0, sess)[3].dayType, 'legs');
 
 // 今天无记录 → 立即生效
 assert.strictEqual(S.pinnedTodayType(T.buildWeekPlan(3).week, 3, null), 'rest');
-assert.strictEqual(S.buildWeekCells(S.effectiveWeek(T.buildWeekPlan(4).week, custom), today, 0, {})[3].dayType, 'legs');
+assert.strictEqual(S.buildWeekCells(S.planWeek(T.buildWeekPlan(4).week), today, 0, {}, { [today]: 'legs' })[3].dayType, 'legs');
 // 日期过了自动失效：明天的格子不受今天记录影响
 assert.strictEqual(S.buildWeekCells(T.buildWeekPlan(3).week, '2026-10-30', 0, sess)[4].dayType, T.buildWeekPlan(3).week[4]);
 

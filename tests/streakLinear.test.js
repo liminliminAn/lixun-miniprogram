@@ -4,8 +4,7 @@ const S = require('./lib/schedule');
 const R = 'rest';
 const today = '2026-10-29'; // 周四
 const tmpl = ['push', 'pull', R, R, R, 'legs', 'push'];
-// 循环算法会把周六日接到周一二 → 4；线性只有 2
-assert.strictEqual(S.maxConsecutiveTraining(tmpl), 4);
+// 线性计算：周六日不接回周一二
 const days = S.pinnedResolvedDays(tmpl, today, {}, null);
 assert.strictEqual(days.length, 14);
 assert.strictEqual(S.maxConsecutiveLinear(days.slice(0, 7)), 2);

@@ -32,5 +32,5 @@ assert.strictEqual(S.pinnedResolvedDays(tmpl, today, {}, null, {})[3], 'push');
 assert.strictEqual(S.pinnedResolvedDays(tmpl, today, {}, { dayType: 'legs', warmup: { checked: ['w'] } }, {})[3], 'legs');
 // 页面接线：把全部记录传进去
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');
-assert.ok(/streakDays\(getEffectiveWeek\(\), today, getDateOverrides\(\), sessions\[today\], sessions\)/.test(ts));
+assert.ok(/streakDays\(getPlanWeek\(\), today, getDateOverrides\(\), sessions\[today\], sessions\)/.test(ts));
 console.log('streakActual.test ok');

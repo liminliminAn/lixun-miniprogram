@@ -57,10 +57,10 @@ Page({
           apply();
           return;
         }
-        // §3.4-5：只有「按新天数重排」（覆盖自定义）和「取消」；取消不改天数
+        // §3.4-5：今天起有按日修改时确认；只有「按新天数重排」（清除按日修改）和「取消」；取消不改天数
         wx.showModal({
           title: `改为每周 ${n} 练？`,
-          content: rescheduleContent('会按新天数重新生成课表，并覆盖你自定义的课表。', countActiveOverrides()),
+          content: rescheduleContent('会按新天数重新生成课表。', countActiveOverrides()),
           confirmText: '按新天数重排',
           cancelText: '取消',
           success: (r) => {

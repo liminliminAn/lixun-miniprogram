@@ -1,41 +1,16 @@
-/** 本周课表：自定义优先于默认（纯函数，便于单测） */
+/** 课表：日期覆盖 → 问卷默认课表（纯函数，便于单测） */
 export type DayKind = 'push' | 'pull' | 'legs' | 'rest';
 export const DAY_KINDS: DayKind[] = ['push', 'pull', 'legs', 'rest'];
 export const DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
-
-export interface CustomSchedule {
-  week: DayKind[];
-  updatedAt: string;
-}
 
 export function isValidWeek(week: any): week is DayKind[] {
   return Array.isArray(week) && week.length === 7 && week.every((d) => DAY_KINDS.indexOf(d) >= 0);
 }
 
-/** 生效课表：自定义合法则用自定义，否则用默认 plan.week */
-export function effectiveWeek(
-  defaultWeek: DayKind[] | null | undefined,
-  custom: CustomSchedule | null | undefined,
-): DayKind[] {
-  if (custom && isValidWeek(custom.week)) return [...custom.week];
+/** 默认课表（问卷生成的 plan.week）；不合法时全休 */
+export function planWeek(defaultWeek: DayKind[] | null | undefined): DayKind[] {
   if (isValidWeek(defaultWeek)) return [...defaultWeek];
   return ['rest', 'rest', 'rest', 'rest', 'rest', 'rest', 'rest'];
-}
-
-/** 改某一天，返回新的自定义课表（以当前生效课表为底） */
-export function setDay(
-  base: DayKind[],
-  idx: number,
-  kind: DayKind,
-  now: Date = new Date(),
-): CustomSchedule {
-  const week = [...base];
-  if (idx >= 0 && idx < 7 && DAY_KINDS.indexOf(kind) >= 0) week[idx] = kind;
-  return { week, updatedAt: now.toISOString() };
-}
-
-export function isCustomized(custom: CustomSchedule | null | undefined): boolean {
-  return !!(custom && isValidWeek(custom.week));
 }
 
 /* ---------- 周视图：日期、翻周、完成标记、过去日禁改 ---------- */
@@ -172,24 +147,9 @@ export function isTodayLocked(todaySession: SessionLite | null | undefined): boo
 export const TODAY_LOCKED_TIP = '今天已开练，训练类型已锁定';
 
 /** 最长连续训练天数（周日→周一循环计算）；全训练返回 7 */
-export function maxConsecutiveTraining(week: DayKind[]): number {
-  if (week.every((d) => d !== 'rest')) return week.length;
-  let best = 0;
-  let run = 0;
-  for (let i = 0; i < week.length * 2; i++) {
-    run = week[i % week.length] !== 'rest' ? run + 1 : 0;
-    best = Math.max(best, run);
-  }
-  return Math.min(best, week.length);
-}
-
 export const STREAK_SOFT_LIMIT = 3;
 export const STREAK_SOFT_TIP = '已连续训练超过 3 天，注意安排休息';
 
-/** §3.4-6：连续训练 >3 天只软提示，不拦截 */
-export function streakSoftTip(week: DayKind[]): string {
-  return maxConsecutiveTraining(week) > STREAK_SOFT_LIMIT ? STREAK_SOFT_TIP : '';
-}
 
 export const PAST_NO_RECORD_LABEL = '未训练/休息';
 /** 周视图、月历格子：过去无记录统一显示单字「休」（深灰）；记录弹窗保留全称 */
@@ -220,7 +180,7 @@ function mondayIdxOf(date: string): number {
   return js === 0 ? 6 : js - 1;
 }
 
-/** 某天生效类型：日期覆盖 → 自定义周模板 / 默认模板（week 已是二者合并后的模板） */
+/** 某天生效类型：日期覆盖 → 问卷默认课表（week） */
 export function resolveDayType(date: string, week: DayKind[], overrides: DateOverrides | null | undefined): DayKind {
   const o = overrides && overrides[date];
   if (o && DAY_KINDS.indexOf(o) >= 0) return o;
@@ -274,14 +234,6 @@ export function pinType(planned: DayKind, todaySession: SessionLite | null | und
   return planned;
 }
 
-/** 本周（today 所在周）生效类型，今天按已开练固定——连练提示用 */
-export function pinnedResolvedWeek(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined): DayKind[] {
-  const dates = weekDates(today, 0);
-  return dates.map((d) => {
-    const t = resolveDayType(d, week, overrides);
-    return d === today ? pinType(t, todaySession) : t;
-  });
-}
 
 /** 具体日期序列（本周一 → 下周日，14 天）：覆盖 → 模板，今天按开练记录固定。不做循环拼接 */
 export function pinnedResolvedDays(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined, sessions?: Record<string, SessionLite | undefined> | null): DayKind[] {

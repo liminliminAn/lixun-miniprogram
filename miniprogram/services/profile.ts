@@ -1,8 +1,8 @@
-import { storage, KEYS } from './storage';
+import { storage, KEYS, LEGACY_CUSTOM_SCHEDULE_KEY } from './storage';
 import { keepCreatedAt } from '../utils/persist';
 import { classify } from '../utils/classify';
 import { buildWeekPlan, isDaysPerWeek } from '../constants/templates';
-import { effectiveWeek, isCustomized, CustomSchedule, DateOverrides, resolveDayType, withOverride, pruneOverrides, dropOverridesFrom } from '../utils/schedule';
+import { planWeek, DateOverrides, resolveDayType, withOverride, pruneOverrides, dropOverridesFrom } from '../utils/schedule';
 import { formatDate } from '../utils/date';
 
 export { classify };
@@ -29,7 +29,7 @@ export function saveOnboarding(input: ClassifyInput): UserProfile {
   };
   storage.set(KEYS.profile, profile);
   storage.set(KEYS.plan, buildWeekPlan(input.daysPerWeek));
-  // §3.4-3：自定义课表不自动清除，由问卷页询问用户
+  // §3.4-3：按日修改不自动清除，由问卷页询问用户
   storage.ensureDefaults();
   return profile;
 }
@@ -46,20 +46,9 @@ export function setPrefs(patch: Partial<Prefs>): void {
   storage.set(KEYS.prefs, { ...getPrefs(), ...patch });
 }
 
-export function getCustomSchedule(): CustomSchedule | null {
-  return storage.get<CustomSchedule | null>(KEYS.customSchedule, null);
-}
-
-export function saveCustomSchedule(c: CustomSchedule): void {
-  storage.set(KEYS.customSchedule, c);
-}
-
-export function clearCustomSchedule(): void {
-  storage.remove(KEYS.customSchedule);
-}
-
-export function hasCustomSchedule(): boolean {
-  return isCustomized(getCustomSchedule());
+/** 迁移：周模板层已移除，删除遗留的 lixun:v1:customSchedule（首次启动执行，幂等） */
+export function migrateRemoveCustomSchedule(): void {
+  storage.remove(LEGACY_CUSTOM_SCHEDULE_KEY);
 }
 
 export function getDateOverrides(): DateOverrides {
@@ -85,9 +74,9 @@ export function clearOverridesFrom(today: string = formatDate()): void {
   storage.set(KEYS.dateOverrides, dropOverridesFrom(getDateOverrides(), today));
 }
 
-/** 需要重排确认：有自定义周模板，或今天及以后有覆盖 */
+/** 需要重排确认：今天及以后有覆盖 */
 export function needsRescheduleConfirm(today: string = formatDate()): boolean {
-  return hasCustomSchedule() || countActiveOverrides(today) > 0;
+  return countActiveOverrides(today) > 0;
 }
 
 /** 今天及以后是否还有覆盖 */
@@ -95,30 +84,27 @@ export function hasActiveOverrides(today: string = formatDate()): boolean {
   return Object.keys(pruneOverrides(getDateOverrides(), today)).length > 0;
 }
 
-/** 某天生效类型：日期覆盖 → 自定义周模板 → 默认模板 */
+/** 某天生效类型：日期覆盖 → 问卷默认课表 */
 export function resolveDay(date: string): DayType {
-  return resolveDayType(date, getEffectiveWeek(), getDateOverrides());
+  return resolveDayType(date, getPlanWeek(), getDateOverrides());
 }
 
-/** 所有读周课表的地方统一走这里：自定义优先 */
-export function getEffectiveWeek(): DayType[] {
+/** 问卷生成的默认周课表 */
+export function getPlanWeek(): DayType[] {
   const plan = getPlan();
-  return effectiveWeek(plan ? plan.week : null, getCustomSchedule());
+  return planWeek(plan ? plan.week : null);
 }
 
 /**
  * 改每周练几天：写回档案并重新生成默认课表。
- * overwriteCustom=true 时同时清除自定义课表；false 保留自定义（仍优先生效）。
+ * clearOverrides=true 时同时清除今天起的按日修改。
  */
-export function changeDaysPerWeek(n: DaysPerWeek, overwriteCustom: boolean): boolean {
+export function changeDaysPerWeek(n: DaysPerWeek, clearOverrides: boolean): boolean {
   if (!isDaysPerWeek(n)) return false;
   const p = getProfile();
   if (!p) return false;
   storage.set(KEYS.profile, { ...p, daysPerWeek: n, updatedAt: new Date().toISOString() });
   storage.set(KEYS.plan, buildWeekPlan(n));
-  if (overwriteCustom) {
-    clearCustomSchedule();
-    clearOverridesFrom();
-  }
+  if (clearOverrides) clearOverridesFrom();
   return true;
 }

@@ -29,5 +29,5 @@ assert.ok(/setDateOverride\(date, kind\);[\s\S]*?const tip = streakSoftTipDays\(
 assert.ok(!/streakSoftTip\(next\.week\)/.test(ts));
 // 今天已开练为推、课表改今天以外某天：软提示按推计算
 { const pinned = S.weekWithTodayPinned(['rest', 'rest', 'rest', 'rest', 'legs', 'legs', 'legs'], 3, { dayType: 'push', warmup: { checked: ['a'] } });
-  assert.strictEqual(S.streakSoftTip(pinned), S.STREAK_SOFT_TIP); }
+  assert.strictEqual(S.streakSoftTipDays(pinned), S.STREAK_SOFT_TIP); }
 console.log('monthPolish.test ok');
