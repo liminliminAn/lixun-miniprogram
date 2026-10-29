@@ -9,6 +9,7 @@ interface IAppOption {
 }
 
 type CrowdId = 'recomp' | 'cut' | 'bulk' | 'beginner';
+type DaysPerWeek = 3 | 4 | 5;
 type DayType = 'push' | 'pull' | 'legs' | 'rest';
 type Sex = 'male' | 'female';
 type BfBand = 'very_low' | 'low' | 'mid' | 'high';
@@ -22,7 +23,7 @@ interface ClassifyInput {
   bfBand: BfBand;
   goal: Goal;
   trainYears: TrainYears;
-  daysPerWeek: 4 | 5;
+  daysPerWeek: DaysPerWeek;
   jointLimit?: boolean;
 }
 
@@ -34,7 +35,7 @@ interface UserProfile extends ClassifyInput {
 }
 
 interface WeekPlan {
-  daysPerWeek: 4 | 5;
+  daysPerWeek: DaysPerWeek;
   /** 长度 7，周一到周日 */
   week: DayType[];
   updatedAt: string;

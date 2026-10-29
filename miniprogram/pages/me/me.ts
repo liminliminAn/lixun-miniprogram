@@ -1,6 +1,7 @@
 import { guardEntry } from '../../services/user';
 import { CROWDS } from '../../constants/crowds';
-import { getProfile, getPrefs, setPrefs } from '../../services/profile';
+import { getProfile, getPrefs, setPrefs, changeDaysPerWeek, hasCustomSchedule } from '../../services/profile';
+import { DAYS_PER_WEEK_OPTIONS } from '../../constants/templates';
 import { getUser, saveUser, persistAvatar, clearAllLocalData } from '../../services/user';
 import { validateNickname, DEFAULT_AVATAR, LOCAL_ONLY_COPY } from '../../utils/login';
 
@@ -33,6 +34,33 @@ Page({
     const v = !!e.detail.value;
     setPrefs({ showWarmup: v });
     this.setData({ showWarmup: v });
+  },
+  onTapDays() {
+    const cur = this.data.profile;
+    if (!cur) return;
+    wx.showActionSheet({
+      itemList: DAYS_PER_WEEK_OPTIONS.map((n) => `每周 ${n} 练`),
+      success: (res) => {
+        const n = DAYS_PER_WEEK_OPTIONS[res.tapIndex];
+        if (!n || n === cur.daysPerWeek) return;
+        const apply = (overwrite: boolean) => {
+          if (!changeDaysPerWeek(n, overwrite)) return;
+          this.setData({ profile: getProfile() });
+          wx.showToast({ title: overwrite ? '已重新生成课表' : '已保存，保留自定义课表', icon: 'none' });
+        };
+        if (!hasCustomSchedule()) {
+          apply(true);
+          return;
+        }
+        wx.showModal({
+          title: '覆盖自定义课表？',
+          content: `改为每周 ${n} 练会重新生成默认课表。确定则清除你自定义的课表；取消则保留自定义课表（仍按它安排训练）。`,
+          confirmText: '覆盖',
+          cancelText: '保留',
+          success: (r) => apply(!!r.confirm),
+        });
+      },
+    });
   },
   onPosture() {
     wx.navigateTo({ url: '/pages/posture/posture' });

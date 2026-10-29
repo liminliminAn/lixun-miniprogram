@@ -1,6 +1,6 @@
 import { storage, KEYS } from './storage';
 import { classify } from '../utils/classify';
-import { buildWeekPlan } from '../constants/templates';
+import { buildWeekPlan, isDaysPerWeek } from '../constants/templates';
 import { effectiveWeek, isCustomized, CustomSchedule } from '../utils/schedule';
 
 export { classify };
@@ -62,4 +62,18 @@ export function hasCustomSchedule(): boolean {
 export function getEffectiveWeek(): DayType[] {
   const plan = getPlan();
   return effectiveWeek(plan ? plan.week : null, getCustomSchedule());
+}
+
+/**
+ * 改每周练几天：写回档案并重新生成默认课表。
+ * overwriteCustom=true 时同时清除自定义课表；false 保留自定义（仍优先生效）。
+ */
+export function changeDaysPerWeek(n: DaysPerWeek, overwriteCustom: boolean): boolean {
+  if (!isDaysPerWeek(n)) return false;
+  const p = getProfile();
+  if (!p) return false;
+  storage.set(KEYS.profile, { ...p, daysPerWeek: n, updatedAt: new Date().toISOString() });
+  storage.set(KEYS.plan, buildWeekPlan(n));
+  if (overwriteCustom) clearCustomSchedule();
+  return true;
 }
