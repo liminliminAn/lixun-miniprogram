@@ -38,3 +38,9 @@ assert.ok(/confirmText: '按新天数重排'/.test(me) && /cancelText: '取消'/
 assert.ok(!/保留/.test(me) && /changeDaysPerWeek\(n, true\)/.test(me) && !/changeDaysPerWeek\(n, false\)/.test(me));
 assert.ok(/bindtap="onTapDays"/.test(read('pages/me/me.wxml')));
 console.log('daysPerWeek.test ok');
+// §3.4-1：问卷提供 3/4/5 练，无 6 练
+{ const ob = read('pages/onboarding/onboarding.wxml');
+  const opts = [...ob.matchAll(/data-v="(\d)" bindtap="onDays">(\d) 练</g)].map((m) => Number(m[1]));
+  assert.deepStrictEqual(opts, [3, 4, 5]);
+  assert.ok(/isDaysPerWeek\(n\)/.test(read('pages/onboarding/onboarding.ts'))); }
+console.log('daysPerWeek.test questionnaire ok');

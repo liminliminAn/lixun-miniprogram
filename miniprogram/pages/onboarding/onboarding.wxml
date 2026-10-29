@@ -55,6 +55,7 @@
   <view class="card">
     <view class="label">每周训练天数</view>
     <view class="chips">
+      <view class="chip {{daysPerWeek===3?'on':''}}" data-v="3" bindtap="onDays">3 练</view>
       <view class="chip {{daysPerWeek===4?'on':''}}" data-v="4" bindtap="onDays">4 练</view>
       <view class="chip {{daysPerWeek===5?'on':''}}" data-v="5" bindtap="onDays">5 练</view>
     </view>

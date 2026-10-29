@@ -1,4 +1,5 @@
 import { BF_BAND_LABELS, CROWDS } from '../../constants/crowds';
+import { isDaysPerWeek } from '../../constants/templates';
 import { saveOnboarding, hasCustomSchedule, clearCustomSchedule } from '../../services/profile';
 
 Page({
@@ -10,7 +11,7 @@ Page({
     bfOptions: BF_BAND_LABELS.male,
     goal: 'recomp' as Goal,
     trainYears: 'half_to_2' as TrainYears,
-    daysPerWeek: 4 as 4 | 5,
+    daysPerWeek: 4 as DaysPerWeek,
     jointLimit: false,
   },
   onSex(e: any) {
@@ -33,7 +34,8 @@ Page({
     this.setData({ trainYears: e.currentTarget.dataset.v });
   },
   onDays(e: any) {
-    this.setData({ daysPerWeek: Number(e.currentTarget.dataset.v) as 4 | 5 });
+    const n = Number(e.currentTarget.dataset.v);
+    if (isDaysPerWeek(n)) this.setData({ daysPerWeek: n });
   },
   onJoint(e: any) {
     this.setData({ jointLimit: !!e.detail.value });
