@@ -7,7 +7,7 @@ const body = ts.slice(ts.indexOf('onRestoreDefault()'));
 const fn = body.slice(0, body.indexOf('\n  },'));
 const modal = fn.indexOf('wx.showModal(');
 assert.ok(modal >= 0, '要有二次确认');
-assert.ok(/content: '会清除所有按日修改，按问卷结果恢复默认课表'/.test(fn));
+assert.ok(/content: '将清除所有按日修改，恢复为问卷生成的课表'/.test(fn));
 assert.ok(/confirmText: '恢复默认'/.test(fn) && /cancelText: '取消'/.test(fn));
 const guard = fn.indexOf('if (!r.confirm) return;');
 assert.ok(guard > modal, '取消直接返回');
