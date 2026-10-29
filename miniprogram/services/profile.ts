@@ -26,6 +26,8 @@ export function saveOnboarding(input: ClassifyInput): UserProfile {
   };
   storage.set(KEYS.profile, profile);
   storage.set(KEYS.plan, buildWeekPlan(input.daysPerWeek));
+  // P2-2：重做问卷 → 新档案/新默认课表，旧的自定义课表作废
+  storage.remove(KEYS.customSchedule);
   storage.ensureDefaults();
   return profile;
 }

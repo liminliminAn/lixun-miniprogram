@@ -32,3 +32,9 @@ assert.ok(/wx\.showActionSheet/.test(planTs) && /clearCustomSchedule\(\)/.test(p
 assert.ok(!/plan\.week/.test(planTs));
 assert.ok(/恢复默认/.test(read('pages/plan/plan.wxml')) && /bindtap="onTapDay"/.test(read('pages/plan/plan.wxml')));
 console.log('schedule.test ok');
+
+// P2-2：重做问卷生成新档案/课表时清除自定义课表
+{ const prof = read('services/profile.ts');
+  const body = prof.slice(prof.indexOf('export function saveOnboarding'), prof.indexOf('export function getPlan'));
+  assert.ok(/storage\.set\(KEYS\.plan, buildWeekPlan/.test(body) && /storage\.remove\(KEYS\.customSchedule\)/.test(body), 'saveOnboarding 需清 customSchedule'); }
+console.log('schedule.test P2-2 ok');
