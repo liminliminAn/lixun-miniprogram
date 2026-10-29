@@ -1,21 +1,22 @@
 import { storage, KEYS } from './storage';
 import { mergeLastSets } from '../utils/persist';
 import { exercisesByDay } from '../constants/exercises';
-import { getPlan, getEffectiveWeek } from './profile';
+import { getPlan, resolveDay } from './profile';
 import { suggestNext, withCardRepRanges, DEFAULT_PROGRESSION } from '../utils/progression';
 
 // IT2-04：次数区间以动作卡正式组剂量为准
 const CARDS: any = require('../config/exercise-cards.js');
 const PROGRESSION = withCardRepRanges(DEFAULT_PROGRESSION, CARDS);
 import { completedTrainDates } from '../utils/warmup';
-import { restoreDecision, pinnedTodayType, isTrained } from '../utils/schedule';
-import { formatDate, mondayBasedIndex, countConsecutiveTrainDays } from '../utils/date';
+import { restoreDecision, pinType, isTrained } from '../utils/schedule';
+import { formatDate, countConsecutiveTrainDays } from '../utils/date';
 
 export function todayDayType(date: Date = new Date()): DayType {
   const plan = getPlan();
   if (!plan) return 'rest';
-  // §3.4-8：当天已有记录 → 固定为记录的类型（新课表从明天起生效）
-  return pinnedTodayType(getEffectiveWeek(), mondayBasedIndex(date), getSession(formatDate(date)));
+  // 日期覆盖 → 周模板；§3.4-8：当天已有记录 → 固定为记录的类型
+  const d = formatDate(date);
+  return pinType(resolveDay(d), getSession(d));
 }
 
 export function getSessions(): SessionsStore {

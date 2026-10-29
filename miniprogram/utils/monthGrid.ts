@@ -1,5 +1,5 @@
 /** 计划页整月日历（纯函数，便于单测）：6 行 × 7 列，周一起 */
-import { DayKind, DAY_KINDS, SessionLite, sessionSummary, PAST_NO_RECORD_LABEL, dayTense, DayTense, isStarted, isTrained, pinnedTodayType } from './schedule';
+import { DayKind, DAY_KINDS, SessionLite, sessionSummary, PAST_NO_RECORD_LABEL, dayTense, DayTense, isStarted, isTrained, pinType, resolveDayType, DateOverrides } from './schedule';
 
 export const MONTH_WEEKDAY_HEADER = ['一', '二', '三', '四', '五', '六', '日'];
 /** 月历格子窄，「未训练/休息」缩成「未练」；周视图和记录弹窗保留全称 */
@@ -26,6 +26,8 @@ export interface MonthCell {
   beforeFirstUse: boolean;
   /** §3.5-3/4：非本月灰色日期、首次使用之前的日期不能点 */
   tappable: boolean;
+  /** 选项 B：本月范围内今天（未开练）及以后可改当天类型 */
+  editable: boolean;
 }
 
 /** 由 today 所在月偏移 offset 个月 → { year, month(1-12) } */
@@ -78,6 +80,7 @@ export function buildMonthCells(
   week: DayKind[],
   sessions: Record<string, SessionLite | undefined>,
   firstUse: string = '',
+  overrides: DateOverrides | null = null,
 ): MonthCell[] {
   return monthDates(year, month).map((date, i) => {
     const [, m, d] = date.split('-').map(Number);
@@ -93,7 +96,7 @@ export function buildMonthCells(
       dayType = s && s.dayType && DAY_KINDS.indexOf(s.dayType) >= 0 ? s.dayType : null;
       label = trained ? '✓已练' : dayType ? PAST_UNFINISHED_LABEL : MONTH_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
     } else {
-      dayType = pinnedTodayType(week, weekdayIdx, tense === 'today' ? s : null);
+      dayType = pinType(resolveDayType(date, week, overrides), tense === 'today' ? s : null);
       label = KIND_LABEL[dayType];
     }
     const inMonth = m === month;
@@ -116,6 +119,7 @@ export function buildMonthCells(
       noRecord: tense === 'past' && !dayType && !beforeFirstUse,
       beforeFirstUse,
       tappable: inMonth && !beforeFirstUse,
+      editable: inMonth && !beforeFirstUse && tense !== 'past' && !(tense === 'today' && !!s),
     };
   });
 }

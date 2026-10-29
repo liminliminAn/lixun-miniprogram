@@ -12,6 +12,8 @@ export const KEYS = {
   user: 'lixun:v1:user',
   /** 用户自定义本周课表 CustomSchedule；存在时优先于 plan.week */
   customSchedule: 'lixun:v1:customSchedule',
+  /** 按日期覆盖 { [YYYY-MM-DD]: DayType }；优先于周模板 */
+  dateOverrides: 'lixun:v1:dateOverrides',
 } as const;
 
 export type StorageKey = (typeof KEYS)[keyof typeof KEYS];

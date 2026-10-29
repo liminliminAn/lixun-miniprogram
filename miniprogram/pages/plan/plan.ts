@@ -1,23 +1,25 @@
 import { guardEntry } from '../../services/user';
 import { DAY_TYPE_LABEL, WEEKDAY_LABELS } from '../../constants/templates';
 import { exercisesByDay, EXERCISE_MAP } from '../../constants/exercises';
-import { getPlan, getProfile, getEffectiveWeek, saveCustomSchedule, clearCustomSchedule, hasCustomSchedule } from '../../services/profile';
+import { getPlan, getProfile, getEffectiveWeek, clearCustomSchedule, hasCustomSchedule, getDateOverrides, setDateOverride, clearDateOverrides, hasActiveOverrides } from '../../services/profile';
 import { getSessions } from '../../services/workout';
-import { formatDate, mondayBasedIndex } from '../../utils/date';
+import { formatDate } from '../../utils/date';
 import {
-  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, setDay, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, weekWithTodayPinned,
+  DAY_KINDS, DAY_KIND_SHEET, TODAY_LOCKED_TIP, streakSoftTip, PAST_NO_RECORD_LABEL, buildWeekCells, clampWeekOffset, tapAction, sessionSummary, shortDate, weekDates, pinnedResolvedWeek, hasOverrideIn, overrideSheetTitle,
 } from '../../utils/schedule';
-import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, editSheetTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
+import { buildMonthCells, firstUseDate, monthOffsetRange, clampMonthOffset, shiftMonth, monthTitle, monthDayPopup, MONTH_WEEKDAY_HEADER } from '../../utils/monthGrid';
 
-/** 生效课表 + 今天按已开练记录固定（§3.4-8/9） */
+/** 本周生效类型（日期覆盖 → 周模板）+ 今天按已开练记录固定（§3.4-8/9） */
 function pinnedWeek(): DayType[] {
-  return weekWithTodayPinned(getEffectiveWeek(), mondayBasedIndex(new Date()), (getSessions() as any)[formatDate()]);
+  const today = formatDate();
+  return pinnedResolvedWeek(getEffectiveWeek(), today, getDateOverrides(), (getSessions() as any)[today]);
 }
 
 Page({
   data: {
     daysPerWeek: 4,
     customized: false,
+    restorable: false,
     weekOffset: 0,
     weekRange: '',
     streakTip: '',
@@ -41,7 +43,7 @@ Page({
     if (!plan) return;
     const today = formatDate();
     const offset = clampWeekOffset(this.data.weekOffset);
-    const weekCells = buildWeekCells(getEffectiveWeek(), today, offset, getSessions() as any).map((c) => ({
+    const weekCells = buildWeekCells(getEffectiveWeek(), today, offset, getSessions() as any, getDateOverrides()).map((c) => ({
       ...c,
       wd: WEEKDAY_LABELS[c.idx],
       label: c.noRecord ? PAST_NO_RECORD_LABEL : DAY_TYPE_LABEL[c.dayType],
@@ -55,7 +57,9 @@ Page({
     }));
     this.setData({
       daysPerWeek: plan.daysPerWeek,
-      customized: hasCustomSchedule(),
+      // 自定义：有自定义周模板，或本周有日期覆盖；恢复默认在还有未来覆盖时也显示
+      customized: hasCustomSchedule() || hasOverrideIn(getDateOverrides(), weekDates(today, 0)),
+      restorable: hasCustomSchedule() || hasActiveOverrides(today),
       streakTip: streakSoftTip(pinnedWeek()),
       weekOffset: offset,
       weekRange: `${shortDate(dates[0])} – ${shortDate(dates[6])}`,
@@ -77,7 +81,7 @@ Page({
       monthMin: range.min,
       monthMax: range.max,
       monthTitle: monthTitle(year, month),
-      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), sessions, firstUse),
+      monthCells: buildMonthCells(year, month, today, getEffectiveWeek(), sessions, firstUse, getDateOverrides()),
     });
   },
   onToggleMonth() {
@@ -97,7 +101,15 @@ Page({
   onTapMonthDay(e: any) {
     const cell = this.data.monthCells[Number(e.currentTarget.dataset.i)];
     if (!cell || !cell.tappable) return; // §3.5-3/4
-    // §3.5-1：月历只读，不改课表；只弹当天类型 + 记录摘要
+    // 选项 B：今天（未开练）及以后可改当天；过去日与已锁定的今天只看
+    if (cell.editable) {
+      this.editDate(cell.date);
+      return;
+    }
+    if (cell.isToday) {
+      wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });
+      return;
+    }
     const p = monthDayPopup(cell, (getSessions() as any)[cell.date], (id) => (EXERCISE_MAP[id] ? EXERCISE_MAP[id].name : id));
     wx.showModal({ title: p.title, content: p.content, showCancel: false, confirmText: '知道了' });
   },
@@ -114,7 +126,6 @@ Page({
     const idx = Number(e.currentTarget.dataset.idx);
     const cell = this.data.weekCells[idx];
     if (!cell) return;
-    const sheetTitle = editSheetTitle(idx);
     const action = tapAction(cell);
     if (action === 'locked') {
       wx.showToast({ title: TODAY_LOCKED_TIP, icon: 'none' });
@@ -134,22 +145,27 @@ Page({
       });
       return;
     }
+    this.editDate(cell.date);
+  },
+  /** 只改这一天：写日期覆盖（周视图、月历共用） */
+  editDate(date: string) {
     wx.showActionSheet({
-      alertText: sheetTitle,
+      alertText: overrideSheetTitle(date),
       itemList: DAY_KIND_SHEET,
       success: (res) => {
         const kind = DAY_KINDS[res.tapIndex];
         if (!kind) return;
-        const next = setDay(getEffectiveWeek(), idx, kind);
-        saveCustomSchedule(next); // 软提示，不拦截保存
+        setDateOverride(date, kind); // 软提示，不拦截保存
         this.refresh();
-        const tip = streakSoftTip(weekWithTodayPinned(next.week, mondayBasedIndex(new Date()), (getSessions() as any)[formatDate()]));
+        const tip = streakSoftTip(pinnedWeek());
         if (tip) wx.showToast({ title: tip, icon: 'none' });
       },
     });
   },
   onRestoreDefault() {
+    // 恢复默认：清除自定义周模板和所有日期覆盖
     clearCustomSchedule();
+    clearDateOverrides();
     this.refresh();
     wx.showToast({ title: '已恢复默认', icon: 'none' });
   },

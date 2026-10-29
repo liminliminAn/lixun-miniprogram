@@ -21,6 +21,14 @@ exports.maxConsecutiveTraining = maxConsecutiveTraining;
 exports.streakSoftTip = streakSoftTip;
 exports.pinnedTodayType = pinnedTodayType;
 exports.weekWithTodayPinned = weekWithTodayPinned;
+exports.resolveDayType = resolveDayType;
+exports.resolveDates = resolveDates;
+exports.pruneOverrides = pruneOverrides;
+exports.withOverride = withOverride;
+exports.hasOverrideIn = hasOverrideIn;
+exports.pinType = pinType;
+exports.pinnedResolvedWeek = pinnedResolvedWeek;
+exports.overrideSheetTitle = overrideSheetTitle;
 exports.DAY_KINDS = ['push', 'pull', 'legs', 'rest'];
 exports.DAY_KIND_SHEET = ['推', '拉', '腿', '休'];
 function isValidWeek(week) {
@@ -91,7 +99,7 @@ function isStarted(s) {
 function isTrained(s) {
     return !!(s && s.completedAt);
 }
-function buildWeekCells(week, today, offset, sessions) {
+function buildWeekCells(week, today, offset, sessions, overrides = null) {
     return weekDates(today, offset).map((date, idx) => {
         const tense = dayTense(date, today);
         const raw = sessions[date];
@@ -102,7 +110,7 @@ function buildWeekCells(week, today, offset, sessions) {
             idx,
             date,
             md: shortDate(date),
-            dayType: tense === 'past' ? recorded || 'rest' : pinnedTodayType(week, idx, tense === 'today' ? s : null),
+            dayType: tense === 'past' ? recorded || 'rest' : pinType(resolveDayType(date, week, overrides), tense === 'today' ? s : null),
             tense,
             isToday: tense === 'today',
             trained: isTrained(s),
@@ -176,4 +184,58 @@ function weekWithTodayPinned(week, todayIdx, todaySession) {
     const out = [...week];
     out[todayIdx] = pinnedTodayType(week, todayIdx, todaySession);
     return out;
+}
+function mondayIdxOf(date) {
+    const js = parse(date).getDay();
+    return js === 0 ? 6 : js - 1;
+}
+/** 某天生效类型：日期覆盖 → 自定义周模板 / 默认模板（week 已是二者合并后的模板） */
+function resolveDayType(date, week, overrides) {
+    const o = overrides && overrides[date];
+    if (o && exports.DAY_KINDS.indexOf(o) >= 0)
+        return o;
+    return week[mondayIdxOf(date)] || 'rest';
+}
+/** 一组日期的生效类型 */
+function resolveDates(dates, week, overrides) {
+    return dates.map((d) => resolveDayType(d, week, overrides));
+}
+/** 去掉今天之前的覆盖（过去日不可改，留着无用） */
+function pruneOverrides(overrides, today) {
+    const out = {};
+    Object.keys(overrides || {}).forEach((d) => {
+        const v = overrides[d];
+        if (d >= today && exports.DAY_KINDS.indexOf(v) >= 0)
+            out[d] = v;
+    });
+    return out;
+}
+/** 写入某天的覆盖（顺带清理过去的覆盖）；过去日不写 */
+function withOverride(overrides, date, kind, today) {
+    const out = pruneOverrides(overrides, today);
+    if (date >= today && exports.DAY_KINDS.indexOf(kind) >= 0)
+        out[date] = kind;
+    return out;
+}
+/** 这些日期里是否有覆盖生效 */
+function hasOverrideIn(overrides, dates) {
+    return dates.some((d) => !!(overrides && overrides[d] && exports.DAY_KINDS.indexOf(overrides[d]) >= 0));
+}
+/** 今天已开练 → 固定为记录类型；否则用计划类型（§3.4-8/9） */
+function pinType(planned, todaySession) {
+    if (isStarted(todaySession) && todaySession && todaySession.dayType && exports.DAY_KINDS.indexOf(todaySession.dayType) >= 0)
+        return todaySession.dayType;
+    return planned;
+}
+/** 本周（today 所在周）生效类型，今天按已开练固定——连练提示用 */
+function pinnedResolvedWeek(week, today, overrides, todaySession) {
+    const dates = weekDates(today, 0);
+    return dates.map((d) => {
+        const t = resolveDayType(d, week, overrides);
+        return d === today ? pinType(t, todaySession) : t;
+    });
+}
+/** 「修改 M/D」 */
+function overrideSheetTitle(date) {
+    return `修改 ${shortDate(date)}`;
 }

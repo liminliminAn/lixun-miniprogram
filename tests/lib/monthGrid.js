@@ -57,7 +57,7 @@ function monthDates(year, month) {
     const lead = js === 0 ? 6 : js - 1;
     return Array.from({ length: 42 }, (_, i) => fmt(new Date(year, month - 1, 1 - lead + i)));
 }
-function buildMonthCells(year, month, today, week, sessions, firstUse = '') {
+function buildMonthCells(year, month, today, week, sessions, firstUse = '', overrides = null) {
     return monthDates(year, month).map((date, i) => {
         const [, m, d] = date.split('-').map(Number);
         const weekdayIdx = i % 7;
@@ -73,7 +73,7 @@ function buildMonthCells(year, month, today, week, sessions, firstUse = '') {
             label = trained ? '✓已练' : dayType ? exports.PAST_UNFINISHED_LABEL : exports.MONTH_NO_RECORD_LABEL; // §3.5-5 开练未完成标「未完成」
         }
         else {
-            dayType = (0, schedule_1.pinnedTodayType)(week, weekdayIdx, tense === 'today' ? s : null);
+            dayType = (0, schedule_1.pinType)((0, schedule_1.resolveDayType)(date, week, overrides), tense === 'today' ? s : null);
             label = KIND_LABEL[dayType];
         }
         const inMonth = m === month;
@@ -96,6 +96,7 @@ function buildMonthCells(year, month, today, week, sessions, firstUse = '') {
             noRecord: tense === 'past' && !dayType && !beforeFirstUse,
             beforeFirstUse,
             tappable: inMonth && !beforeFirstUse,
+            editable: inMonth && !beforeFirstUse && tense !== 'past' && !(tense === 'today' && !!s),
         };
     });
 }

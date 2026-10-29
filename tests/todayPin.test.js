@@ -35,5 +35,5 @@ assert.strictEqual(S.buildWeekCells(T.buildWeekPlan(3).week, '2026-10-30', 0, se
 
 // 接线：todayDayType 走 pin
 const w = fs.readFileSync(path.join(__dirname, '../miniprogram/services/workout.ts'), 'utf8');
-assert.ok(/pinnedTodayType\(getEffectiveWeek\(\), mondayBasedIndex\(date\), getSession\(formatDate\(date\)\)\)/.test(w));
+assert.ok(/pinType\(resolveDay\(d\), getSession\(d\)\)/.test(w));
 console.log('todayPin.test ok');

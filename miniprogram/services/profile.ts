@@ -2,7 +2,8 @@ import { storage, KEYS } from './storage';
 import { keepCreatedAt } from '../utils/persist';
 import { classify } from '../utils/classify';
 import { buildWeekPlan, isDaysPerWeek } from '../constants/templates';
-import { effectiveWeek, isCustomized, CustomSchedule } from '../utils/schedule';
+import { effectiveWeek, isCustomized, CustomSchedule, DateOverrides, resolveDayType, withOverride, pruneOverrides } from '../utils/schedule';
+import { formatDate } from '../utils/date';
 
 export { classify };
 
@@ -59,6 +60,29 @@ export function clearCustomSchedule(): void {
 
 export function hasCustomSchedule(): boolean {
   return isCustomized(getCustomSchedule());
+}
+
+export function getDateOverrides(): DateOverrides {
+  return storage.get<DateOverrides>(KEYS.dateOverrides, {}) || {};
+}
+
+/** 只改这一天（周视图、月历共用）；同时清理过去日期的覆盖 */
+export function setDateOverride(date: string, kind: DayType, today: string = formatDate()): void {
+  storage.set(KEYS.dateOverrides, withOverride(getDateOverrides(), date, kind, today));
+}
+
+export function clearDateOverrides(): void {
+  storage.remove(KEYS.dateOverrides);
+}
+
+/** 今天及以后是否还有覆盖 */
+export function hasActiveOverrides(today: string = formatDate()): boolean {
+  return Object.keys(pruneOverrides(getDateOverrides(), today)).length > 0;
+}
+
+/** 某天生效类型：日期覆盖 → 自定义周模板 → 默认模板 */
+export function resolveDay(date: string): DayType {
+  return resolveDayType(date, getEffectiveWeek(), getDateOverrides());
 }
 
 /** 所有读周课表的地方统一走这里：自定义优先 */

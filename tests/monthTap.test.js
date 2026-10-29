@@ -25,7 +25,7 @@ assert.strictEqual(at('2026-10-30').tappable, true);
 assert.ok(M.buildMonthCells(2026, 10, today, week, {}).every((c) => !c.beforeFirstUse));
 const ts = fs.readFileSync(path.join(__dirname, '../miniprogram/pages/plan/plan.ts'), 'utf8');
 assert.ok(/onTapMonthDay[\s\S]*?if \(!cell \|\| !cell\.tappable\) return;/.test(ts));
-assert.ok(/getEffectiveWeek\(\), sessions, firstUse\)/.test(ts));
+assert.ok(/getEffectiveWeek\(\), sessions, firstUse, getDateOverrides\(\)\)/.test(ts));
 console.log('monthTap.test ok');
 // §3.5-5：过去开练未完成 → 「未完成」
 { const c = M.buildMonthCells(2026, 10, today, week, { '2026-10-20': { dayType: 'pull', completedAt: null, exercises: [{ exerciseId: 'row', sets: [{ done: true }] }] } }, '2026-10-01').find((x) => x.date === '2026-10-20');

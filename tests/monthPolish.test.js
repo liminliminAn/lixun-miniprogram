@@ -24,7 +24,7 @@ assert.strictEqual(S.PAST_NO_RECORD_LABEL, '未训练/休息');
 const ts = read('pages/plan/plan.ts');
 assert.ok(/c\.noRecord \? PAST_NO_RECORD_LABEL/.test(ts));
 // 改天后的软提示按固定今天的课表
-assert.ok(/const tip = streakSoftTip\(weekWithTodayPinned\(next\.week, mondayBasedIndex\(new Date\(\)\), \(getSessions\(\) as any\)\[formatDate\(\)\]\)\)/.test(ts));
+assert.ok(/setDateOverride\(date, kind\);[\s\S]*?const tip = streakSoftTip\(pinnedWeek\(\)\)/.test(ts));
 assert.ok(!/streakSoftTip\(next\.week\)/.test(ts));
 // 今天已开练为推、课表改今天以外某天：软提示按推计算
 { const pinned = S.weekWithTodayPinned(['rest', 'rest', 'rest', 'rest', 'legs', 'legs', 'legs'], 3, { dayType: 'push', warmup: { checked: ['a'] } });

@@ -117,6 +117,7 @@ export function buildWeekCells(
   today: string,
   offset: number,
   sessions: Record<string, SessionLite | undefined>,
+  overrides: DateOverrides | null = null,
 ): WeekCell[] {
   return weekDates(today, offset).map((date, idx) => {
     const tense = dayTense(date, today);
@@ -128,7 +129,7 @@ export function buildWeekCells(
       idx,
       date,
       md: shortDate(date),
-      dayType: tense === 'past' ? recorded || 'rest' : pinnedTodayType(week, idx, tense === 'today' ? s : null),
+      dayType: tense === 'past' ? recorded || 'rest' : pinType(resolveDayType(date, week, overrides), tense === 'today' ? s : null),
       tense,
       isToday: tense === 'today',
       trained: isTrained(s),
@@ -207,4 +208,66 @@ export function weekWithTodayPinned(week: DayKind[], todayIdx: number, todaySess
   const out = [...week];
   out[todayIdx] = pinnedTodayType(week, todayIdx, todaySession);
   return out;
+}
+
+/* ---------- 按日期覆盖（lixun:v1:dateOverrides） ---------- */
+export type DateOverrides = Record<string, DayKind>;
+
+function mondayIdxOf(date: string): number {
+  const js = parse(date).getDay();
+  return js === 0 ? 6 : js - 1;
+}
+
+/** 某天生效类型：日期覆盖 → 自定义周模板 / 默认模板（week 已是二者合并后的模板） */
+export function resolveDayType(date: string, week: DayKind[], overrides: DateOverrides | null | undefined): DayKind {
+  const o = overrides && overrides[date];
+  if (o && DAY_KINDS.indexOf(o) >= 0) return o;
+  return week[mondayIdxOf(date)] || 'rest';
+}
+
+/** 一组日期的生效类型 */
+export function resolveDates(dates: string[], week: DayKind[], overrides: DateOverrides | null | undefined): DayKind[] {
+  return dates.map((d) => resolveDayType(d, week, overrides));
+}
+
+/** 去掉今天之前的覆盖（过去日不可改，留着无用） */
+export function pruneOverrides(overrides: DateOverrides | null | undefined, today: string): DateOverrides {
+  const out: DateOverrides = {};
+  Object.keys(overrides || {}).forEach((d) => {
+    const v = (overrides as DateOverrides)[d];
+    if (d >= today && DAY_KINDS.indexOf(v) >= 0) out[d] = v;
+  });
+  return out;
+}
+
+/** 写入某天的覆盖（顺带清理过去的覆盖）；过去日不写 */
+export function withOverride(overrides: DateOverrides | null | undefined, date: string, kind: DayKind, today: string): DateOverrides {
+  const out = pruneOverrides(overrides, today);
+  if (date >= today && DAY_KINDS.indexOf(kind) >= 0) out[date] = kind;
+  return out;
+}
+
+/** 这些日期里是否有覆盖生效 */
+export function hasOverrideIn(overrides: DateOverrides | null | undefined, dates: string[]): boolean {
+  return dates.some((d) => !!(overrides && overrides[d] && DAY_KINDS.indexOf(overrides[d]) >= 0));
+}
+
+/** 今天已开练 → 固定为记录类型；否则用计划类型（§3.4-8/9） */
+export function pinType(planned: DayKind, todaySession: SessionLite | null | undefined): DayKind {
+  if (isStarted(todaySession) && todaySession && todaySession.dayType && DAY_KINDS.indexOf(todaySession.dayType) >= 0) return todaySession.dayType;
+  return planned;
+}
+
+/** 本周（today 所在周）生效类型，今天按已开练固定——连练提示用 */
+export function pinnedResolvedWeek(week: DayKind[], today: string, overrides: DateOverrides | null | undefined, todaySession: SessionLite | null | undefined): DayKind[] {
+  const dates = weekDates(today, 0);
+  return dates.map((d) => {
+    const t = resolveDayType(d, week, overrides);
+    return d === today ? pinType(t, todaySession) : t;
+  });
+}
+
+/** 「修改 M/D」 */
+export function overrideSheetTitle(date: string): string {
+  return `修改 ${shortDate(date)}`;
 }

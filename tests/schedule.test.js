@@ -26,9 +26,9 @@ assert.deepStrictEqual(S.DAY_KIND_SHEET, ['推', '拉', '腿', '休']);
 
 // 接线：新 key、今日走生效课表、计划页 ActionSheet + 恢复默认
 assert.ok(/customSchedule:\s*'lixun:v1:customSchedule'/.test(read('services/storage.ts')));
-assert.ok(/getEffectiveWeek\(\), mondayBasedIndex/.test(read('services/workout.ts')));
+assert.ok(/pinType\(resolveDay\(d\), getSession\(d\)\)/.test(read('services/workout.ts')));
 const planTs = read('pages/plan/plan.ts');
-assert.ok(/wx\.showActionSheet/.test(planTs) && /clearCustomSchedule\(\)/.test(planTs) && /getEffectiveWeek\(\)/.test(planTs));
+assert.ok(/wx\.showActionSheet/.test(planTs) && /clearCustomSchedule\(\);\s*clearDateOverrides\(\);/.test(planTs) && /getEffectiveWeek\(\)/.test(planTs));
 assert.ok(!/plan\.week/.test(planTs));
 assert.ok(/恢复默认/.test(read('pages/plan/plan.wxml')) && /bindtap="onTapDay"/.test(read('pages/plan/plan.wxml')));
 console.log('schedule.test ok');
@@ -44,7 +44,7 @@ console.log('schedule.test ok');
 console.log('schedule.test §3.4-3 ok');
 // P3：自定义生效时标题旁显示「自定义」小标签
 { const wxml = read('pages/plan/plan.wxml');
-  assert.ok(/本周课表（\{\{daysPerWeek\}\} 练）<text class="tag-custom" wx:if="\{\{customized && !expanded\}\}">自定义<\/text>/.test(wxml));
+  assert.ok(/本周课表（\{\{daysPerWeek\}\} 练）<text class="tag-custom" wx:if="\{\{customized\}\}">自定义<\/text>/.test(wxml));
   assert.ok(/\.tag-custom\s*\{/.test(read('pages/plan/plan.wxss')));
   assert.ok(/customized: hasCustomSchedule\(\)/.test(read('pages/plan/plan.ts'))); }
 console.log('schedule.test tag ok');
